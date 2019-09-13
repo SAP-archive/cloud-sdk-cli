@@ -1,7 +1,21 @@
 {
-  "extends": ["../../tslint.json"],
+  "extends": ["tslint:latest"],
   "rules": {
+    "arrow-parens": [false, "as-needed"],
+    "interface-name": false,
+    "max-line-length": false,
+    "member-access": false,
+    "no-shadowed-variable": false,
+    "no-string-literal": false,
     "no-submodule-imports": false,
-    "no-shadowed-variable": false
+    "object-literal-sort-keys": false,
+    "trailing-comma": [
+      false,
+      {
+        "multiline": "never",
+        "singleline": "never"
+      }
+    ],
+    "quotemark": [true, "single", "avoid-escape", "avoid-template"]
   }
 }

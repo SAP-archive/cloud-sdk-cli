@@ -27,8 +27,46 @@ USAGE
 # Commands
 
 <!-- commands -->
+* [`sap-cloud-sdk add-approuter`](#sap-cloud-sdk-add-approuter)
+* [`sap-cloud-sdk add-cx-server`](#sap-cloud-sdk-add-cx-server)
 * [`sap-cloud-sdk autocomplete [SHELL]`](#sap-cloud-sdk-autocomplete-shell)
 * [`sap-cloud-sdk help [COMMAND]`](#sap-cloud-sdk-help-command)
+* [`sap-cloud-sdk help-page`](#sap-cloud-sdk-help-page)
+* [`sap-cloud-sdk init`](#sap-cloud-sdk-init)
+* [`sap-cloud-sdk package`](#sap-cloud-sdk-package)
+
+## `sap-cloud-sdk add-approuter`
+
+Setup your Cloud Foundry app to authenticate through the app router
+
+```
+USAGE
+  $ sap-cloud-sdk add-approuter
+
+OPTIONS
+  -h, --help  show CLI help
+
+ALIASES
+  $ sap-cloud-sdk add-app-router
+
+EXAMPLE
+  $ sap-cloud-sdk add-approuter
+```
+
+## `sap-cloud-sdk add-cx-server`
+
+Add the scripts to set up a Jenkins master for CI/CD of your project
+
+```
+USAGE
+  $ sap-cloud-sdk add-cx-server
+
+OPTIONS
+  -h, --help  show CLI help
+
+EXAMPLE
+  $ sap-cloud-sdk add-cx-server
+```
 
 ## `sap-cloud-sdk autocomplete [SHELL]`
 
@@ -69,4 +107,57 @@ OPTIONS
 ```
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v2.2.0/src/commands/help.ts)_
+
+## `sap-cloud-sdk help-page`
+
+Open the product page, which contains tutorials and links to all relevant resources
+
+```
+USAGE
+  $ sap-cloud-sdk help-page
+
+OPTIONS
+  -h, --help  show CLI help
+```
+
+## `sap-cloud-sdk init`
+
+Initializes your project for the SAP Cloud SDK, SAP Cloud Platform Cloud Foundry and CI/CD using the SAP Cloud SDK toolkit
+
+```
+USAGE
+  $ sap-cloud-sdk init
+
+OPTIONS
+  -h, --help  Show help for the new command.
+
+EXAMPLES
+  $ sap-cloud-sdk init
+  $ sap-cloud-sdk init --help
+```
+
+## `sap-cloud-sdk package`
+
+Copies the specified files to the deployment folder
+
+```
+USAGE
+  $ sap-cloud-sdk package
+
+OPTIONS
+  -e, --exclude=exclude  Comma seperated list of files or globs to exclude
+  -h, --help             show CLI help
+
+  -i, --include=include  [default: package.json,package-lock.json,index.js,dist/**/*] Comma seperated list of files or
+                         globs to include
+
+  -o, --output=output    [default: deployment] Output and deployment folder
+
+  --skipInstall          Skip `npm i --production` during packaging
+
+EXAMPLES
+  $ sap-cloud-sdk package
+  $ sap-cloud-sdk package -i="index.html"
+  $ sap-cloud-sdk package --include="package.json,package-lock.json,index.js,dist/**/*" --exclude="**/*.java"
+```
 <!-- commandsstop -->
