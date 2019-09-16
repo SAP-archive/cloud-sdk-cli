@@ -1,9 +1,7 @@
 {
-  "extends": "../tsconfig",
   "compilerOptions": {
     "types": ["node", "jest"],
     "rootDir": "./"
   },
-  "include": ["./**/*.spec.ts"],
-  "exclude": ["lib/**/*", "tmp/**/*"]
+  "include": ["./**/*.spec.ts"]
 }
