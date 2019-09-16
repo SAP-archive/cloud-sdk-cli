@@ -1,6 +1,7 @@
 /*!
  * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
+
 import cli from 'cli-ux';
 import * as fs from 'fs';
 import { compile } from 'handlebars';

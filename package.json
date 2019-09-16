@@ -73,7 +73,7 @@
   "repository": "https://github.wdf.sap.corp/MA/sdk-js",
   "scripts": {
     "postpack": "rm -f oclif.manifest.json",
-    "posttest": "tslint -p . -t stylish",
+    "posttest": "tslint -p . -t stylish && tslint -p test -t stylish",
     "prepack": "rm -rf lib && tsc -b && cp -R src/templates lib/ && oclif-dev manifest && oclif-dev readme",
     "test": "jest",
     "version": "oclif-dev readme && git add README.md"

@@ -22,15 +22,30 @@ export default class Package extends Command {
 
   static flags = {
     help: flags.help({ char: 'h' }),
-    output: flags.string({ char: 'o', default: 'deployment', description: 'Output and deployment folder' }),
-    skipInstall: flags.boolean({ default: false, description: 'Skip `npm i --production` during packaging' }),
-    projectDir: flags.string({ hidden: true, default: '', description: 'Path to the folder in which the project should be created.' }),
+    output: flags.string({
+      char: 'o',
+      default: 'deployment',
+      description: 'Output and deployment folder'
+    }),
+    skipInstall: flags.boolean({
+      default: false,
+      description: 'Skip `npm i --production` during packaging'
+    }),
+    projectDir: flags.string({
+      hidden: true,
+      default: '',
+      description: 'Path to the folder in which the project should be created.'
+    }),
     include: flags.string({
       char: 'i',
       default: 'package.json,package-lock.json,index.js,dist/**/*',
       description: 'Comma seperated list of files or globs to include'
     }),
-    exclude: flags.string({ char: 'e', default: '', description: 'Comma seperated list of files or globs to exclude' })
+    exclude: flags.string({
+      char: 'e',
+      default: '',
+      description: 'Comma seperated list of files or globs to exclude'
+    })
   };
 
   async run() {
@@ -49,8 +64,18 @@ export default class Package extends Command {
     cli.action.stop();
 
     cli.action.start('Copying files');
-    const include = await glob(flags.include.split(','), { dot: true, absolute: true, cwd: flags.projectDir });
-    const exclude: string[] = flags.exclude.length ? await glob(flags.exclude.split(','), { dot: true, absolute: true, cwd: flags.projectDir }) : [];
+    const include = await glob(flags.include.split(','), {
+      dot: true,
+      absolute: true,
+      cwd: flags.projectDir
+    });
+    const exclude: string[] = flags.exclude.length
+      ? await glob(flags.exclude.split(','), {
+          dot: true,
+          absolute: true,
+          cwd: flags.projectDir
+        })
+      : [];
     const filtered = include.filter(filepath => !exclude.includes(filepath)).map(filepath => path.relative(flags.projectDir, filepath));
 
     filtered.forEach(filepath => {

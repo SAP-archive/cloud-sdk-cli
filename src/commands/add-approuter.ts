@@ -15,8 +15,15 @@ export default class AddApprouter extends Command {
   static examples = ['$ sap-cloud-sdk add-approuter'];
 
   static flags = {
-    projectDir: flags.string({ hidden: true, default: '', description: 'Path to the folder in which the project should be created.' }),
-    force: flags.boolean({ hidden: true, description: 'Overwrite files without asking if conflicts are found.' }),
+    projectDir: flags.string({
+      hidden: true,
+      default: '',
+      description: 'Path to the folder in which the project should be created.'
+    }),
+    force: flags.boolean({
+      hidden: true,
+      description: 'Overwrite files without asking if conflicts are found.'
+    }),
     help: flags.help({ char: 'h' })
   };
 

@@ -31,8 +31,14 @@ export default class Init extends Command {
   static examples = ['$ sap-cloud-sdk init', '$ sap-cloud-sdk init --help'];
 
   static flags = {
-    projectName: flags.string({ hidden: true, description: 'Give project name which is used for the Cloud Foundry mainfest.yml' }),
-    startCommand: flags.string({ hidden: true, description: 'Give a command which is used to start the application productively.' }),
+    projectName: flags.string({
+      hidden: true,
+      description: 'Give project name which is used for the Cloud Foundry mainfest.yml'
+    }),
+    startCommand: flags.string({
+      hidden: true,
+      description: 'Give a command which is used to start the application productively.'
+    }),
     frontendScripts: flags.boolean({
       hidden: true,
       description: 'Add frontend-related npm scripts which are needed for CI/CD.',
@@ -43,10 +49,23 @@ export default class Init extends Command {
       description: 'Skip frontend-related npm scripts and dont ask to add them.',
       exclusive: ['frontendScripts']
     }),
-    initWithExpress: flags.boolean({ hidden: true, description: 'If the folder is empty, use express-generator to create a project scaffold.' }),
-    projectDir: flags.string({ hidden: true, default: '', description: 'Path to the folder in which the project should be created.' }),
-    force: flags.boolean({ hidden: true, description: 'Overwrite files without asking if conflicts are found.' }),
-    help: flags.help({ char: 'h', description: 'Show help for the new command.' })
+    initWithExpress: flags.boolean({
+      hidden: true,
+      description: 'If the folder is empty, use express-generator to create a project scaffold.'
+    }),
+    projectDir: flags.string({
+      hidden: true,
+      default: '',
+      description: 'Path to the folder in which the project should be created.'
+    }),
+    force: flags.boolean({
+      hidden: true,
+      description: 'Overwrite files without asking if conflicts are found.'
+    }),
+    help: flags.help({
+      char: 'h',
+      description: 'Show help for the new command.'
+    })
   };
 
   async run() {
@@ -57,7 +76,9 @@ export default class Init extends Command {
     if (!fs.existsSync(path.resolve(flags.projectDir, 'package.json'))) {
       this.log('This folder does not contain a `package.json`.');
       if (flags.initWithExpress || (await cli.confirm('Should a new `express.js` project be initialized in this folder?'))) {
-        await execa('npx', ['express-generator', '--no-view', '--git'], { cwd: flags.projectDir });
+        await execa('npx', ['express-generator', '--no-view', '--git'], {
+          cwd: flags.projectDir
+        });
         await execa('git', ['init'], { cwd: flags.projectDir });
       } else {
         this.exit();
@@ -116,7 +137,11 @@ export default class Init extends Command {
     const { flags } = this.parse(Init);
     try {
       if (fs.existsSync(path.resolve(flags.projectDir, 'package.json'))) {
-        return JSON.parse(fs.readFileSync(path.resolve(flags.projectDir, 'package.json'), { encoding: 'utf8' }));
+        return JSON.parse(
+          fs.readFileSync(path.resolve(flags.projectDir, 'package.json'), {
+            encoding: 'utf8'
+          })
+        );
       }
     } catch (error) {
       this.error('Your package.json does not contain valid JSON. Please repair or delete it.', { exit: 10 });
@@ -135,14 +160,18 @@ export default class Init extends Command {
       conflicts.length &&
       !(await cli.confirm(`Script(s) with the name(s) "${conflicts.join('", "')}" already exist(s). Should they be overwritten?`))
     ) {
-      this.error('Script exits as npm scripts could not be written.', { exit: 11 });
+      this.error('Script exits as npm scripts could not be written.', {
+        exit: 11
+      });
     }
     packageJson.scripts = { ...packageJson.scripts, ...scripts };
 
     fs.writeFileSync(path.resolve(flags.projectDir, 'package.json'), JSON.stringify(packageJson, null, 2));
 
     try {
-      await execa('npm', ['install', '@sap/cloud-sdk-core'], { cwd: flags.projectDir });
+      await execa('npm', ['install', '@sap/cloud-sdk-core'], {
+        cwd: flags.projectDir
+      });
       await execa('npm', ['install', '--save-dev', '@sap/cloud-sdk-test-util'], { cwd: flags.projectDir });
     } catch (error) {
       this.error(error, { exit: 12 });
@@ -153,7 +182,9 @@ export default class Init extends Command {
     const { flags } = this.parse(Init);
     const pathsToIgnore = ['credentials.json', '/s4hana_pipeline', '/deployment'];
     try {
-      let file = fs.readFileSync(path.resolve(flags.projectDir, '.gitignore'), { encoding: 'utf-8' });
+      let file = fs.readFileSync(path.resolve(flags.projectDir, '.gitignore'), {
+        encoding: 'utf-8'
+      });
       pathsToIgnore
         .filter(path => !file.includes(path))
         .forEach(path => {
