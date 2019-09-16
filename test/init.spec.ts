@@ -39,7 +39,7 @@ describe('Init', () => {
         expect(fs.existsSync(path)).toBe(true);
       });
     fs.removeSync(projectDir);
-  });
+  }, 20000);
 
   it('should detect and ask if there are conflicts', async () => {
     expect(true).toBe(true);
