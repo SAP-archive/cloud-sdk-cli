@@ -55,7 +55,7 @@ export default class Init extends Command {
     }),
     projectDir: flags.string({
       hidden: true,
-      default: '',
+      default: '.',
       description: 'Path to the folder in which the project should be created.'
     }),
     force: flags.boolean({
