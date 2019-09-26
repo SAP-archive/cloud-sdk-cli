@@ -2,11 +2,11 @@
  * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
+import cli from 'cli-ux';
 import * as fs from 'fs';
 import { compile } from 'handlebars';
 import * as path from 'path';
 import { CopyDescriptor } from './copy-list';
-import { Confirm } from './functions';
 
 export function readTemplates(fromDirectory: string[], toDirectory: string): CopyDescriptor[] {
   const files = fs.readdirSync(path.resolve(...fromDirectory), { withFileTypes: true });
@@ -34,15 +34,13 @@ type stderr = (
   }
 ) => never;
 
-export async function findConflicts(files: CopyDescriptor[], force: boolean, stderr: stderr, dependencies: Confirm) {
+export async function findConflicts(files: CopyDescriptor[], force: boolean, stderr: stderr) {
   const conflicts = files.filter(file => fs.existsSync(file.fileName));
-
-  const { confirm } = dependencies;
 
   if (conflicts.length) {
     const overwrite =
       force ||
-      (await confirm(`File(s) "${conflicts.map(f => path.basename(f.fileName)).join('", "')}" already exist(s). Should they be overwritten?`));
+      (await cli.confirm(`File(s) "${conflicts.map(f => path.basename(f.fileName)).join('", "')}" already exist(s). Should they be overwritten?`));
     if (overwrite) {
       conflicts.forEach(file => fs.unlinkSync(file.fileName));
     } else {
