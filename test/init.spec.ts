@@ -1,16 +1,6 @@
 /*!
  * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
-// const spy = jest.fn(message => Promise.resolve(true));
-
-// jest.mock('cli-ux', () => ({
-//   ...jest.requireActual('cli-ux'),
-//   cli: {
-//     ...jest.requireActual('cli-ux').cli,
-//     confirm: spy
-//   }
-// }));
-
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { testFunctions } from '../src';
