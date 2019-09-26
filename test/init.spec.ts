@@ -1,9 +1,20 @@
 /*!
  * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
+const confirm = jest.fn().mockResolvedValue(true);
+jest.mock('cli-ux', () => {
+  // Mocking needs to happen before the command is imported
+  const cli = jest.requireActual('cli-ux');
+  return {
+    ...cli,
+    default: {
+      ...cli.default,
+      confirm
+    }
+  };
+});
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import { testFunctions } from '../src';
 import Init from '../src/commands/init';
 
 describe('Init', () => {
@@ -49,25 +60,10 @@ describe('Init', () => {
 
     fs.createFileSync(`${projectDir}.npmrc`);
 
-    // const mockConfirm = jest.fn().mockImplementation(message => Promise.resolve(true));
-    // cli['confirm'] = mockConfirm;
-
-    // const cli = jest.genMockFromModule('cli-ux') as any;
-    // cli.default.confirm = mockConfirm;
-
-    const spy = jest.spyOn(testFunctions, 'confirm');
-
-    const argv = [
-      '--projectName=testingApp',
-      '--startCommand="npm start"',
-      '--frontendScripts',
-      '--initWithExpress',
-      `--projectDir=${projectDir}`,
-      '--testMode'
-    ];
+    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--frontendScripts', '--initWithExpress', `--projectDir=${projectDir}`];
     await Init.run(argv);
 
-    expect(spy).toHaveBeenCalledWith('File(s) ".npmrc" already exist(s). Should they be overwritten?');
+    expect(confirm).toHaveBeenCalledWith('File(s) ".npmrc" already exist(s). Should they be overwritten?');
 
     fs.removeSync(projectDir);
   }, 60000);
@@ -78,14 +74,7 @@ describe('Init', () => {
       fs.removeSync(projectDir);
     }
 
-    const argv = [
-      '--projectName=testingApp',
-      '--startCommand="npm start"',
-      '--frontendScripts',
-      '--initWithExpress',
-      `--projectDir=${projectDir}`,
-      '--testMode'
-    ];
+    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--frontendScripts', '--initWithExpress', `--projectDir=${projectDir}`];
     await Init.run(argv);
 
     const gitignoreEntries = fs
