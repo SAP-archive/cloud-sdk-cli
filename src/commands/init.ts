@@ -7,6 +7,7 @@ import cli from 'cli-ux';
 import * as execa from 'execa';
 import * as fs from 'fs';
 import * as path from 'path';
+import { Confirm, testFunctions } from '../utils/functions';
 import { copyFiles, ensureDirectoryExistence, findConflicts, readTemplates } from '../utils/templates';
 
 const backendScripts = {
@@ -65,18 +66,23 @@ export default class Init extends Command {
     help: flags.help({
       char: 'h',
       description: 'Show help for the new command.'
+    }),
+    testMode: flags.boolean({
+      hidden: true,
+      description: 'Only used for testing.'
     })
   };
 
   async run() {
     const { flags } = this.parse(Init);
+    const { confirm } = this.dependencies(flags.testMode);
 
     ensureDirectoryExistence(flags.projectDir, true);
 
     if (!fs.existsSync(path.resolve(flags.projectDir, 'package.json'))) {
       this.log('This folder does not contain a `package.json`.');
-      if (flags.initWithExpress || (await cli.confirm('Should a new `express.js` project be initialized in this folder?'))) {
-        await execa('npx', ['express-generator', '--no-view', '--git'], {
+      if (flags.initWithExpress || (await confirm('Should a new `express.js` project be initialized in this folder?'))) {
+        await execa('npx', ['express-generator', '--no-view', '--git', '--force'], {
           cwd: flags.projectDir
         });
         await execa('git', ['init'], { cwd: flags.projectDir });
@@ -93,7 +99,7 @@ export default class Init extends Command {
       cli.action.stop();
 
       cli.action.start('Finding potential conflicts');
-      await findConflicts(files, flags.force, this.error);
+      await findConflicts(files, flags.force, this.error, { confirm });
       cli.action.stop();
 
       cli.action.start('Creating files');
@@ -101,7 +107,7 @@ export default class Init extends Command {
       cli.action.stop();
 
       cli.action.start('Adding scripts for CI/CD and dependencies to package.json');
-      await this.modifyPackageJson();
+      await this.modifyPackageJson({ confirm });
       cli.action.stop();
 
       cli.action.start('Modify .gitignore');
@@ -133,6 +139,15 @@ export default class Init extends Command {
     return options;
   }
 
+  private dependencies(testMode: boolean) {
+    if (testMode) {
+      return {
+        confirm: testFunctions.confirm
+      };
+    }
+    return { confirm: cli.confirm };
+  }
+
   private packageJson() {
     const { flags } = this.parse(Init);
     try {
@@ -148,17 +163,19 @@ export default class Init extends Command {
     }
   }
 
-  private async modifyPackageJson() {
+  private async modifyPackageJson(dependencies: Confirm) {
     const { flags } = this.parse(Init);
+    const { confirm } = dependencies;
+
     const packageJson = this.packageJson();
     const addFrontendScripts: boolean =
-      flags.frontendScripts || (!flags.skipFrontendScripts && (await cli.confirm('Should frontend-related npm scripts for CI/CD be added?')));
+      flags.frontendScripts || (!flags.skipFrontendScripts && (await confirm('Should frontend-related npm scripts for CI/CD be added?')));
     const scripts = addFrontendScripts ? { ...backendScripts, ...frontendScripts } : backendScripts;
 
     const conflicts = Object.keys(scripts).filter(name => Object.keys(packageJson.scripts).includes(name));
     if (
       conflicts.length &&
-      !(await cli.confirm(`Script(s) with the name(s) "${conflicts.join('", "')}" already exist(s). Should they be overwritten?`))
+      !(await confirm(`Script(s) with the name(s) "${conflicts.join('", "')}" already exist(s). Should they be overwritten?`))
     ) {
       this.error('Script exits as npm scripts could not be written.', {
         exit: 11

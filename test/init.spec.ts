@@ -1,9 +1,19 @@
 /*!
  * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
+// const spy = jest.fn(message => Promise.resolve(true));
+
+// jest.mock('cli-ux', () => ({
+//   ...jest.requireActual('cli-ux'),
+//   cli: {
+//     ...jest.requireActual('cli-ux').cli,
+//     confirm: spy
+//   }
+// }));
 
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import { testFunctions } from '../src';
 import Init from '../src/commands/init';
 
 describe('Init', () => {
@@ -41,9 +51,31 @@ describe('Init', () => {
     fs.removeSync(projectDir);
   }, 20000);
 
-  it('should detect and ask if there are conflicts', async () => {
-    expect(true).toBe(true);
-  });
+  it('init should detect and ask if there are conflicts', async () => {
+    const projectDir = 'test/do-not-commit3/';
+    if (fs.existsSync(projectDir)) {
+      fs.removeSync(projectDir);
+    }
+
+    fs.createFileSync(`${projectDir}.npmrc`);
+
+    const spy = jest.spyOn(testFunctions, 'confirm');
+
+    const argv = [
+      '--projectName=testingApp',
+      '--startCommand="npm start"',
+      '--frontendScripts',
+      '--initWithExpress',
+      `--projectDir=${projectDir}`,
+      '--testMode'
+    ];
+    await Init.run(argv);
+
+    expect(spy).toHaveBeenCalled();
+    expect(spy).toHaveBeenCalledWith('File(s) ".npmrc" already exist(s). Should they be overwritten?');
+
+    fs.removeSync(projectDir);
+  }, 60000);
 
   it('should add to gitignore if there is one', () => {
     expect(true).toBe(true);
