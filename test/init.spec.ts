@@ -106,7 +106,7 @@ describe('Init', () => {
     expect(gitignoreEntries).toContain('/s4hana_pipeline');
     expect(gitignoreEntries).toContain('/deployment');
     expect(gitignoreEntries.length).toBeGreaterThan(29);
-  }, 20000);
+  }, 50000);
 
   it('should show a warning if the project is not using git', async () => {
     const projectDir = path.resolve(pathPrefix, 'warn-on-no-git');
@@ -121,7 +121,7 @@ describe('Init', () => {
     await Init.run(argv);
 
     expect(warn).toHaveBeenCalledWith('No .gitignore file found!');
-  }, 20000);
+  }, 30000);
 
   it('should add our scripts and dependencies to the package.json', async () => {
     const projectDir = path.resolve(pathPrefix, 'add-scripts-and-dependencies');

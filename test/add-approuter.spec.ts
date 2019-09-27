@@ -3,6 +3,7 @@
  */
 
 const prompt = jest.fn().mockResolvedValue('mock-project');
+const confirm = jest.fn().mockResolvedValue(true);
 jest.mock('cli-ux', () => {
   // Mocking needs to happen before the command is imported
   const cli = jest.requireActual('cli-ux');
@@ -10,7 +11,8 @@ jest.mock('cli-ux', () => {
     ...cli,
     default: {
       ...cli.default,
-      prompt
+      prompt,
+      confirm
     }
   };
 });
@@ -58,7 +60,7 @@ describe('Add Approuter', () => {
       fs.removeSync(projectDir);
     }
 
-    // fs.copySync()
+    fs.copySync(path.resolve(__dirname, 'express'), projectDir, { recursive: true });
 
     const argv = [`--projectDir=${projectDir}`];
     await AddApprouter.run(argv);
@@ -74,7 +76,20 @@ describe('Add Approuter', () => {
     expect(approuterFiles).toContain('xs-security.json');
   }, 30000);
 
-  it('should detect and ask if there are conflicts', () => {
-    expect(true).toBe(true);
-  });
+  it('should detect and ask if there are conflicts', async () => {
+    const projectDir = path.resolve(pathPrefix, 'add-approuter');
+    if (fs.existsSync(projectDir)) {
+      fs.removeSync(projectDir);
+    }
+
+    fs.copySync(path.resolve(__dirname, 'express'), projectDir, { recursive: true });
+    fs.mkdirSync(path.resolve(projectDir, 'approuter'));
+    fs.createFileSync(path.resolve(projectDir, 'approuter', 'xs-security.json'));
+    fs.writeFileSync(path.resolve(projectDir, 'approuter', 'xs-security.json'), JSON.stringify({ 'tenant-mode': 'shared' }), 'utf8');
+
+    const argv = [`--projectDir=${projectDir}`];
+    await AddApprouter.run(argv);
+
+    expect(confirm).toHaveBeenCalledWith('File(s) "xs-security.json" already exist(s). Should they be overwritten?');
+  }, 30000);
 });

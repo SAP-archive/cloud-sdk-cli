@@ -62,7 +62,7 @@ export default class AddApprouter extends Command {
       }
       projectName = manifest['applications'].map((app: any) => app.name)[0];
     } catch (error) {
-      this.log(error);
+      this.log(`Unable to read "manifest.yml" (${error.message}).`);
     }
 
     const options: { [key: string]: string } = {
