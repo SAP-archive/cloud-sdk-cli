@@ -114,7 +114,7 @@ export default class Init extends Command {
 
         const param = ['express-generator', '--no-view', '--git'];
         const dirEmpty = fs.readdirSync(flags.projectDir).length === 0;
-        if (!dirEmpty && (flags.force || cli.confirm('Directory is not empty. Should the project be initialized anyway?'))) {
+        if (!dirEmpty && (flags.force || (await cli.confirm('Directory is not empty. Should the project be initialized anyway?')))) {
           param.push('--force');
         }
         await execa('npx', param, { cwd: flags.projectDir });
