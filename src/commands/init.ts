@@ -73,17 +73,7 @@ export default class Init extends Command {
 
     ensureDirectoryExistence(flags.projectDir, true);
 
-    if (!fs.existsSync(path.resolve(flags.projectDir, 'package.json'))) {
-      this.log('This folder does not contain a `package.json`.');
-      if (flags.initWithExpress || (await cli.confirm('Should a new `express.js` project be initialized in this folder?'))) {
-        await execa('npx', ['express-generator', '--no-view', '--git'], {
-          cwd: flags.projectDir
-        });
-        await execa('git', ['init'], { cwd: flags.projectDir });
-      } else {
-        this.exit();
-      }
-    }
+    await this.initExpressProject();
 
     const options = await this.getOptions();
 
@@ -111,6 +101,32 @@ export default class Init extends Command {
       this.printSuccessMessage();
     } catch (error) {
       this.error(error, { exit: 1 });
+    }
+  }
+
+  private async initExpressProject() {
+    const { flags } = this.parse(Init);
+
+    if (!fs.existsSync(path.resolve(flags.projectDir, 'package.json'))) {
+      this.log('This folder does not contain a `package.json`.');
+
+      if (flags.initWithExpress || (await cli.confirm('Should a new `express.js` project be initialized in this folder?'))) {
+        cli.action.start('Initializing project');
+
+        const param = ['express-generator', '--no-view', '--git'];
+        const dirEmpty = fs.readdirSync(flags.projectDir).length === 0;
+        if (!dirEmpty && (flags.force || cli.confirm('Directory is not empty. Should the project be initialized anyway?'))) {
+          param.push('--force');
+        }
+        await execa('npx', param, { cwd: flags.projectDir });
+
+        if (!fs.existsSync('.git')) {
+          await execa('git', ['init'], { cwd: flags.projectDir });
+        }
+        cli.action.stop();
+      } else {
+        this.exit();
+      }
     }
   }
 
@@ -150,6 +166,7 @@ export default class Init extends Command {
 
   private async modifyPackageJson() {
     const { flags } = this.parse(Init);
+
     const packageJson = this.packageJson();
     const addFrontendScripts: boolean =
       flags.frontendScripts || (!flags.skipFrontendScripts && (await cli.confirm('Should frontend-related npm scripts for CI/CD be added?')));
