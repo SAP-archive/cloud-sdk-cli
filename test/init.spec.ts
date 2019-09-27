@@ -105,7 +105,7 @@ describe('Init', () => {
     expect(gitignoreEntries).toContain('credentials.json');
     expect(gitignoreEntries).toContain('/s4hana_pipeline');
     expect(gitignoreEntries).toContain('/deployment');
-    expect(gitignoreEntries.length).toBeGreaterThan(3);
+    expect(gitignoreEntries.length).toBeGreaterThan(29);
   }, 20000);
 
   it('should show a warning if the project is not using git', async () => {
