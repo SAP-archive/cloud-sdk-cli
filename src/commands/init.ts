@@ -73,25 +73,7 @@ export default class Init extends Command {
 
     ensureDirectoryExistence(flags.projectDir, true);
 
-    if (!fs.existsSync(path.resolve(flags.projectDir, '.git'))) {
-      this.log('This folder does not contain a `.git` folder yet! Initializing git repository...');
-      await execa('git', ['init'], { cwd: flags.projectDir });
-    }
-
-    if (!fs.existsSync(path.resolve(flags.projectDir, 'package.json'))) {
-      this.log('This folder does not contain a `package.json`.');
-
-      if (
-        flags.initWithExpress ||
-        (await confirm('Should a new `express.js` project be initialized in this folder (this may override existing files)?'))
-      ) {
-        await execa('npx', ['express-generator', '--no-view', '--git', '--force'], {
-          cwd: flags.projectDir
-        });
-      } else {
-        this.exit();
-      }
-    }
+    await this.initExpressProject();
 
     const options = await this.getOptions();
 
@@ -113,12 +95,39 @@ export default class Init extends Command {
       cli.action.stop();
 
       cli.action.start('Modify .gitignore');
-      this.addOrModifyGitIgnore();
+      this.modifyGitIgnore();
       cli.action.stop();
 
       this.printSuccessMessage();
     } catch (error) {
       this.error(error, { exit: 1 });
+    }
+  }
+
+  private async initExpressProject() {
+    const { flags } = this.parse(Init);
+
+    if (!fs.existsSync(path.resolve(flags.projectDir, 'package.json'))) {
+      this.log('This folder does not contain a `package.json`.');
+
+      if (flags.initWithExpress || (await cli.confirm('Should a new `express.js` project be initialized in this folder?'))) {
+        cli.action.start('Initializing project');
+
+        const params = ['express-generator', '--no-view', '--git'];
+        const dirEmpty = fs.readdirSync(flags.projectDir).length === 0;
+
+        if (!dirEmpty && (flags.force || (await cli.confirm('Directory is not empty. Should the project be initialized anyway?')))) {
+          params.push('--force');
+        }
+        await execa('npx', params, { cwd: flags.projectDir });
+
+        if (!fs.existsSync('.git')) {
+          await execa('git', ['init'], { cwd: flags.projectDir });
+        }
+        cli.action.stop();
+      } else {
+        this.exit();
+      }
     }
   }
 
@@ -188,7 +197,7 @@ export default class Init extends Command {
     }
   }
 
-  private addOrModifyGitIgnore() {
+  private modifyGitIgnore() {
     const { flags } = this.parse(Init);
     const pathToGitignore = path.resolve(flags.projectDir, '.gitignore');
     const pathsToIgnore = ['credentials.json', '/s4hana_pipeline', '/deployment'];
@@ -206,8 +215,8 @@ export default class Init extends Command {
         pathsToIgnore.forEach(path => this.log('  ' + path));
       }
     } else {
-      const fileContent = pathsToIgnore.join('\n') + '\n';
-      fs.writeFileSync(pathToGitignore, fileContent, 'utf8');
+      this.warn('No .gitignore file found!');
+      this.log('If your project is using a different version control system, please make sure the following paths are not tracked:');
     }
   }
 
