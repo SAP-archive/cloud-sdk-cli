@@ -34,7 +34,7 @@ describe('Add Approuter', () => {
     fs.removeSync(pathPrefix);
   });
 
-  it('[approuter] should add preconfigured files', async () => {
+  it('should add preconfigured files', async () => {
     const projectDir = path.resolve(pathPrefix, 'add-approuter');
     if (fs.existsSync(projectDir)) {
       fs.removeSync(projectDir);
@@ -55,7 +55,7 @@ describe('Add Approuter', () => {
   }, 30000);
 
   it('should add necessary files to an existing project', async () => {
-    const projectDir = path.resolve(pathPrefix, 'add-approuter');
+    const projectDir = path.resolve(pathPrefix, 'add-approuter-to-existing-project');
     if (fs.existsSync(projectDir)) {
       fs.removeSync(projectDir);
     }
@@ -77,7 +77,7 @@ describe('Add Approuter', () => {
   }, 30000);
 
   it('should detect and ask if there are conflicts', async () => {
-    const projectDir = path.resolve(pathPrefix, 'add-approuter');
+    const projectDir = path.resolve(pathPrefix, 'approuter-conflict');
     if (fs.existsSync(projectDir)) {
       fs.removeSync(projectDir);
     }
