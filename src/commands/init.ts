@@ -204,7 +204,7 @@ export default class Init extends Command {
 
     if (fs.existsSync(pathToGitignore)) {
       try {
-        const fileContent = fs.readFileSync(pathToGitignore, 'utf-8');
+        const fileContent = fs.readFileSync(pathToGitignore, 'utf8');
         const newPaths = pathsToIgnore.filter(path => !fileContent.includes(path));
         const newFileContent = fileContent + (newPaths.length ? `\n${newPaths.join('\n')}\n` : '');
 

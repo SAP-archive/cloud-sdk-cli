@@ -87,12 +87,14 @@ describe('Init', () => {
   }, 60000);
 
   it('should add to gitignore if there is one', async () => {
+    const exampleAppDir = 'test/nest/';
     const projectDir = path.resolve(pathPrefix, 'add-to-gitignore');
     if (fs.existsSync(projectDir)) {
       fs.removeSync(projectDir);
     }
+    fs.copySync(exampleAppDir, projectDir, { recursive: true });
 
-    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--frontendScripts', '--initWithExpress', `--projectDir=${projectDir}`];
+    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--skipFrontendScripts', `--projectDir=${projectDir}`];
     await Init.run(argv);
 
     const gitignoreEntries = fs
@@ -103,8 +105,8 @@ describe('Init', () => {
     expect(gitignoreEntries).toContain('credentials.json');
     expect(gitignoreEntries).toContain('/s4hana_pipeline');
     expect(gitignoreEntries).toContain('/deployment');
-    expect(gitignoreEntries.length).toBeGreaterThan(3);
-  }, 60000);
+    expect(gitignoreEntries.length).toBeGreaterThan(29);
+  }, 20000);
 
   it('should show a warning if the project is not using git', async () => {
     const projectDir = path.resolve(pathPrefix, 'warn-on-no-git');
@@ -115,14 +117,14 @@ describe('Init', () => {
     fs.createFileSync(path.resolve(projectDir, 'package.json'));
     fs.writeFileSync(path.resolve(projectDir, 'package.json'), JSON.stringify({ name: 'project' }), 'utf8');
 
-    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--frontendScripts', `--projectDir=${projectDir}`];
+    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--skipFrontendScripts', `--projectDir=${projectDir}`];
     await Init.run(argv);
 
     expect(warn).toHaveBeenCalledWith('No .gitignore file found!');
-  }, 60000);
+  }, 20000);
 
   it('should add our scripts and dependencies to the package.json', async () => {
-    const projectDir = path.resolve(pathPrefix, 'warn-on-no-git');
+    const projectDir = path.resolve(pathPrefix, 'add-scripts-and-dependencies');
     if (fs.existsSync(projectDir)) {
       fs.removeSync(projectDir);
     }
@@ -144,8 +146,8 @@ describe('Init', () => {
     expect(scripts).toContain('ci-build');
     expect(scripts).toContain('ci-package');
     expect(scripts).toContain('ci-backend-unit-test');
+    expect(scripts).toContain('ci-frontend-unit-test');
     expect(scripts).toContain('ci-integration-test');
     expect(scripts).toContain('ci-e2e');
-    expect(scripts).toContain('ci-frontend-unit-test');
-  }, 60000);
+  }, 20000);
 });
