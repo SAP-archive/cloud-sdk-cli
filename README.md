@@ -6,6 +6,8 @@ A nifty CLI for the SAP Cloud SDK for JavaScript
 <!-- toc -->
 * [Usage](#usage)
 * [Commands](#commands)
+* [Contribute](#contribute)
+* [License](#license)
 <!-- tocstop -->
 
 # Usage
@@ -162,3 +164,14 @@ EXAMPLES
   $ sap-cloud-sdk package --include="package.json,package-lock.json,index.js,dist/**/*" --exclude="**/*.java"
 ```
 <!-- commandsstop -->
+
+# Contribute
+
+The CLI is based on [oclif](https://oclif.io/docs/introduction.html) and can be extended using [plugins](https://oclif.io/docs/plugins). 
+If you think your plugin should be part of the CLI itself, feel free to [open a pull request](https://github.com/SAP/cloud-sdk-cli/compare). 
+If you have found a bug in our existing functionality, please [open an issue](https://github.com/SAP/cloud-sdk-cli/issues/new).
+
+# License
+
+Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+This file is licensed under the Apache Software License, v. 2 except as noted otherwise in the [LICENSE file](LICENSE).
