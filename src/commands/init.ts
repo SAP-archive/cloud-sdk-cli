@@ -54,7 +54,6 @@ export default class Init extends Command {
       description: 'If the folder is empty, use express-generator to create a project scaffold.'
     }),
     projectDir: flags.string({
-      hidden: true,
       default: '.',
       description: 'Path to the folder in which the project should be created.'
     }),
