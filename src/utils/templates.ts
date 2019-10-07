@@ -36,6 +36,7 @@ type stderr = (
 
 export async function findConflicts(files: CopyDescriptor[], force: boolean, stderr: stderr) {
   const conflicts = files.filter(file => fs.existsSync(file.fileName));
+
   if (conflicts.length) {
     const overwrite =
       force ||

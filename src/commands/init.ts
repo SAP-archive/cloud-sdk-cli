@@ -112,12 +112,13 @@ export default class Init extends Command {
       if (flags.initWithExpress || (await cli.confirm('Should a new `express.js` project be initialized in this folder?'))) {
         cli.action.start('Initializing project');
 
-        const param = ['express-generator', '--no-view', '--git'];
+        const params = ['express-generator', '--no-view', '--git'];
         const dirEmpty = fs.readdirSync(flags.projectDir).length === 0;
+
         if (!dirEmpty && (flags.force || (await cli.confirm('Directory is not empty. Should the project be initialized anyway?')))) {
-          param.push('--force');
+          params.push('--force');
         }
-        await execa('npx', param, { cwd: flags.projectDir });
+        await execa('npx', params, { cwd: flags.projectDir });
 
         if (!fs.existsSync('.git')) {
           await execa('git', ['init'], { cwd: flags.projectDir });
@@ -171,7 +172,8 @@ export default class Init extends Command {
       flags.frontendScripts || (!flags.skipFrontendScripts && (await cli.confirm('Should frontend-related npm scripts for CI/CD be added?')));
     const scripts = addFrontendScripts ? { ...backendScripts, ...frontendScripts } : backendScripts;
 
-    const conflicts = Object.keys(scripts).filter(name => Object.keys(packageJson.scripts).includes(name));
+    const conflicts = packageJson.scripts ? Object.keys(scripts).filter(name => Object.keys(packageJson.scripts).includes(name)) : [];
+
     if (
       conflicts.length &&
       !(await cli.confirm(`Script(s) with the name(s) "${conflicts.join('", "')}" already exist(s). Should they be overwritten?`))
@@ -196,21 +198,24 @@ export default class Init extends Command {
 
   private modifyGitIgnore() {
     const { flags } = this.parse(Init);
+    const pathToGitignore = path.resolve(flags.projectDir, '.gitignore');
     const pathsToIgnore = ['credentials.json', '/s4hana_pipeline', '/deployment'];
-    try {
-      let file = fs.readFileSync(path.resolve(flags.projectDir, '.gitignore'), {
-        encoding: 'utf-8'
-      });
-      pathsToIgnore
-        .filter(path => !file.includes(path))
-        .forEach(path => {
-          file = `${file}${file.slice(-1) === '\n' ? '' : '\n'}${path}\n`;
-        });
-      fs.writeFileSync(path.resolve(flags.projectDir, '.gitignore'), file);
-    } catch (error) {
-      this.warn('There was a problem writing to the .gitignore.');
+
+    if (fs.existsSync(pathToGitignore)) {
+      try {
+        const fileContent = fs.readFileSync(pathToGitignore, 'utf8');
+        const newPaths = pathsToIgnore.filter(path => !fileContent.includes(path));
+        const newFileContent = fileContent + (newPaths.length ? `\n${newPaths.join('\n')}\n` : '');
+
+        fs.writeFileSync(pathToGitignore, newFileContent, 'utf8');
+      } catch (error) {
+        this.warn('There was a problem writing to the .gitignore.');
+        this.log('If your project is using a different version control system, please make sure the following paths are not tracked:');
+        pathsToIgnore.forEach(path => this.log('  ' + path));
+      }
+    } else {
+      this.warn('No .gitignore file found!');
       this.log('If your project is using a different version control system, please make sure the following paths are not tracked:');
-      pathsToIgnore.forEach(path => this.log('  ' + path));
     }
   }
 
