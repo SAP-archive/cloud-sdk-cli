@@ -1,3 +1,5 @@
+<a href="https://sap.com/s4sdk"><img src="https://help.sap.com/doc/6c02295dfa8f47cf9c08a19f2e172901/1.0/en-US/logo-with-js.svg" alt="SAP Cloud SDK for JavaScript Logo" height="122.92" width="226.773"/></a>
+
 SAP Cloud SDK CLI
 ===
 
@@ -175,3 +177,5 @@ If you have found a bug in our existing functionality, please [open an issue](ht
 
 Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
 This file is licensed under the Apache Software License, v. 2 except as noted otherwise in the [LICENSE file](LICENSE).
+
+Note: This license does not apply to the SAP Cloud SDK for JavaScript Logo referenced in this README.
