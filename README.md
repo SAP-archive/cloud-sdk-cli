@@ -1,18 +1,18 @@
 <a href="https://sap.com/s4sdk"><img src="https://help.sap.com/doc/6c02295dfa8f47cf9c08a19f2e172901/1.0/en-US/logo-with-js.svg" alt="SAP Cloud SDK for JavaScript Logo" height="122.92" width="226.773"/></a>
 
-SAP Cloud SDK CLI
-===
+# SAP Cloud SDK CLI
 
-A nifty CLI for the SAP Cloud SDK for JavaScript
+A nifty CLI for the SAP Cloud SDK for JavaScript to initialize and package your SAP Cloud Platform application.
+It is also the launchpad when trying to set up the approuter or getting started with the [SAP Cloud SDK for Continuous Delivery](https://github.com/SAP/cloud-s4-sdk-pipeline).
 
-<!-- toc -->
-* [Usage](#usage)
-* [Commands](#commands)
-* [Contribute](#contribute)
-* [License](#license)
-<!-- tocstop -->
+## About the SDK
 
-# Usage
+The SAP Cloud SDK supports you end-to-end when developing applications that communicate with SAP solutions and services such as SAP S/4HANA Cloud, SAP SuccessFactors, and many others.
+
+Using the SDK, you can reduce your effort when developing an application on SAP Cloud Platform by building on best practices delivered by the SDK. 
+The SDK provides Java libraries, JavaScript libraries, project templates and a continuous delivery toolkit.
+
+## Usage
 
 <!-- usage -->
 ```sh-session
@@ -28,7 +28,7 @@ USAGE
 ```
 <!-- usagestop -->
 
-# Commands
+## Commands
 
 <!-- commands -->
 * [`sap-cloud-sdk add-approuter`](#sap-cloud-sdk-add-approuter)
@@ -167,13 +167,13 @@ EXAMPLES
 ```
 <!-- commandsstop -->
 
-# Contribute
+## Contribute
 
 The CLI is based on [oclif](https://oclif.io/docs/introduction.html) and can be extended using [plugins](https://oclif.io/docs/plugins). 
 If you think your plugin should be part of the CLI itself, feel free to [open a pull request](https://github.com/SAP/cloud-sdk-cli/compare). 
 If you have found a bug in our existing functionality, please [open an issue](https://github.com/SAP/cloud-sdk-cli/issues/new).
 
-# License
+## License
 
 Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
 This file is licensed under the Apache Software License, v. 2 except as noted otherwise in the [LICENSE file](LICENSE).
