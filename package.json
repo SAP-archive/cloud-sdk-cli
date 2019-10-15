@@ -1,12 +1,12 @@
 {
-  "name": "sap-cloud-sdk-cli",
+  "name": "@sap-cloud-sdk/cli",
   "description": "CLI for the SAP Cloud SDK for JavaScript",
   "version": "0.0.1",
   "author": "SAP",
   "bin": {
     "sap-cloud-sdk": "./bin/run"
   },
-  "bugs": "https://github.wdf.sap.corp/MA/sdk-js/issues",
+  "bugs": "https://github.com/SAP/cloud-sdk-cli/issues",
   "dependencies": {
     "@oclif/command": "^1.5.18",
     "@oclif/config": "^1.13.2",
@@ -48,11 +48,13 @@
     "/npm-shrinkwrap.json",
     "/oclif.manifest.json"
   ],
-  "homepage": "https://github.wdf.sap.corp/MA/sdk-js",
+  "homepage": "https://developers.sap.com/topics/cloud-sdk.html",
   "keywords": [
-    "oclif"
+    "sap-cloud-sdk",
+    "cloud-sdk-cli",
+    "sap-cloud-platform"
   ],
-  "license": "MIT",
+  "license": "Apache-2.0",
   "main": "lib/index.js",
   "oclif": {
     "commands": "./lib/commands",
@@ -70,7 +72,7 @@
       "@oclif/plugin-warn-if-update-available"
     ]
   },
-  "repository": "https://github.wdf.sap.corp/MA/sdk-js",
+  "repository": "https://github.com/SAP/cloud-sdk-cli",
   "scripts": {
     "postpack": "rm -f oclif.manifest.json",
     "posttest": "tslint -p . -t stylish && tslint -p test -t stylish",
