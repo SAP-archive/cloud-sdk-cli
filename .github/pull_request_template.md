@@ -4,7 +4,7 @@ Give a brief description of the changes in this PR. If this relates to a bug or 
 
 <!-- Link with "Closes #ISSUE-NUMBER" -->
 
-## Types of Changes
+## Type of Changes
 
 - [ ] Bug Fix
 - [ ] New Feature
@@ -16,6 +16,8 @@ Give a brief description of the changes in this PR. If this relates to a bug or 
 - [ ] I have added necessary documentation
 
 ## Breaking Changes
+
+In general avoid breaking changes, but if you think it is necessary give your reasoning in the _Further Comments_ section.
 
 - [ ] I have not introduced breaking changes
 
