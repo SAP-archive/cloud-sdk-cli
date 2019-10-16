@@ -120,18 +120,17 @@ export default class Init extends Command {
     return InitializationType.existingProject;
   }
 
-  private async initProject(flags: OutputFlags<typeof Init.flags>, initializationType: InitializationType) {
+  private async initProject(flags: OutputFlags<typeof Init.flags>, initializationType: InitializationType) :Promise<void>{
     switch (initializationType) {
       case InitializationType.freshExpress:
-        this.initExpressProject(flags);
-        return;
+        return this.initExpressProject(flags);
       case InitializationType.existingProject:
         return;
     }
   }
 
-  private async initExpressProject(flags: OutputFlags<typeof Init.flags>) {
-    cli.action.start('Initializing project');
+  private async initExpressProject(flags: OutputFlags<typeof Init.flags>):Promise<void> {
+    cli.action.start('Initializing Express project');
 
     const params = ['express-generator', '--no-view', '--git'];
     const dirEmpty = fs.readdirSync(flags.projectDir).length === 0;
@@ -139,7 +138,11 @@ export default class Init extends Command {
     if (!dirEmpty && (flags.force || (await cli.confirm('Directory is not empty. Should the project be initialized anyway?')))) {
       params.push('--force');
     }
-    await execa('npx', params, { cwd: flags.projectDir });
+    try {
+      await execa('npx', params, { cwd: flags.projectDir })
+    }catch (error) {
+      console.log(error)
+    }
 
     if (!fs.existsSync('.git')) {
       await execa('git', ['init'], { cwd: flags.projectDir });

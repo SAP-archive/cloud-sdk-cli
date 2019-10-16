@@ -1,6 +1,8 @@
 /*!
  * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
+import { exec } from 'child_process';
+
 const confirm = jest.fn().mockResolvedValue(true);
 jest.mock('cli-ux', () => {
   // Mocking needs to happen before the command is imported
@@ -24,9 +26,12 @@ jest.mock('@oclif/command', () => {
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import Init from '../src/commands/init';
+import execa = require('execa');
+
+const foo:string='bar';
 
 describe('Init', () => {
-  const pathPrefix = path.resolve(__dirname, __filename.replace(/\./g, '-')).replace('-ts','');
+  const pathPrefix = path.resolve(__dirname, __filename.replace(/\./g, '-')).replace('-ts', '');
 
   beforeAll(() => {
     if (!fs.existsSync(pathPrefix)) {
@@ -35,7 +40,7 @@ describe('Init', () => {
   });
 
   afterAll(() => {
-  //  fs.removeSync(pathPrefix);
+    // fs.removeSync(pathPrefix);
   });
 
   it('should create a new project with the necessary files', async () => {
@@ -53,6 +58,31 @@ describe('Init', () => {
         expect(fs.existsSync(path)).toBe(true);
       });
   }, 60000);
+
+  it('should create test cases for a fresh express project.', async () => {
+    const projectDir = path.resolve(pathPrefix, 'full-init');
+    if (fs.existsSync(projectDir)) {
+      fs.removeSync(projectDir);
+    }
+
+    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--frontendScripts', '--initWithExpress', `--projectDir=${projectDir}`];
+    await Init.run(argv);
+
+    //execute the local tests
+    await execa('npm',['i'],{cwd:projectDir});
+    const testResult = await execa('npm', ['test'], { cwd: projectDir });
+    expect(testResult.exitCode).toBe(0);
+
+    //execute the ci scripts and check if the reports are written
+    await execa('npm', ['run','ci-integration-test'], { cwd: projectDir });
+    const pathBackendIntegraiontion = path.resolve(projectDir,'s4hana_pipeline','reports','backend-integration');
+    expect(fs.readdirSync(pathBackendIntegraiontion).length).not.toBe(0);
+
+    await execa('npm', ['run','ci-backend-unit-test'], { cwd: projectDir });
+    const pathBackendUnit = path.resolve(projectDir,'s4hana_pipeline','reports','backend-unit');
+    expect(fs.readdirSync(pathBackendUnit).length).not.toBe(0);
+
+  },60000);
 
   it('should add necessary files to an existing project', async () => {
     const expressAppDir = 'test/express/';
@@ -151,3 +181,18 @@ describe('Init', () => {
     expect(scripts).toContain('ci-e2e');
   }, 20000);
 });
+
+//TODO use execa to execute this?
+//Wrapper to execute bash commands
+function execPromise(command: string) {
+  const options = { timeout: 100000000 };
+  return new Promise((resolve, reject) => {
+    exec(command, options, (error, stdout, stderr) => {
+      if (error) {
+        reject({ error, stderr });
+        return;
+      }
+      resolve(stdout);
+    });
+  });
+}
