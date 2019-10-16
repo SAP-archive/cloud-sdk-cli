@@ -67,8 +67,6 @@ export default class Init extends Command {
     })
   };
 
-  // type flagsType = typeof Init.flags;
-
   async run() {
     const { flags } = this.parse(Init);
 
