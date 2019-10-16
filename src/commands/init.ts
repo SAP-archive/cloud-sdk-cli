@@ -8,15 +8,15 @@ import cli from 'cli-ux';
 import * as execa from 'execa';
 import * as fs from 'fs';
 import * as path from 'path';
-import { copyFiles, ensureDirectoryExistence, findConflicts, readTemplates } from '../utils/templates';
+import { testFiles } from '../templates/init/test/test-file-info';
 import { CopyDescriptor } from '../utils/copy-list';
-import { InitializationType, InitTypeHelper } from '../utils/initialization-helper';
+import { InitializationType, packageJsonParts } from '../utils/initialization-helper';
+import { copyFiles, ensureDirectoryExistence, findConflicts, readTemplates } from '../utils/templates';
 
 const backendBuildScripts = {
   'ci-build': 'echo "Use this to compile or minify your application"',
   'ci-package': 'echo "Copy all deployment-relevant files to the `deployment` folder"'
 };
-
 
 // TODO Autodetect testing framework (?) and make sure it outputs junit
 const frontendScripts = {
@@ -120,7 +120,7 @@ export default class Init extends Command {
     return InitializationType.existingProject;
   }
 
-  private async initProject(flags: OutputFlags<typeof Init.flags>, initializationType: InitializationType) :Promise<void>{
+  private async initProject(flags: OutputFlags<typeof Init.flags>, initializationType: InitializationType): Promise<void> {
     switch (initializationType) {
       case InitializationType.freshExpress:
         return this.initExpressProject(flags);
@@ -129,7 +129,7 @@ export default class Init extends Command {
     }
   }
 
-  private async initExpressProject(flags: OutputFlags<typeof Init.flags>):Promise<void> {
+  private async initExpressProject(flags: OutputFlags<typeof Init.flags>): Promise<void> {
     cli.action.start('Initializing Express project');
 
     const params = ['express-generator', '--no-view', '--git'];
@@ -138,11 +138,7 @@ export default class Init extends Command {
     if (!dirEmpty && (flags.force || (await cli.confirm('Directory is not empty. Should the project be initialized anyway?')))) {
       params.push('--force');
     }
-    try {
-      await execa('npx', params, { cwd: flags.projectDir })
-    }catch (error) {
-      console.log(error)
-    }
+    await execa('npx', params, { cwd: flags.projectDir });
 
     if (!fs.existsSync('.git')) {
       await execa('git', ['init'], { cwd: flags.projectDir });
@@ -186,12 +182,12 @@ export default class Init extends Command {
 
   private async modifyPackageJson(initializationType: InitializationType) {
     const { flags } = this.parse(Init);
-    const packJsonParts = InitTypeHelper.packageJsonParts(initializationType);
+    const packageJsonData = packageJsonParts(initializationType);
 
     const packageJson = this.packageJson();
     const addFrontendScripts: boolean =
       flags.frontendScripts || (!flags.skipFrontendScripts && (await cli.confirm('Should frontend-related npm scripts for CI/CD be added?')));
-    const backendScritps = { ...backendBuildScripts, ...packJsonParts.backendTestScripts };
+    const backendScritps = { ...backendBuildScripts, ...packageJsonData.backendTestScripts };
     const scripts = addFrontendScripts ? { ...backendScritps, ...frontendScripts } : backendScritps;
 
     const conflicts = packageJson.scripts ? Object.keys(scripts).filter(name => Object.keys(packageJson.scripts).includes(name)) : [];
@@ -205,10 +201,9 @@ export default class Init extends Command {
       });
     }
     packageJson.scripts = { ...packageJson.scripts, ...scripts };
-    if (packageJson.devDependencies !== undefined) {
-      packageJson.devDependencies = { ...packageJson.devDependencies, ...packJsonParts.devDependencies };
-    } else {
-      packageJson.devDependencies = packJsonParts.devDependencies;
+
+    if (initializationType === InitializationType.freshExpress) {
+      packageJson.devDependencies = { ...packageJson.devDependencies, ...packageJsonData.devDependencies };
     }
 
     fs.writeFileSync(path.resolve(flags.projectDir, 'package.json'), JSON.stringify(packageJson, null, 2));
@@ -246,32 +241,19 @@ export default class Init extends Command {
     }
   }
 
-  //Discuss if one should put this as static to the templates.ts?
+  // Discuss if one should put this as static to the templates.ts?
   private readTestTemplatesFiles(toDirectory: string, initializationType: InitializationType): CopyDescriptor[] {
     switch (initializationType) {
       case InitializationType.existingProject:
         return [];
       case InitializationType.freshExpress:
         const fromDirectory = path.resolve(__dirname, '..', 'templates', 'init', 'test');
-        const testFiles = fs.readdirSync(fromDirectory, { withFileTypes: true });
-        //TODO make this more elegant
-        return testFiles.map((file) => {
-          if (file.name.includes('unit-test')) {
-            return {
-              sourcePath: path.resolve(fromDirectory, file.name),
-              targetFolder: path.resolve(toDirectory, 'unit-tests'),
-              fileName: path.resolve(toDirectory, 'unit-tests', file.name)
-            };
-          }
-          ;
-          //TODO undifined error on run henece return alwyas ?1?
-          // if (file.name.includes('integration-test')) {
+        return testFiles.map(fileInfo => {
           return {
-            sourcePath: path.resolve(fromDirectory, file.name),
-            targetFolder: path.resolve(toDirectory, 'integration-tests'),
-            fileName: path.resolve(toDirectory, 'integration-tests', file.name)
+            sourcePath: path.resolve(fromDirectory, fileInfo.fileName),
+            targetFolder: path.resolve(toDirectory, fileInfo.targetFolder),
+            fileName: path.resolve(toDirectory, fileInfo.targetFolder, fileInfo.fileName)
           };
-          // };
         });
     }
   }
@@ -291,5 +273,3 @@ export default class Init extends Command {
     this.log('+---------------------------------------------------------------+');
   }
 }
-
-

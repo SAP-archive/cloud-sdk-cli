@@ -1,6 +1,5 @@
-describe('Sample integration tests', () => {
-
-  it('should create a new project with the necessary files', async () => {
-    expect("a").toBe("a")
-  });
+describe('Sample unit tests', () => {
+  it('should do some unit test',  () => {
+    expect(2+2).toBe(4);
+  })
 });

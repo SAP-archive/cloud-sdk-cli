@@ -3,8 +3,7 @@ module.exports = {
   testEnvironment: 'node',
   modulePathIgnorePatterns: ['<rootDir>/lib', '<rootDir>/bin', '<rootDir>/tmp', '<rootDir>/test/nest', '<rootDir>/test/express'],
   transform: {"^.+\\.tsx?$": "ts-jest"},
-  reporters: [
-    'default',
-    [ "jest-junit", { suiteName: "jest tests" } ]
-  ]
+  testMatch: ["**/*.spec.ts"],
+  roots: ["test"],
+  reporters: ['default']
 };
