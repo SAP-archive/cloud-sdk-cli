@@ -51,7 +51,9 @@
   ],
   "homepage": "https://developers.sap.com/topics/cloud-sdk.html",
   "keywords": [
-    "oclif"
+    "sap-cloud-sdk",
+    "cloud-sdk-cli",
+    "sap-cloud-platform"
   ],
   "license": "Apache-2.0",
   "main": "lib/index.js",
