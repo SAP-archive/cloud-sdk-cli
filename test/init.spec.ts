@@ -73,14 +73,14 @@ describe('Init', () => {
 
     // execute the ci scripts and check if the reports are written
     await execa('npm', ['run', 'ci-integration-test'], { cwd: projectDir });
-    const pathBackendIntegraiontion = path.resolve(projectDir, 's4hana_pipeline', 'reports', 'backend-integration');
-    expect(fs.readdirSync(pathBackendIntegraiontion).length).not.toBe(0);
+    const pathBackendIntegration = path.resolve(projectDir, 's4hana_pipeline', 'reports', 'backend-integration');
+    expect(fs.readdirSync(pathBackendIntegration).length).not.toBe(0);
 
     await execa('npm', ['run', 'ci-backend-unit-test'], { cwd: projectDir });
     const pathBackendUnit = path.resolve(projectDir, 's4hana_pipeline', 'reports', 'backend-unit');
     expect(fs.readdirSync(pathBackendUnit).length).not.toBe(0);
 
-  }, 60000);
+  }, 120000);
 
   it('should add necessary files to an existing project', async () => {
     const expressAppDir = 'test/express/';

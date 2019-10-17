@@ -80,7 +80,7 @@ export default class Init extends Command {
     try {
       cli.action.start('Reading templates');
       const files = readTemplates([path.resolve(__dirname, '..', 'templates', 'init')], flags.projectDir, ['test']);
-      this.readTestTemplatesFiles(flags.projectDir, initializationType).forEach(file => files.push(file));
+      this.readTestSampleFiles(flags.projectDir, initializationType).forEach(file => files.push(file));
       cli.action.stop();
 
       cli.action.start('Finding potential conflicts');
@@ -239,8 +239,7 @@ export default class Init extends Command {
     }
   }
 
-  // Discuss if one should put this as static to the templates.ts?
-  private readTestTemplatesFiles(toDirectory: string, initializationType: InitializationType): CopyDescriptor[] {
+  private readTestSampleFiles(toDirectory: string, initializationType: InitializationType): CopyDescriptor[] {
     switch (initializationType) {
       case InitializationType.existingProject:
         return [];
