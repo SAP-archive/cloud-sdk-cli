@@ -6,7 +6,7 @@
   "bin": {
     "sap-cloud-sdk": "./bin/run"
   },
-  "bugs": "https://github.wdf.sap.corp/MA/sdk-js/issues",
+  "bugs": "https://github.com/SAP/cloud-sdk-cli/issues",
   "dependencies": {
     "@oclif/command": "^1.5.19",
     "@oclif/config": "^1.13.3",
