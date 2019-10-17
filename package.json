@@ -1,5 +1,5 @@
 {
-  "name": "sap-cloud-sdk-cli",
+  "name": "@sap-cloud-sdk/cli",
   "description": "CLI for the SAP Cloud SDK for JavaScript",
   "version": "0.0.1",
   "author": "SAP",
