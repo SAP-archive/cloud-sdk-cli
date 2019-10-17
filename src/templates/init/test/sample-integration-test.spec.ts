@@ -1,6 +1,5 @@
-const https = require('http');
-
 describe('Sample integration tests', () => {
+  const https = require('http');
   const server = require('../app.js');
   const port = 3000;
   let serverInstance:any;
