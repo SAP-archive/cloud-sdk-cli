@@ -79,7 +79,7 @@ export default class Init extends Command {
 
     try {
       cli.action.start('Reading templates');
-      const files = readTemplates([path.resolve(__dirname, '..', 'templates', 'init')], flags.projectDir, ['test']);
+      const files = readTemplates({from: [path.resolve(__dirname, '..', 'templates', 'init')], to: flags.projectDir, exclude: ['test']});
       this.readTestSampleFiles(flags.projectDir, initializationType).forEach(file => files.push(file));
       cli.action.stop();
 
