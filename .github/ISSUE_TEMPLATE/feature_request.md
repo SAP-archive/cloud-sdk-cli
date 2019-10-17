@@ -17,7 +17,7 @@ A clear and concise description of what a solution could look like.
 
 **Describe alternatives you've considered**
 
-A clear and concise description of any alternatives you've considered.
+If you are aware of alternative solutions, please mention them here.
 
 **Additional context**
 
