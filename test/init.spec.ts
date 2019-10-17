@@ -1,8 +1,6 @@
 /*!
  * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
-import { exec } from 'child_process';
-
 const confirm = jest.fn().mockResolvedValue(true);
 jest.mock('cli-ux', () => {
   // Mocking needs to happen before the command is imported
