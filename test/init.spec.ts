@@ -26,8 +26,6 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import Init from '../src/commands/init';
 
-const foo: string = 'bar';
-
 describe('Init', () => {
   const pathPrefix = path.resolve(__dirname, __filename.replace(/\./g, '-')).replace('-ts', '');
 
@@ -79,7 +77,7 @@ describe('Init', () => {
     const pathBackendUnit = path.resolve(projectDir, 's4hana_pipeline', 'reports', 'backend-unit');
     expect(fs.readdirSync(pathBackendUnit).length).not.toBe(0);
 
-  }, 120000);
+  }, 60000);
 
   it('should add necessary files to an existing project', async () => {
     const expressAppDir = 'test/express/';
