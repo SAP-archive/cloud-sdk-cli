@@ -25,11 +25,6 @@ const expressPackageJsonParts: PackageJsonParts = {
   },
   devDependencies: {
     'jest': '^24.9.0',
-    'ts-jest': '^24.0.2',
-    '@types/jest': '^24.0.18',
-    'ts-node': '^8.3.0',
-    'tslint': '^5.18.0',
-    'typescript': '^3.5.3',
     'jest-junit': '^8.0.0'
   }
 };

@@ -1,5 +1,4 @@
 module.exports = {
-  transform: {"^.+\\.tsx?$": "ts-jest"},
   roots: ["unit-tests"],
   reporters: [
     'default',
