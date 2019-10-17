@@ -49,7 +49,7 @@
     "/npm-shrinkwrap.json",
     "/oclif.manifest.json"
   ],
-  "homepage": "https://github.wdf.sap.corp/MA/sdk-js",
+  "homepage": "https://developers.sap.com/topics/cloud-sdk.html",
   "keywords": [
     "oclif"
   ],
