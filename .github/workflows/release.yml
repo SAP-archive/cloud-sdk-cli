@@ -15,9 +15,9 @@ jobs:
           node-version: '12.x'
       - name: Deploy a stable release to NPM
         run: |
-          npm config set registry "https://registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN"
+          echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' >> .npmrc
           npm whoami
           npm ci
           npm publish --access public
         env:
-          NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
