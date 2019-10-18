@@ -1,0 +1,22 @@
+name: Publish to NPM
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  prerelease:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - name: Deploy a stable release to NPM
+        run: |
+          npm whoami
+          npm ci
+          npm publish --access public
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
