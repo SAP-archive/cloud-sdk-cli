@@ -1,26 +1,22 @@
 name: Publish to NPM
 
 on:
-  push:
-    branches:
-      - master
+  release:
+    types: [published]
 
 jobs:
-  build:
+  prerelease:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v1
       - name: Use Node.js
         uses: actions/setup-node@v1
         with:
           node-version: '12.x'
-      - name: npm test
+      - name: Deploy a stable release to NPM
         run: |
-          npm install
-          npm test
-      - name: npm publish
-        run: |
+          npm whoami
+          npm ci
           npm publish --access public
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
