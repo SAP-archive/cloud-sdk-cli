@@ -6,9 +6,9 @@ interface testFileInfo {
 export const testFiles: testFileInfo[] = [
   {
     fileName: 'sample-unit-test.spec.js',
-    targetFolder: 'unit-tests'
+    targetFolder: 'test/unit-tests'
   }, {
     fileName: 'sample-integration-test.spec.js',
-    targetFolder: 'integration-tests'
+    targetFolder: 'test/integration-tests'
   }
 ];
