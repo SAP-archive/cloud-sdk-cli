@@ -3,5 +3,6 @@
     "types": ["node", "jest"],
     "rootDir": "./"
   },
-  "include": ["./**/*.spec.ts"]
+  "include": ["./**/*.spec.ts"],
+  "exclude": ["./express/**", "./nest/**"]
 }
