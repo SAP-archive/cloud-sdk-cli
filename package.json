@@ -35,9 +35,11 @@
     "globby": "^10.0.1",
     "jest": "^24.9.0",
     "np": "^5.1.1",
+    "prettier": "^1.18.2",
     "ts-jest": "^24.0.2",
     "ts-node": "^8.3.0",
     "tslint": "^5.18.0",
+    "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.5.3"
   },
   "engines": {
@@ -80,7 +82,8 @@
   "repository": "https://github.com/SAP/cloud-sdk-cli",
   "scripts": {
     "postpack": "rm -f oclif.manifest.json",
-    "posttest": "tslint -p . -t stylish && tslint -p test -t stylish",
+    "pretest": "tslint -p . -t stylish && tslint -p test -t stylish && prettier -c \"**/*.ts\"",
+    "prettier": "prettier --write \"**/*.ts\"",
     "prepack": "rm -rf lib && tsc -b && cp -R src/templates lib/ && oclif-dev manifest && oclif-dev readme",
     "test": "jest",
     "test:watch-debug": "node --inspect-brk node_modules/.bin/jest --watch --runInBand",
