@@ -229,20 +229,6 @@ export default class Init extends Command {
     }
   }
 
-  // private readTestSampleFiles(toDirectory: string, initializationType: InitializationType): CopyDescriptor[] {
-  //   switch (initializationType) {
-  //     case InitializationType.existingProject:
-  //       return [];
-  //     case InitializationType.freshExpress:
-  //       const fromDirectory = path.resolve(__dirname, '..', 'templates', 'init', 'test');
-  //         return {
-  //           sourcePath: fromDirectory,
-  //           targetFolder: path.resolve(toDirectory, 'test'),
-  //           // fileName: path.resolve(toDirectory, fileInfo.targetFolder, fileInfo.fileName)
-  //         };
-  //   }
-  // }
-
   private printSuccessMessage() {
     this.log('+---------------------------------------------------------------+');
     this.log('| ✅ Init finished successfully.                                |');
