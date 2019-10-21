@@ -10,7 +10,7 @@ export enum InitializationType {
 interface BackendTestScripts {
   'ci-backend-unit-test': string;
   'ci-integration-test': string;
-  test?: string;
+  'test'?: string;
 }
 
 interface DevDependencies {
@@ -31,8 +31,10 @@ const expressPackageJsonParts: PackageJsonParts = {
 
 const userDefinedJsonParts: PackageJsonParts = {
   backendTestScripts: {
-    'ci-integration-test': 'echo "Test your application and write results in a JUnit format to `s4hana_pipeline/reports/backend-integration/` and coverage in a cobertura format to `s4hana_pipeline/reports/coverage/backend-integration/`"',
-    'ci-backend-unit-test': 'echo "Test your application and write results in a JUnit format to `s4hana_pipeline/reports/backend-unit/` and coverage in a cobertura format to `s4hana_pipeline/reports/coverage/backend-unit/`"'
+    'ci-integration-test':
+      'echo "Test your application and write results in a JUnit format to `s4hana_pipeline/reports/backend-integration/` and coverage in a cobertura format to `s4hana_pipeline/reports/coverage/backend-integration/`"',
+    'ci-backend-unit-test':
+      'echo "Test your application and write results in a JUnit format to `s4hana_pipeline/reports/backend-unit/` and coverage in a cobertura format to `s4hana_pipeline/reports/coverage/backend-unit/`"'
   },
   devDependencies: {}
 };

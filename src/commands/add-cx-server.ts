@@ -30,7 +30,7 @@ export default class AddCxServer extends Command {
 
     try {
       cli.action.start('Reading templates');
-      const files = readTemplates({from: [path.resolve(__dirname, '..', 'templates', 'add-cx-server')], to: flags.projectDir});
+      const files = readTemplates({ from: [path.resolve(__dirname, '..', 'templates', 'add-cx-server')], to: flags.projectDir });
       cli.action.stop();
 
       cli.action.start('Finding potential conflicts');

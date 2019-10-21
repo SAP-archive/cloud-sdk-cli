@@ -66,7 +66,7 @@ describe('Init', () => {
 
     // execute the local tests
     await execa('npm', ['install'], { cwd: projectDir });
-    const testResult = await execa('npm', ['test'], { cwd: projectDir });
+    await execa('npm', ['test'], { cwd: projectDir });
 
     // execute the ci scripts and check if the reports are written
     await execa('npm', ['run', 'ci-integration-test'], { cwd: projectDir });
@@ -76,7 +76,6 @@ describe('Init', () => {
     await execa('npm', ['run', 'ci-backend-unit-test'], { cwd: projectDir });
     const pathBackendUnit = path.resolve(projectDir, 's4hana_pipeline', 'reports', 'backend-unit');
     expect(fs.readdirSync(pathBackendUnit).length).not.toBe(0);
-
   }, 60000);
 
   it('should add necessary files to an existing project', async () => {

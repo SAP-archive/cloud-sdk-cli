@@ -6,6 +6,8 @@
     "outDir": "lib",
     "rootDir": "src",
     "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "target": "es2017"
   },
   "include": ["src/**/*.ts"],
