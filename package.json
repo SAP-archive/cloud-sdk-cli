@@ -73,7 +73,7 @@
       "@oclif/plugin-warn-if-update-available"
     ]
   },
-  "repository": "https://github.wdf.sap.corp/MA/sdk-js",
+  "repository": "https://github.com/SAP/cloud-sdk-cli",
   "scripts": {
     "postpack": "rm -f oclif.manifest.json",
     "posttest": "tslint -p . -t stylish && tslint -p test -t stylish",
