@@ -66,7 +66,7 @@ describe('Init', () => {
 
     // execute the local tests
     await execa('npm', ['install'], { cwd: projectDir });
-    const testResult = await execa('npm', ['test'], { cwd: projectDir });
+    await execa('npm', ['test'], { cwd: projectDir });
 
     // execute the ci scripts and check if the reports are written
     await execa('npm', ['run', 'ci-integration-test'], { cwd: projectDir });

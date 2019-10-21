@@ -7,4 +7,5 @@
 /yarn.lock
 node_modules
 .idea
-test/*-spec/
+test/*spec/*
+oclif.manifest.json
