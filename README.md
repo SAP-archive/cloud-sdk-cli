@@ -16,11 +16,11 @@ The SDK provides Java libraries, JavaScript libraries, project templates and a c
 
 <!-- usage -->
 ```sh-session
-$ npm install -g sap-cloud-sdk-cli
+$ npm install -g @sap-cloud-sdk/cli
 $ sap-cloud-sdk COMMAND
 running command...
 $ sap-cloud-sdk (-v|--version|version)
-sap-cloud-sdk-cli/0.0.1 darwin-x64 node-v11.12.0
+@sap-cloud-sdk/cli/0.0.5 darwin-x64 node-v11.12.0
 $ sap-cloud-sdk --help [COMMAND]
 USAGE
   $ sap-cloud-sdk COMMAND
@@ -57,6 +57,8 @@ EXAMPLE
   $ sap-cloud-sdk add-approuter
 ```
 
+_See code: [src/commands/add-approuter.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.5/src/commands/add-approuter.ts)_
+
 ## `sap-cloud-sdk add-cx-server`
 
 Add the scripts to set up a Jenkins master for CI/CD of your project
@@ -71,6 +73,8 @@ OPTIONS
 EXAMPLE
   $ sap-cloud-sdk add-cx-server
 ```
+
+_See code: [src/commands/add-cx-server.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.5/src/commands/add-cx-server.ts)_
 
 ## `sap-cloud-sdk autocomplete [SHELL]`
 
@@ -124,6 +128,8 @@ OPTIONS
   -h, --help  show CLI help
 ```
 
+_See code: [src/commands/help-page.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.5/src/commands/help-page.ts)_
+
 ## `sap-cloud-sdk init`
 
 Initializes your project for the SAP Cloud SDK, SAP Cloud Platform Cloud Foundry and CI/CD using the SAP Cloud SDK toolkit
@@ -140,6 +146,8 @@ EXAMPLES
   $ sap-cloud-sdk init
   $ sap-cloud-sdk init --help
 ```
+
+_See code: [src/commands/init.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.5/src/commands/init.ts)_
 
 ## `sap-cloud-sdk package`
 
@@ -165,6 +173,8 @@ EXAMPLES
   $ sap-cloud-sdk package -i="index.html"
   $ sap-cloud-sdk package --include="package.json,package-lock.json,index.js,dist/**/*" --exclude="**/*.java"
 ```
+
+_See code: [src/commands/package.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.5/src/commands/package.ts)_
 <!-- commandsstop -->
 
 ## Contribute

@@ -1,7 +1,7 @@
 {
   "name": "@sap-cloud-sdk/cli",
   "description": "CLI for the SAP Cloud SDK for JavaScript",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "author": "SAP",
   "bin": {
     "sap-cloud-sdk": "./bin/run"
@@ -35,6 +35,7 @@
     "fs-extra": "^8.1.0",
     "globby": "^10.0.1",
     "jest": "^24.9.0",
+    "np": "^5.1.1",
     "ts-jest": "^24.1.0",
     "ts-node": "^8.4.1",
     "tslint": "^5.20.0",
@@ -73,7 +74,11 @@
       "@oclif/plugin-warn-if-update-available"
     ]
   },
-  "repository": "https://github.wdf.sap.corp/MA/sdk-js",
+  "np": {
+    "yarn": false,
+    "publish": false
+  },
+  "repository": "https://github.com/SAP/cloud-sdk-cli",
   "scripts": {
     "postpack": "rm -f oclif.manifest.json",
     "posttest": "tslint -p . -t stylish && tslint -p test -t stylish",
