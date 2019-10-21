@@ -6,4 +6,4 @@
 /tmp
 /yarn.lock
 node_modules
-test/do-not-commit*
+test/*.ts/

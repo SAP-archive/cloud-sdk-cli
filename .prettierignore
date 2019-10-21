@@ -1,0 +1,6 @@
+/dist
+/lib
+/tmp
+**/*.d.ts
+/test/nest/
+/test/express/

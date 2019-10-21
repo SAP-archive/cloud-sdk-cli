@@ -1,5 +1,8 @@
 {
-  "extends": ["tslint:latest"],
+  "extends": [
+    "tslint:latest",
+    "tslint-config-prettier"
+  ],
   "linterOptions": {
     "exclude": ["node_modules/**/*", "src/templates/**/*", "lib/**/*", "tmp/**/*", "test/express/**/*", "test/nest/**/*"]
   },
@@ -16,14 +19,6 @@
     "no-shadowed-variable": false,
     "no-string-literal": false,
     "no-submodule-imports": false,
-    "object-literal-sort-keys": false,
-    "quotemark": [true, "single", "avoid-escape", "avoid-template"],
-    "trailing-comma": [
-      true,
-      {
-        "multiline": "never",
-        "singleline": "never"
-      }
-    ]
+    "object-literal-sort-keys": false
   }
 }
