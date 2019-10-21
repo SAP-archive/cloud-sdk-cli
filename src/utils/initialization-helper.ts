@@ -21,10 +21,10 @@ const expressPackageJsonParts: PackageJsonParts = {
   backendTestScripts: {
     'ci-integration-test': 'jest --ci --config=jest.integration-test.config.js',
     'ci-backend-unit-test': 'jest --ci --config=jest.unit-test.config.js',
-    'test': 'jest'
+    test: 'jest'
   },
   devDependencies: {
-    'jest': '^24.9.0',
+    jest: '^24.9.0',
     'jest-junit': '^8.0.0'
   }
 };

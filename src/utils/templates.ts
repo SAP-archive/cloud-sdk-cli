@@ -19,7 +19,7 @@ export function readTemplates({ from, to, exclude = [] }: TemplateParam): CopyDe
   const results: CopyDescriptor[] = [];
   return files.reduce((prev, curr) => {
     if (curr.isDirectory() && !exclude.includes(curr.name)) {
-      prev = prev.concat(readTemplates({from: from.concat(curr.name), to, exclude}));
+      prev = prev.concat(readTemplates({ from: from.concat(curr.name), to, exclude }));
     }
     if (curr.isFile()) {
       prev.push({
