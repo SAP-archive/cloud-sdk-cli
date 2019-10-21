@@ -8,22 +8,8 @@ import cli from 'cli-ux';
 import * as execa from 'execa';
 import * as fs from 'fs';
 import * as path from 'path';
-import { testFiles } from '../templates/init/test/test-file-info';
-import { CopyDescriptor } from '../utils/copy-list';
 import { InitializationType, packageJsonParts } from '../utils/initialization-helper';
 import { copyFiles, ensureDirectoryExistence, findConflicts, readTemplates } from '../utils/templates';
-
-const backendBuildScripts = {
-  'ci-build': 'echo "Use this to compile or minify your application"',
-  'ci-package': 'echo "Copy all deployment-relevant files to the `deployment` folder"'
-};
-
-// TODO Autodetect testing framework (?) and make sure it outputs junit
-const frontendScripts = {
-  'ci-e2e': 'echo "Test your application and write results in a JUnit format to `s4hana_pipeline/reports/e2e/`"',
-  'ci-frontend-unit-test':
-    'echo "Test your application and write results in a JUnit format to `s4hana_pipeline/reports/backend-integration/` and coverage in a cobertura format to `s4hana_pipeline/reports/coverage/backend-integration/`"'
-};
 
 export default class Init extends Command {
   static description = 'Initializes your project for the SAP Cloud SDK, SAP Cloud Platform Cloud Foundry and CI/CD using the SAP Cloud SDK toolkit';
@@ -79,14 +65,12 @@ export default class Init extends Command {
 
     try {
       cli.action.start('Reading templates');
-      const files = [
-        ...readTemplates({
-          from: [path.resolve(__dirname, '..', 'templates', 'init')],
-          to: flags.projectDir,
-          exclude: ['test']
-        }),
-        ...this.readTestSampleFiles(flags.projectDir, initializationType)
-      ];
+      const excludes = initializationType === InitializationType.existingProject ? ['test'] : [];
+      const files = readTemplates({
+        from: [path.resolve(__dirname, '..', 'templates', 'init')],
+        to: flags.projectDir,
+        exclude: excludes
+      });
       cli.action.stop();
 
       cli.action.start('Finding potential conflicts');
@@ -191,8 +175,8 @@ export default class Init extends Command {
     const packageJson = this.packageJson();
     const addFrontendScripts: boolean =
       flags.frontendScripts || (!flags.skipFrontendScripts && (await cli.confirm('Should frontend-related npm scripts for CI/CD be added?')));
-    const backendScritps = { ...backendBuildScripts, ...packageJsonData.backendTestScripts };
-    const scripts = addFrontendScripts ? { ...backendScritps, ...frontendScripts } : backendScritps;
+    const backendScritps = { ...packageJsonData.backendBuildScripts, ...packageJsonData.backendTestScripts };
+    const scripts = addFrontendScripts ? { ...backendScritps, ...packageJsonData.frontendScripts } : backendScritps;
 
     const conflicts = packageJson.scripts ? Object.keys(scripts).filter(name => Object.keys(packageJson.scripts).includes(name)) : [];
 
@@ -245,21 +229,19 @@ export default class Init extends Command {
     }
   }
 
-  private readTestSampleFiles(toDirectory: string, initializationType: InitializationType): CopyDescriptor[] {
-    switch (initializationType) {
-      case InitializationType.existingProject:
-        return [];
-      case InitializationType.freshExpress:
-        const fromDirectory = path.resolve(__dirname, '..', 'templates', 'init', 'test');
-        return testFiles.map(fileInfo => {
-          return {
-            sourcePath: path.resolve(fromDirectory, fileInfo.fileName),
-            targetFolder: path.resolve(toDirectory, fileInfo.targetFolder),
-            fileName: path.resolve(toDirectory, fileInfo.targetFolder, fileInfo.fileName)
-          };
-        });
-    }
-  }
+  // private readTestSampleFiles(toDirectory: string, initializationType: InitializationType): CopyDescriptor[] {
+  //   switch (initializationType) {
+  //     case InitializationType.existingProject:
+  //       return [];
+  //     case InitializationType.freshExpress:
+  //       const fromDirectory = path.resolve(__dirname, '..', 'templates', 'init', 'test');
+  //         return {
+  //           sourcePath: fromDirectory,
+  //           targetFolder: path.resolve(toDirectory, 'test'),
+  //           // fileName: path.resolve(toDirectory, fileInfo.targetFolder, fileInfo.fileName)
+  //         };
+  //   }
+  // }
 
   private printSuccessMessage() {
     this.log('+---------------------------------------------------------------+');
