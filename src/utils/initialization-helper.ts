@@ -2,7 +2,7 @@
  * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
-export enum InitializationType {
+export enum InitType {
   freshExpress,
   existingProject
 }
@@ -76,11 +76,11 @@ interface PackageJsonParts {
   devDependencies: DevDependencies;
 }
 
-export function packageJsonParts(type: InitializationType): PackageJsonParts {
+export function packageJsonParts(type: InitType): PackageJsonParts {
   switch (type) {
-    case InitializationType.freshExpress:
+    case InitType.freshExpress:
       return expressPackageJsonParts;
-    case InitializationType.existingProject:
+    case InitType.existingProject:
       return userDefinedJsonParts;
   }
 }

@@ -8,8 +8,10 @@ import cli from 'cli-ux';
 import * as execa from 'execa';
 import * as fs from 'fs';
 import * as path from 'path';
-import { InitializationType, packageJsonParts } from '../utils/initialization-helper';
+import { InitType, packageJsonParts } from '../utils/initialization-helper';
 import { copyFiles, ensureDirectoryExistence, findConflicts, readTemplates } from '../utils/templates';
+
+type Flags = OutputFlags<typeof Init.flags>;
 
 export default class Init extends Command {
   static description = 'Initializes your project for the SAP Cloud SDK, SAP Cloud Platform Cloud Foundry and CI/CD using the SAP Cloud SDK toolkit';
@@ -58,18 +60,17 @@ export default class Init extends Command {
 
     ensureDirectoryExistence(flags.projectDir, true);
 
-    const initializationType = await this.determineInitializationType(flags);
-    await this.initProject(flags, initializationType);
+    const initType = await this.determineInitializationType(flags);
+    await this.initProject(flags, initType);
 
-    const options = await this.getOptions();
+    const options = await this.getOptions(flags);
 
     try {
       cli.action.start('Reading templates');
-      const excludes = initializationType === InitializationType.existingProject ? ['test'] : [];
       const files = readTemplates({
         from: [path.resolve(__dirname, '..', 'templates', 'init')],
         to: flags.projectDir,
-        exclude: excludes
+        exclude: initType === InitType.existingProject ? ['test'] : []
       });
       cli.action.stop();
 
@@ -82,11 +83,11 @@ export default class Init extends Command {
       cli.action.stop();
 
       cli.action.start('Adding scripts for CI/CD and dependencies to package.json');
-      await this.modifyPackageJson(initializationType);
+      await this.modifyPackageJson(flags, initType);
       cli.action.stop();
 
       cli.action.start('Modify .gitignore');
-      this.modifyGitIgnore();
+      this.modifyGitIgnore(flags);
       cli.action.stop();
 
       this.printSuccessMessage();
@@ -95,29 +96,29 @@ export default class Init extends Command {
     }
   }
 
-  private async determineInitializationType(flags: OutputFlags<typeof Init.flags>): Promise<InitializationType> {
+  private async determineInitializationType(flags: Flags): Promise<InitType> {
     if (fs.existsSync(path.resolve(flags.projectDir, 'package.json'))) {
-      return InitializationType.existingProject;
+      return InitType.existingProject;
     }
 
     this.log('This folder does not contain a `package.json`.');
     if (flags.initWithExpress || (await cli.confirm('Should a new `express.js` project be initialized in this folder?'))) {
-      return InitializationType.freshExpress;
+      return InitType.freshExpress;
     }
 
-    return InitializationType.existingProject;
+    return InitType.existingProject;
   }
 
-  private async initProject(flags: OutputFlags<typeof Init.flags>, initializationType: InitializationType): Promise<void> {
+  private async initProject(flags: Flags, initializationType: InitType): Promise<void> {
     switch (initializationType) {
-      case InitializationType.freshExpress:
+      case InitType.freshExpress:
         return this.initExpressProject(flags);
-      case InitializationType.existingProject:
+      case InitType.existingProject:
         return;
     }
   }
 
-  private async initExpressProject(flags: OutputFlags<typeof Init.flags>): Promise<void> {
+  private async initExpressProject(flags: Flags): Promise<void> {
     cli.action.start('Initializing Express project');
 
     const params = ['express-generator', '--no-view', '--git'];
@@ -134,27 +135,24 @@ export default class Init extends Command {
     cli.action.stop();
   }
 
-  private async getOptions() {
-    const { flags } = this.parse(Init);
-
+  private async getOptions(flags: Flags) {
     const options: { [key: string]: string } = {
       projectName:
         flags.projectName ||
         (await cli.prompt('Enter project name (for use in manifest.yml)', {
-          default: this.packageJson().name
+          default: this.packageJson(flags).name
         })),
       command:
         flags.startCommand ||
         (await cli.prompt('Enter the command to start your server', {
-          default: this.packageJson().scripts.start ? 'npm start' : ''
+          default: this.packageJson(flags).scripts.start ? 'npm start' : ''
         }))
     };
 
     return options;
   }
 
-  private packageJson() {
-    const { flags } = this.parse(Init);
+  private packageJson(flags: Flags) {
     try {
       if (fs.existsSync(path.resolve(flags.projectDir, 'package.json'))) {
         return JSON.parse(
@@ -168,11 +166,10 @@ export default class Init extends Command {
     }
   }
 
-  private async modifyPackageJson(initializationType: InitializationType) {
-    const { flags } = this.parse(Init);
+  private async modifyPackageJson(flags: Flags, initializationType: InitType) {
     const packageJsonData = packageJsonParts(initializationType);
 
-    const packageJson = this.packageJson();
+    const packageJson = this.packageJson(flags);
     const addFrontendScripts: boolean =
       flags.frontendScripts || (!flags.skipFrontendScripts && (await cli.confirm('Should frontend-related npm scripts for CI/CD be added?')));
     const backendScritps = { ...packageJsonData.backendBuildScripts, ...packageJsonData.backendTestScripts };
@@ -190,7 +187,7 @@ export default class Init extends Command {
     }
     packageJson.scripts = { ...packageJson.scripts, ...scripts };
 
-    if (initializationType === InitializationType.freshExpress) {
+    if (initializationType === InitType.freshExpress) {
       packageJson.devDependencies = { ...packageJson.devDependencies, ...packageJsonData.devDependencies };
     }
 
@@ -206,8 +203,7 @@ export default class Init extends Command {
     }
   }
 
-  private modifyGitIgnore() {
-    const { flags } = this.parse(Init);
+  private modifyGitIgnore(flags: Flags) {
     const pathToGitignore = path.resolve(flags.projectDir, '.gitignore');
     const pathsToIgnore = ['credentials.json', '/s4hana_pipeline', '/deployment'];
 
