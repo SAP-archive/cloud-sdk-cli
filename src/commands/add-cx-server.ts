@@ -29,16 +29,26 @@ export default class AddCxServer extends Command {
     const options = await this.getOptions();
 
     try {
-      cli.action.start('Reading templates');
-      const files = readTemplates([path.resolve(__dirname, '..', 'templates', 'add-cx-server')], flags.projectDir);
-      cli.action.stop();
+      const githubPrefix = 'https://raw.githubusercontent.com/SAP/devops-docker-cx-server/master/cx-server-companion/life-cycle-scripts/';
+      const files = [
+        {
+          sourcePath: new URL('cx-server', githubPrefix),
+          targetFolder: path.resolve(flags.projectDir, 'cx-server'),
+          fileName: path.resolve(flags.projectDir, 'cx-server', 'cx-server')
+        },
+        {
+          sourcePath: new URL('server.cfg', githubPrefix),
+          targetFolder: path.resolve(flags.projectDir, 'cx-server'),
+          fileName: path.resolve(flags.projectDir, 'cx-server', 'server.cfg')
+        }
+      ];
 
       cli.action.start('Finding potential conflicts');
       await findConflicts(files, flags.force, this.error);
       cli.action.stop();
 
       cli.action.start('Creating files');
-      copyFiles(files, options, this.error);
+      await copyFiles(files, options).catch(e => this.error(e, { exit: 2 }));
       cli.action.stop();
     } catch (error) {
       this.error(error, { exit: 1 });

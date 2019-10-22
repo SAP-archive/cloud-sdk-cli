@@ -3,7 +3,7 @@
  */
 
 export interface CopyDescriptor {
-  sourcePath: string;
+  sourcePath: string | URL;
   targetFolder: string;
   fileName: string;
 }

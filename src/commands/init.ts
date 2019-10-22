@@ -86,7 +86,7 @@ export default class Init extends Command {
       cli.action.stop();
 
       cli.action.start('Creating files');
-      copyFiles(files, options, this.error);
+      copyFiles(files, options).catch(e => this.error(e, { exit: 2 }));
       cli.action.stop();
 
       cli.action.start('Adding scripts for CI/CD and dependencies to package.json');
@@ -125,7 +125,7 @@ export default class Init extends Command {
         }
         cli.action.stop();
       } else {
-        this.exit();
+        this.exit(3);
       }
     }
   }

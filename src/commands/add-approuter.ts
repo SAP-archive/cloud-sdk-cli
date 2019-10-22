@@ -39,7 +39,7 @@ export default class AddApprouter extends Command {
       cli.action.stop();
 
       cli.action.start('Creating files');
-      copyFiles(files, await this.getOptions(), this.error);
+      await copyFiles(files, await this.getOptions()).catch(e => this.error(e, { exit: 2 }));
       cli.action.stop();
 
       this.printSuccessMessage();

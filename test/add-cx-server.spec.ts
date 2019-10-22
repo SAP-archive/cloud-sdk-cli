@@ -46,7 +46,6 @@ describe('Add CX Server', () => {
 
     const approuterFiles = fs.readdirSync(path.resolve(projectDir, 'cx-server'));
     expect(approuterFiles).toContain('cx-server');
-    expect(approuterFiles).toContain('cx-server.bat');
     expect(approuterFiles).toContain('server.cfg');
   }, 30000);
 
@@ -66,7 +65,6 @@ describe('Add CX Server', () => {
 
     const approuterFiles = fs.readdirSync(path.resolve(projectDir, 'cx-server'));
     expect(approuterFiles).toContain('cx-server');
-    expect(approuterFiles).toContain('cx-server.bat');
     expect(approuterFiles).toContain('server.cfg');
   }, 30000);
 
