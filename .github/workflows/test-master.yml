@@ -1,9 +1,9 @@
-name: Local Tests
+name: Tests (master)
 
 on:
   push:
     branches:
-      - '**'
+      - master
 
 jobs:
   build:
