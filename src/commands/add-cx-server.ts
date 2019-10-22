@@ -5,7 +5,7 @@
 import { Command, flags } from '@oclif/command';
 import cli from 'cli-ux';
 import * as path from 'path';
-import { copyFiles, findConflicts, readTemplates } from '../utils/templates';
+import { copyFiles, findConflicts } from '../utils/templates';
 
 export default class AddCxServer extends Command {
   static description = 'Add the scripts to set up a Jenkins master for CI/CD of your project';
