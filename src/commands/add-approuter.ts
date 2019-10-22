@@ -31,7 +31,7 @@ export default class AddApprouter extends Command {
     const { flags } = this.parse(AddApprouter);
     try {
       cli.action.start('Reading templates');
-      const files = readTemplates([path.resolve(__dirname, '..', 'templates', 'add-approuter')], flags.projectDir);
+      const files = readTemplates({ from: [path.resolve(__dirname, '..', 'templates', 'add-approuter')], to: flags.projectDir });
       cli.action.stop();
 
       cli.action.start('Finding potential conflicts');

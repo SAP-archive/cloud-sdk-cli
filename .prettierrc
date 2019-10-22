@@ -2,5 +2,6 @@
   "$schema": "http://json.schemastore.org/prettierrc",
   "singleQuote": true,
   "printWidth": 150,
+  "quoteProps": "consistent",
   "filepath": "**/*.ts"
 }

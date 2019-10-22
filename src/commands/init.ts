@@ -3,27 +3,15 @@
  */
 
 import { Command, flags } from '@oclif/command';
+import { OutputFlags } from '@oclif/parser';
 import cli from 'cli-ux';
 import * as execa from 'execa';
 import * as fs from 'fs';
 import * as path from 'path';
+import { InitType, packageJsonParts } from '../utils/initialization-helper';
 import { copyFiles, ensureDirectoryExistence, findConflicts, readTemplates } from '../utils/templates';
 
-const backendScripts = {
-  'ci-build': 'echo "Use this to compile or minify your application"',
-  'ci-package': 'echo "Copy all deployment-relevant files to the `deployment` folder"',
-  'ci-backend-unit-test':
-    'echo "Test your application and write results in a JUnit format to `s4hana_pipeline/reports/backend-unit/` and coverage in a cobertura format to `s4hana_pipeline/reports/coverage/backend-unit/`"',
-  'ci-integration-test':
-    'echo "Test your application and write results in a JUnit format to `s4hana_pipeline/reports/backend-integration/` and coverage in a cobertura format to `s4hana_pipeline/reports/coverage/backend-integration/`"'
-};
-
-// TODO Autodetect testing framework (?) and make sure it outputs junit
-const frontendScripts = {
-  'ci-e2e': 'echo "Test your application and write results in a JUnit format to `s4hana_pipeline/reports/e2e/`"',
-  'ci-frontend-unit-test':
-    'echo "Test your application and write results in a JUnit format to `s4hana_pipeline/reports/backend-integration/` and coverage in a cobertura format to `s4hana_pipeline/reports/coverage/backend-integration/`"'
-};
+type Flags = OutputFlags<typeof Init.flags>;
 
 export default class Init extends Command {
   static description = 'Initializes your project for the SAP Cloud SDK, SAP Cloud Platform Cloud Foundry and CI/CD using the SAP Cloud SDK toolkit';
@@ -72,13 +60,18 @@ export default class Init extends Command {
 
     ensureDirectoryExistence(flags.projectDir, true);
 
-    await this.initExpressProject();
+    const initType = await this.determineInitializationType(flags);
+    await this.initProject(flags, initType);
 
-    const options = await this.getOptions();
+    const options = await this.getOptions(flags);
 
     try {
       cli.action.start('Reading templates');
-      const files = readTemplates([path.resolve(__dirname, '..', 'templates', 'init')], flags.projectDir);
+      const files = readTemplates({
+        from: [path.resolve(__dirname, '..', 'templates', 'init')],
+        to: flags.projectDir,
+        exclude: initType === InitType.existingProject ? ['test'] : []
+      });
       cli.action.stop();
 
       cli.action.start('Finding potential conflicts');
@@ -90,11 +83,11 @@ export default class Init extends Command {
       cli.action.stop();
 
       cli.action.start('Adding scripts for CI/CD and dependencies to package.json');
-      await this.modifyPackageJson();
+      await this.modifyPackageJson(flags, initType);
       cli.action.stop();
 
       cli.action.start('Modify .gitignore');
-      this.modifyGitIgnore();
+      this.modifyGitIgnore(flags);
       cli.action.stop();
 
       this.printSuccessMessage();
@@ -103,54 +96,63 @@ export default class Init extends Command {
     }
   }
 
-  private async initExpressProject() {
-    const { flags } = this.parse(Init);
+  private async determineInitializationType(flags: Flags): Promise<InitType> {
+    if (fs.existsSync(path.resolve(flags.projectDir, 'package.json'))) {
+      return InitType.existingProject;
+    }
 
-    if (!fs.existsSync(path.resolve(flags.projectDir, 'package.json'))) {
-      this.log('This folder does not contain a `package.json`.');
+    this.log('This folder does not contain a `package.json`.');
+    if (flags.initWithExpress || (await cli.confirm('Should a new `express.js` project be initialized in this folder?'))) {
+      return InitType.freshExpress;
+    }
 
-      if (flags.initWithExpress || (await cli.confirm('Should a new `express.js` project be initialized in this folder?'))) {
-        cli.action.start('Initializing project');
+    return InitType.existingProject;
+  }
 
-        const params = ['express-generator', '--no-view', '--git'];
-        const dirEmpty = fs.readdirSync(flags.projectDir).length === 0;
-
-        if (!dirEmpty && (flags.force || (await cli.confirm('Directory is not empty. Should the project be initialized anyway?')))) {
-          params.push('--force');
-        }
-        await execa('npx', params, { cwd: flags.projectDir });
-
-        if (!fs.existsSync('.git')) {
-          await execa('git', ['init'], { cwd: flags.projectDir });
-        }
-        cli.action.stop();
-      } else {
-        this.exit();
-      }
+  private async initProject(flags: Flags, initializationType: InitType): Promise<void> {
+    switch (initializationType) {
+      case InitType.freshExpress:
+        return this.initExpressProject(flags);
+      case InitType.existingProject:
+        return;
     }
   }
 
-  private async getOptions() {
-    const { flags } = this.parse(Init);
+  private async initExpressProject(flags: Flags): Promise<void> {
+    cli.action.start('Initializing Express project');
 
+    const params = ['express-generator', '--no-view', '--git'];
+    const dirEmpty = fs.readdirSync(flags.projectDir).length === 0;
+
+    if (!dirEmpty && (flags.force || (await cli.confirm('Directory is not empty. Should the project be initialized anyway?')))) {
+      params.push('--force');
+    }
+    await execa('npx', params, { cwd: flags.projectDir });
+
+    if (!fs.existsSync('.git')) {
+      await execa('git', ['init'], { cwd: flags.projectDir });
+    }
+    cli.action.stop();
+  }
+
+  private async getOptions(flags: Flags) {
     const options: { [key: string]: string } = {
       projectName:
         flags.projectName ||
         (await cli.prompt('Enter project name (for use in manifest.yml)', {
-          default: this.packageJson().name
+          default: this.packageJson(flags).name
         })),
       command:
         flags.startCommand ||
         (await cli.prompt('Enter the command to start your server', {
-          default: this.packageJson().scripts.start ? 'npm start' : ''
+          default: this.packageJson(flags).scripts.start ? 'npm start' : ''
         }))
     };
 
     return options;
   }
 
-  private packageJson() {
-    const { flags } = this.parse(Init);
+  private packageJson(flags: Flags) {
     try {
       if (fs.existsSync(path.resolve(flags.projectDir, 'package.json'))) {
         return JSON.parse(
@@ -164,13 +166,14 @@ export default class Init extends Command {
     }
   }
 
-  private async modifyPackageJson() {
-    const { flags } = this.parse(Init);
+  private async modifyPackageJson(flags: Flags, initializationType: InitType) {
+    const packageJsonData = packageJsonParts(initializationType);
 
-    const packageJson = this.packageJson();
+    const packageJson = this.packageJson(flags);
     const addFrontendScripts: boolean =
       flags.frontendScripts || (!flags.skipFrontendScripts && (await cli.confirm('Should frontend-related npm scripts for CI/CD be added?')));
-    const scripts = addFrontendScripts ? { ...backendScripts, ...frontendScripts } : backendScripts;
+    const backendScritps = { ...packageJsonData.backendBuildScripts, ...packageJsonData.backendTestScripts };
+    const scripts = addFrontendScripts ? { ...backendScritps, ...packageJsonData.frontendScripts } : backendScritps;
 
     const conflicts = packageJson.scripts ? Object.keys(scripts).filter(name => Object.keys(packageJson.scripts).includes(name)) : [];
 
@@ -184,6 +187,10 @@ export default class Init extends Command {
     }
     packageJson.scripts = { ...packageJson.scripts, ...scripts };
 
+    if (initializationType === InitType.freshExpress) {
+      packageJson.devDependencies = { ...packageJson.devDependencies, ...packageJsonData.devDependencies };
+    }
+
     fs.writeFileSync(path.resolve(flags.projectDir, 'package.json'), JSON.stringify(packageJson, null, 2));
 
     try {
@@ -196,8 +203,7 @@ export default class Init extends Command {
     }
   }
 
-  private modifyGitIgnore() {
-    const { flags } = this.parse(Init);
+  private modifyGitIgnore(flags: Flags) {
     const pathToGitignore = path.resolve(flags.projectDir, '.gitignore');
     const pathsToIgnore = ['credentials.json', '/s4hana_pipeline', '/deployment'];
 
