@@ -21,12 +21,13 @@ jest.mock('@oclif/command', () => {
   return command;
 });
 
+import execa = require('execa');
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import Init from '../src/commands/init';
 
 describe('Init', () => {
-  const pathPrefix = path.resolve(__dirname, __filename.replace('.', '-'));
+  const pathPrefix = path.resolve(__dirname, __filename.replace(/\./g, '-')).replace('-ts', '');
 
   beforeAll(() => {
     if (!fs.existsSync(pathPrefix)) {
@@ -52,6 +53,29 @@ describe('Init', () => {
       .forEach(path => {
         expect(fs.existsSync(path)).toBe(true);
       });
+  }, 60000);
+
+  it('should create test cases for a fresh express project.', async () => {
+    const projectDir = path.resolve(pathPrefix, 'full-init-with-test');
+    if (fs.existsSync(projectDir)) {
+      fs.removeSync(projectDir);
+    }
+
+    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--frontendScripts', '--initWithExpress', `--projectDir=${projectDir}`];
+    await Init.run(argv);
+
+    // execute the local tests
+    await execa('npm', ['install'], { cwd: projectDir });
+    await execa('npm', ['test'], { cwd: projectDir });
+
+    // execute the ci scripts and check if the reports are written
+    await execa('npm', ['run', 'ci-integration-test'], { cwd: projectDir });
+    const pathBackendIntegration = path.resolve(projectDir, 's4hana_pipeline', 'reports', 'backend-integration');
+    expect(fs.readdirSync(pathBackendIntegration).length).not.toBe(0);
+
+    await execa('npm', ['run', 'ci-backend-unit-test'], { cwd: projectDir });
+    const pathBackendUnit = path.resolve(projectDir, 's4hana_pipeline', 'reports', 'backend-unit');
+    expect(fs.readdirSync(pathBackendUnit).length).not.toBe(0);
   }, 60000);
 
   it('should add necessary files to an existing project', async () => {

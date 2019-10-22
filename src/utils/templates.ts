@@ -9,18 +9,24 @@ import * as https from 'https';
 import * as path from 'path';
 import { CopyDescriptor } from './copy-list';
 
-export function readTemplates(fromDirectory: string[], toDirectory: string): CopyDescriptor[] {
-  const files = fs.readdirSync(path.resolve(...fromDirectory), { withFileTypes: true });
+interface TemplateParam {
+  from: string[];
+  to: string;
+  exclude?: string[];
+}
+
+export function readTemplates({ from, to, exclude = [] }: TemplateParam): CopyDescriptor[] {
+  const files = fs.readdirSync(path.resolve(...from), { withFileTypes: true });
   const results: CopyDescriptor[] = [];
   return files.reduce((prev, curr) => {
-    if (curr.isDirectory()) {
-      prev = prev.concat(readTemplates(fromDirectory.concat(curr.name), toDirectory));
+    if (curr.isDirectory() && !exclude.includes(curr.name)) {
+      prev = prev.concat(readTemplates({ from: from.concat(curr.name), to, exclude }));
     }
     if (curr.isFile()) {
       prev.push({
-        sourcePath: path.resolve(...fromDirectory, curr.name),
-        targetFolder: path.resolve(toDirectory, ...fromDirectory.slice(1)),
-        fileName: path.resolve(toDirectory, ...fromDirectory.slice(1), path.basename(curr.name, '.mu'))
+        sourcePath: path.resolve(...from, curr.name),
+        targetFolder: path.resolve(to, ...from.slice(1)),
+        fileName: path.resolve(to, ...from.slice(1), path.basename(curr.name, '.mu'))
       });
     }
     return prev;

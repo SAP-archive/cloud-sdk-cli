@@ -1,6 +1,9 @@
 {
   "compilerOptions": {
     "types": ["node", "jest"],
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "rootDir": "./"
   },
   "include": ["./**/*.spec.ts"],

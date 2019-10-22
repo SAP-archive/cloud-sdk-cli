@@ -6,4 +6,6 @@
 /tmp
 /yarn.lock
 node_modules
-test/*.ts/
+.idea
+test/*spec/*
+oclif.manifest.json
