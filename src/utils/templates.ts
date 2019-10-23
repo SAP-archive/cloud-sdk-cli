@@ -91,24 +91,22 @@ function copyRemote(sourcePath: URL, targetFolder: string, fileName: string) {
 }
 
 function copyLocal(sourcePath: string, targetFolder: string, fileName: string, options: { [key: string]: any }) {
-  return new Promise((resolve, reject) => {
-    try {
-      let content: string;
+  try {
+    let content: string;
 
-      if (path.extname(sourcePath) === '.mu') {
-        const template = compile(fs.readFileSync(sourcePath, { encoding: 'utf8' }));
-        content = template(options);
-      } else {
-        content = fs.readFileSync(sourcePath, { encoding: 'utf8' });
-      }
-
-      fs.mkdirSync(targetFolder, { recursive: true });
-      fs.writeFileSync(fileName, content);
-      resolve();
-    } catch (e) {
-      reject(e);
+    if (path.extname(sourcePath) === '.mu') {
+      const template = compile(fs.readFileSync(sourcePath, { encoding: 'utf8' }));
+      content = template(options);
+    } else {
+      content = fs.readFileSync(sourcePath, { encoding: 'utf8' });
     }
-  });
+
+    fs.mkdirSync(targetFolder, { recursive: true });
+    fs.writeFileSync(fileName, content);
+    return Promise.resolve();
+  } catch (e) {
+    return Promise.reject(e);
+  }
 }
 
 export function ensureDirectoryExistence(filePath: string, isDir: boolean = false) {
