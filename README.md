@@ -2,7 +2,7 @@
 
 # SAP Cloud SDK CLI
 
-A nifty CLI for the SAP Cloud SDK for JavaScript to initialize and package your SAP Cloud Platform application.
+A nifty command line interface (CLI) for the SAP Cloud SDK for JavaScript to initialize and package your SAP Cloud Platform application.
 It is also the launchpad when trying to set up the approuter or getting started with the [SAP Cloud SDK for Continuous Delivery](https://github.com/SAP/cloud-s4-sdk-pipeline).
 
 ## About the SDK
