@@ -20,7 +20,7 @@ import * as path from 'path';
 import AddCxServer from '../src/commands/add-cx-server';
 
 describe('Add CX Server', () => {
-  const pathPrefix = path.resolve(__dirname, __filename.replace('.', '-'));
+  const pathPrefix = path.resolve(__dirname, __filename.replace(/\./g, '-')).replace('-ts', '');
 
   beforeAll(() => {
     if (!fs.existsSync(pathPrefix)) {
@@ -39,6 +39,23 @@ describe('Add CX Server', () => {
     }
 
     const argv = [`--projectDir=${projectDir}`];
+    await AddCxServer.run(argv);
+
+    const files = fs.readdirSync(projectDir);
+    expect(files).toContain('cx-server');
+
+    const approuterFiles = fs.readdirSync(path.resolve(projectDir, 'cx-server'));
+    expect(approuterFiles).toContain('cx-server');
+    expect(approuterFiles).toContain('server.cfg');
+  }, 30000);
+
+  it('should add the necessary files on windows', async () => {
+    const projectDir = path.resolve(pathPrefix, 'add-cx-server');
+    if (fs.existsSync(projectDir)) {
+      fs.removeSync(projectDir);
+    }
+
+    const argv = [`--projectDir=${projectDir}`, '--platform=win32'];
     await AddCxServer.run(argv);
 
     const files = fs.readdirSync(projectDir);
@@ -66,7 +83,6 @@ describe('Add CX Server', () => {
 
     const approuterFiles = fs.readdirSync(path.resolve(projectDir, 'cx-server'));
     expect(approuterFiles).toContain('cx-server');
-    expect(approuterFiles).toContain('cx-server.bat');
     expect(approuterFiles).toContain('server.cfg');
   }, 30000);
 

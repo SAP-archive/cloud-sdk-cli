@@ -5,6 +5,7 @@
 import cli from 'cli-ux';
 import * as fs from 'fs';
 import { compile } from 'handlebars';
+import * as https from 'https';
 import * as path from 'path';
 import { CopyDescriptor } from './copy-list';
 
@@ -55,24 +56,56 @@ export async function findConflicts(files: CopyDescriptor[], force: boolean, std
   }
 }
 
-export function copyFiles(files: CopyDescriptor[], options: { [key: string]: any }, stderr: stderr) {
-  for (const file of files) {
+export async function copyFiles(files: CopyDescriptor[], options: { [key: string]: any }) {
+  return Promise.all(
+    files.map(file => {
+      const { sourcePath, targetFolder, fileName } = file;
+
+      if (sourcePath instanceof URL) {
+        return copyRemote(sourcePath, targetFolder, fileName);
+      } else {
+        return copyLocal(sourcePath, targetFolder, fileName, options);
+      }
+    })
+  );
+}
+
+function copyRemote(sourcePath: URL, targetFolder: string, fileName: string) {
+  return new Promise((resolve, reject) => {
+    https
+      .get(sourcePath, response => {
+        if (response.statusCode && (response.statusCode < 200 || response.statusCode > 299)) {
+          reject(new Error('Failed to load page, status code: ' + response.statusCode));
+        }
+
+        response.on('data', content => {
+          fs.mkdirSync(targetFolder, { recursive: true });
+          fs.writeFileSync(fileName, content);
+          resolve();
+        });
+      })
+      .on('error', e => {
+        reject(e);
+      });
+  });
+}
+
+function copyLocal(sourcePath: string, targetFolder: string, fileName: string, options: { [key: string]: any }) {
+  try {
     let content: string;
 
-    if (path.extname(file.sourcePath) === '.mu') {
-      const template = compile(fs.readFileSync(file.sourcePath, { encoding: 'utf8' }));
+    if (path.extname(sourcePath) === '.mu') {
+      const template = compile(fs.readFileSync(sourcePath, { encoding: 'utf8' }));
       content = template(options);
     } else {
-      content = fs.readFileSync(file.sourcePath, { encoding: 'utf8' });
+      content = fs.readFileSync(sourcePath, { encoding: 'utf8' });
     }
 
-    try {
-      fs.mkdirSync(file.targetFolder, { recursive: true });
-    } catch (error) {
-      stderr(error.message);
-    }
-
-    fs.writeFileSync(file.fileName, content);
+    fs.mkdirSync(targetFolder, { recursive: true });
+    fs.writeFileSync(fileName, content);
+    return Promise.resolve();
+  } catch (e) {
+    return Promise.reject(e);
   }
 }
 
