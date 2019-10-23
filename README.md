@@ -39,6 +39,7 @@ To get started run
 $ sap-cloud-sdk init
 ``` 
 in the project folder. 
+
 It will guide you through the initialization, create the necessary files and add necessary dependencies. 
 If you run it in an empty folder, it will ask if you want to initialize a project using [express-generator](https://expressjs.com/en/starter/generator.html). 
 
@@ -48,7 +49,7 @@ To deploy to and run on Cloud Foundry, you need to
 3. Run [`sap-cloud-sdk package`](#sap-cloud-sdk-package)
 4. Push to Cloud Foundry (`cf push`)
 
-For productive use, your app should be implement user authentication and authorization. 
+For productive use, your app should implement user authentication and authorization. 
 For SAP Cloud Foundry, this is usually done by using the approuter and xsuaa service. 
 Start by running [`sap-cloud-sdk add-approuter`](#sap-cloud-sdk-add-approuter) and configure the xsuaa service accordingly.
 
