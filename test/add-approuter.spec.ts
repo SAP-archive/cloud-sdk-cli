@@ -22,7 +22,7 @@ import * as path from 'path';
 import AddApprouter from '../src/commands/add-approuter';
 
 describe('Add Approuter', () => {
-  const pathPrefix = path.resolve(__dirname, __filename.replace('.', '-'));
+  const pathPrefix = path.resolve(__dirname, __filename.replace(/\./g, '-')).replace('-ts', '');
 
   beforeAll(() => {
     if (!fs.existsSync(pathPrefix)) {
