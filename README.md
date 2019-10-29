@@ -15,11 +15,24 @@ The SAP Cloud SDK supports you end-to-end when developing applications that comm
 Using the SDK, you can reduce your effort when developing an application on SAP Cloud Platform by building on best practices delivered by the SDK. 
 The SDK provides Java libraries, JavaScript libraries, project templates and a continuous delivery toolkit.
 
+## Installation
+To install the CLI globally, run:
+
+```sh-session
+$ npm install -g @sap-cloud-sdk/cli
+```
+
+### Update
+As long as the CLI version is less than `1.0.0`, run the following to update to the latest version. Please keep in mind, that these updates can have breaking changes as per the [semver spec](https://semver.org/#spec-item-4).
+
+```sh-session
+$ npm i -g @sap-cloud-sdk/cli@latest
+```
+
 ## Usage
 
 <!-- usage -->
 ```sh-session
-$ npm install -g @sap-cloud-sdk/cli
 $ sap-cloud-sdk COMMAND
 running command...
 $ sap-cloud-sdk (-v|--version|version)
