@@ -3,6 +3,7 @@
 # SAP Cloud SDK CLI
 
 ![Tests Badge](https://github.com/SAP/cloud-sdk-cli/workflows/Tests%20(master)/badge.svg)
+
 ![NPM Downloads](https://img.shields.io/npm/dw/@sap-cloud-sdk/cli)
 
 A nifty command line interface (CLI) for the SAP Cloud SDK for JavaScript to initialize and package your SAP Cloud Platform application.
@@ -12,7 +13,7 @@ It is also the launchpad when trying to set up the approuter or getting started 
 
 The SAP Cloud SDK supports you end-to-end when developing applications that communicate with SAP solutions and services such as SAP S/4HANA Cloud, SAP SuccessFactors, and many others.
 
-Using the SDK, you can reduce your effort when developing an application on SAP Cloud Platform by building on best practices delivered by the SDK. 
+Using the SDK, you can reduce your effort when developing an application on SAP Cloud Platform by building on best practices delivered by the SDK.
 The SDK provides Java libraries, JavaScript libraries, project templates and a continuous delivery toolkit.
 
 ## Usage
@@ -31,26 +32,26 @@ USAGE
 ```
 <!-- usagestop -->
 
-The CLI can initialize an express-based project or (the more common case) add everything you need to develop for SAP Cloud Platform to an existing project no matter what backend framework you use. 
+The CLI can initialize an express-based project or (the more common case) add everything you need to develop for SAP Cloud Platform to an existing project no matter what backend framework you use.
 If there are any incompatibilities, please let us know in the [issues](https://github.com/SAP/cloud-sdk-cli/issues/new/choose)!
 
-To get started run 
+To get started run
 ``` sh-session
 $ sap-cloud-sdk init
-``` 
-in the project folder. 
+```
+in the project folder.
 
-It will guide you through the initialization, create the necessary files and add necessary dependencies. 
-If you run it in an empty folder, it will ask if you want to initialize a project using [express-generator](https://expressjs.com/en/starter/generator.html). 
+It will guide you through the initialization, create the necessary files and add necessary dependencies.
+If you run it in an empty folder, it will ask if you want to initialize a project using [express-generator](https://expressjs.com/en/starter/generator.html).
 
-To deploy to and run on Cloud Foundry, you need to 
-1. Make sure that your app listens to port 8080  
-2. Build your app if necessary 
+To deploy to and run on Cloud Foundry, you need to
+1. Make sure that your app listens to port 8080
+2. Build your app if necessary
 3. Run [`sap-cloud-sdk package`](#sap-cloud-sdk-package)
 4. Push to Cloud Foundry (`cf push`)
 
-For productive use, your app should implement user authentication and authorization. 
-For SAP Cloud Foundry, this is usually done by using the approuter and xsuaa service. 
+For productive use, your app should implement user authentication and authorization.
+For SAP Cloud Foundry, this is usually done by using the approuter and xsuaa service.
 Start by running [`sap-cloud-sdk add-approuter`](#sap-cloud-sdk-add-approuter) and configure the xsuaa service accordingly.
 
 ## Commands
@@ -204,8 +205,8 @@ _See code: [src/commands/package.ts](https://github.com/SAP/cloud-sdk-cli/blob/v
 
 ## Contribute
 
-The CLI is based on [oclif](https://oclif.io/docs/introduction.html) and can be extended using [plugins](https://oclif.io/docs/plugins). 
-If you think your plugin should be part of the CLI itself, feel free to [open a pull request](https://github.com/SAP/cloud-sdk-cli/compare). 
+The CLI is based on [oclif](https://oclif.io/docs/introduction.html) and can be extended using [plugins](https://oclif.io/docs/plugins).
+If you think your plugin should be part of the CLI itself, feel free to [open a pull request](https://github.com/SAP/cloud-sdk-cli/compare).
 If you have found a bug in our existing functionality, please [open an issue](https://github.com/SAP/cloud-sdk-cli/issues/new/choose).
 
 ### Release
@@ -216,13 +217,13 @@ The easiest way to create a new release is running
 $ npx np
 ```
 
-This will test the code, run any prepublish steps, increase the version as selected by the user and create a draft release in github. 
-Afterwards fill in the release notes and press "Publish release". 
+This will test the code, run any prepublish steps, increase the version as selected by the user and create a draft release in github.
+Afterwards fill in the release notes and press "Publish release".
 This will trigger the github action and a new release will be published on npm automatically.
 
 ## License
 
-Copyright (c) 2019 SAP SE or an SAP affiliate company. 
+Copyright (c) 2019 SAP SE or an SAP affiliate company.
 All rights reserved.
 This file is licensed under the Apache Software License, v. 2 except as noted otherwise in the [LICENSE file](LICENSE).
 
