@@ -194,10 +194,7 @@ export default class Init extends Command {
     fs.writeFileSync(path.resolve(flags.projectDir, 'package.json'), JSON.stringify(packageJson, null, 2));
 
     try {
-      await execa('npm', ['install', '@sap/cloud-sdk-core'], {
-        cwd: flags.projectDir
-      });
-      await execa('npm', ['install', '--save-dev', '@sap/cloud-sdk-test-util'], { cwd: flags.projectDir });
+      await execa('npm', ['install'], { cwd: flags.projectDir });
     } catch (error) {
       this.error(error, { exit: 12 });
     }

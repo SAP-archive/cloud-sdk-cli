@@ -23,7 +23,7 @@ $ npm install -g @sap-cloud-sdk/cli
 $ sap-cloud-sdk COMMAND
 running command...
 $ sap-cloud-sdk (-v|--version|version)
-@sap-cloud-sdk/cli/0.0.6 darwin-x64 node-v11.12.0
+@sap-cloud-sdk/cli/0.0.6 darwin-x64 node-v12.9.0
 $ sap-cloud-sdk --help [COMMAND]
 USAGE
   $ sap-cloud-sdk COMMAND
