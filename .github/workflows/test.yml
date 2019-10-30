@@ -1,8 +1,9 @@
-name: Tests (all branches)
+name: Tests
 
 on:
+  pull_request: ~
   push:
-    branches-ignore:
+    branches:
       - master
 
 jobs:
