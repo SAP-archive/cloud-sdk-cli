@@ -1,9 +1,6 @@
-name: Tests (all branches)
+name: Tests (master)
 
-on:
-  push:
-    branches-ignore:
-      - master
+on: [push, pull_request]
 
 jobs:
   build:
