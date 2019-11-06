@@ -10,7 +10,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { InitType, packageJsonParts } from '../utils/initialization-helper';
 import { copyFiles, ensureDirectoryExistence, findConflicts, readTemplates } from '../utils/templates';
-import { ExecaChildProcess } from 'execa';
 
 type Flags = OutputFlags<typeof Init.flags>;
 
@@ -215,7 +214,7 @@ export default class Init extends Command {
   }
 
   private async installDevDependencies(dependencyNames: string[], projectDir: string) {
-    let promises: ExecaChildProcess[] = [];
+    const promises: execa.ExecaChildProcess[] = [];
     dependencyNames.forEach(value => {
       promises.push(execa('npm', ['install', '--save-dev', value], { cwd: projectDir }));
     });
