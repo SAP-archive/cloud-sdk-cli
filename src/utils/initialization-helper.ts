@@ -28,10 +28,6 @@ interface SharedScripts {
   backendBuildScripts: BackendBuildScripts;
 }
 
-interface DevDependencies {
-  [name: string]: string;
-}
-
 // TODO Autodetect testing framework (?) and make sure it outputs junit
 const sharedScriptsForTypes: SharedScripts = {
   frontendScripts: {
@@ -52,10 +48,7 @@ const expressPackageJsonParts: PackageJsonParts = {
     'ci-backend-unit-test': 'jest --ci --config=jest.unit-test.config.js',
     'test': 'jest'
   },
-  devDependencies: {
-    'jest': '^24.9.0',
-    'jest-junit': '^8.0.0'
-  }
+  devDependencies: ['jest', 'jest-junit']
 };
 
 const userDefinedJsonParts: PackageJsonParts = {
@@ -66,14 +59,14 @@ const userDefinedJsonParts: PackageJsonParts = {
     'ci-backend-unit-test':
       'echo "Test your application and write results in a JUnit format to `s4hana_pipeline/reports/backend-unit/` and coverage in a cobertura format to `s4hana_pipeline/reports/coverage/backend-unit/`"'
   },
-  devDependencies: {}
+  devDependencies: []
 };
 
 interface PackageJsonParts {
   backendBuildScripts: BackendBuildScripts;
   frontendScripts: FrontendScripts;
   backendTestScripts: BackendTestScripts;
-  devDependencies: DevDependencies;
+  devDependencies: string[];
 }
 
 export function packageJsonParts(type: InitType): PackageJsonParts {

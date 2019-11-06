@@ -10,6 +10,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { InitType, packageJsonParts } from '../utils/initialization-helper';
 import { copyFiles, ensureDirectoryExistence, findConflicts, readTemplates } from '../utils/templates';
+import { ExecaChildProcess } from 'execa';
 
 type Flags = OutputFlags<typeof Init.flags>;
 
@@ -70,7 +71,8 @@ export default class Init extends Command {
       const files = readTemplates({
         from: [path.resolve(__dirname, '..', 'templates', 'init')],
         to: flags.projectDir,
-        exclude: initType === InitType.existingProject ? ['test'] : []
+        exclude:
+          initType === InitType.existingProject ? ['test', 'jest.config.js', 'jest.integration-test.config.js', 'jets.unit-test.config.js'] : []
       });
       cli.action.stop();
 
@@ -82,7 +84,7 @@ export default class Init extends Command {
       await copyFiles(files, options).catch(e => this.error(e, { exit: 2 }));
       cli.action.stop();
 
-      cli.action.start('Adding scripts for CI/CD and dependencies to package.json');
+      cli.action.start('Adding dependencies to package.json and installing');
       await this.modifyPackageJson(flags, initType);
       cli.action.stop();
 
@@ -187,17 +189,37 @@ export default class Init extends Command {
     }
     packageJson.scripts = { ...packageJson.scripts, ...scripts };
 
-    if (initializationType === InitType.freshExpress) {
-      packageJson.devDependencies = { ...packageJson.devDependencies, ...packageJsonData.devDependencies };
-    }
-
     fs.writeFileSync(path.resolve(flags.projectDir, 'package.json'), JSON.stringify(packageJson, null, 2));
 
     try {
-      await execa('npm', ['install'], { cwd: flags.projectDir });
+      cli.action.start('\t->Install cloud sdk dependencies');
+      await execa('npm', ['install', '@sap/cloud-sdk-core'], { cwd: flags.projectDir });
+      cli.action.stop();
+      if (initializationType === InitType.freshExpress) {
+        cli.action.start('\t->Install remaining express dependencies');
+        await execa('npm', ['install'], { cwd: flags.projectDir });
+        cli.action.stop();
+      }
+
+      cli.action.start('\t->Install cloud-sdk-test-util as dev dependencies');
+      await this.installDevDependencies(['@sap/cloud-sdk-test-util'], flags.projectDir);
+      cli.action.stop();
+      if (initializationType === InitType.freshExpress) {
+        cli.action.start('\t->Install remaining express dev dependencies');
+        await this.installDevDependencies([...packageJsonData.devDependencies, '@sap/cloud-sdk-test-util'], flags.projectDir);
+        cli.action.stop();
+      }
     } catch (error) {
       this.error(error, { exit: 12 });
     }
+  }
+
+  private async installDevDependencies(dependencyNames: string[], projectDir: string) {
+    let promises: ExecaChildProcess[] = [];
+    dependencyNames.forEach(value => {
+      promises.push(execa('npm', ['install', '--save-dev', value], { cwd: projectDir }));
+    });
+    return Promise.all(promises);
   }
 
   private modifyGitIgnore(flags: Flags) {

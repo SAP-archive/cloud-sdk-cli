@@ -22,7 +22,7 @@ export function readTemplates({ from, to, exclude = [] }: TemplateParam): CopyDe
     if (curr.isDirectory() && !exclude.includes(curr.name)) {
       prev = prev.concat(readTemplates({ from: from.concat(curr.name), to, exclude }));
     }
-    if (curr.isFile()) {
+    if (curr.isFile() && !exclude.includes(curr.name)) {
       prev.push({
         sourcePath: path.resolve(...from, curr.name),
         targetFolder: path.resolve(to, ...from.slice(1)),
