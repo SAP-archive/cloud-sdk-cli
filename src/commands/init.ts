@@ -83,8 +83,12 @@ export default class Init extends Command {
       await copyFiles(files, options).catch(e => this.error(e, { exit: 2 }));
       cli.action.stop();
 
-      cli.action.start('Adding dependencies to package.json and installing');
+      cli.action.start('Adding dependencies to package.json');
       await this.modifyPackageJson(flags, initType);
+      cli.action.stop();
+
+      cli.action.start('Installing dependencies');
+      await this.installDependencies(flags, initType);
       cli.action.stop();
 
       cli.action.start('Modify .gitignore');
@@ -188,37 +192,46 @@ export default class Init extends Command {
     }
     packageJson.scripts = { ...packageJson.scripts, ...scripts };
 
+    await this.addDependencies(packageJsonData.dependencies, false, packageJson, flags.projectDir);
+    await this.addDependencies(packageJsonData.devDependencies, true, packageJson, flags.projectDir);
+
     fs.writeFileSync(path.resolve(flags.projectDir, 'package.json'), JSON.stringify(packageJson, null, 2));
-
-    try {
-      cli.action.start('\t->Install cloud sdk dependencies');
-      await execa('npm', ['install', '@sap/cloud-sdk-core'], { cwd: flags.projectDir });
-      cli.action.stop();
-      if (initializationType === InitType.freshExpress) {
-        cli.action.start('\t->Install remaining express dependencies');
-        await execa('npm', ['install'], { cwd: flags.projectDir });
-        cli.action.stop();
-      }
-
-      cli.action.start('\t->Install cloud-sdk-test-util as dev dependencies');
-      await this.installDevDependencies(['@sap/cloud-sdk-test-util'], flags.projectDir);
-      cli.action.stop();
-      if (initializationType === InitType.freshExpress) {
-        cli.action.start('\t->Install remaining express dev dependencies');
-        await this.installDevDependencies([...packageJsonData.devDependencies, '@sap/cloud-sdk-test-util'], flags.projectDir);
-        cli.action.stop();
-      }
-    } catch (error) {
-      this.error(error, { exit: 12 });
-    }
   }
 
-  private async installDevDependencies(dependencyNames: string[], projectDir: string) {
-    const promises: execa.ExecaChildProcess[] = [];
-    dependencyNames.forEach(value => {
-      promises.push(execa('npm', ['install', '--save-dev', value], { cwd: projectDir }));
+  private async addDependencies(dependencies: string[], isDev: boolean, packageJson: any, projectDir: string) {
+    packageJson.devDependencies = packageJson.devDependencies ? packageJson.devDependencies : {};
+    packageJson.dependencies = packageJson.dependencies ? packageJson.dependencies : {};
+    const promises = dependencies.map(async dependency => {
+      try {
+        const latestVersion = (await execa('npm', ['view', dependency, 'version'], { cwd: projectDir })).stdout;
+        if (isDev) {
+          packageJson.devDependencies[dependency] = `^${latestVersion}`;
+        } else {
+          packageJson.dependencies[dependency] = `^${latestVersion}`;
+        }
+      } catch (err) {
+        this.error(`Error in finding version for dependency ${dependency}`);
+      }
+      return Promise.resolve();
     });
     return Promise.all(promises);
+  }
+
+  private async installDependencies(flags: Flags, initType: InitType) {
+    try {
+      switch (initType) {
+        case InitType.existingProject:
+          const packageJsonPart = packageJsonParts(initType);
+          const sdkOnly = [...packageJsonPart.dependencies, ...packageJsonPart.devDependencies];
+          await execa('npm', ['install', ...sdkOnly], { cwd: flags.projectDir });
+          break;
+        case InitType.freshExpress:
+          await execa('npm', ['install'], { cwd: flags.projectDir });
+          break;
+      }
+    } catch (err) {
+      this.error(`Error in npm install ${err.message}`);
+    }
   }
 
   private modifyGitIgnore(flags: Flags) {

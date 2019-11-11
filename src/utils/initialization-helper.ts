@@ -48,7 +48,8 @@ const expressPackageJsonParts: PackageJsonParts = {
     'ci-backend-unit-test': 'jest --ci --config=jest.unit-test.config.js',
     'test': 'jest'
   },
-  devDependencies: ['jest', 'jest-junit']
+  devDependencies: ['jest', 'jest-junit', '@sap/cloud-sdk-test-util'],
+  dependencies: ['@sap/cloud-sdk-core']
 };
 
 const userDefinedJsonParts: PackageJsonParts = {
@@ -59,7 +60,8 @@ const userDefinedJsonParts: PackageJsonParts = {
     'ci-backend-unit-test':
       'echo "Test your application and write results in a JUnit format to `s4hana_pipeline/reports/backend-unit/` and coverage in a cobertura format to `s4hana_pipeline/reports/coverage/backend-unit/`"'
   },
-  devDependencies: []
+  devDependencies: ['@sap/cloud-sdk-test-util'],
+  dependencies: ['@sap/cloud-sdk-core']
 };
 
 interface PackageJsonParts {
@@ -67,6 +69,7 @@ interface PackageJsonParts {
   frontendScripts: FrontendScripts;
   backendTestScripts: BackendTestScripts;
   devDependencies: string[];
+  dependencies: string[];
 }
 
 export function packageJsonParts(type: InitType): PackageJsonParts {
