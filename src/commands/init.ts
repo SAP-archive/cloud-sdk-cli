@@ -11,7 +11,7 @@ import * as path from 'path';
 import { InitType, packageJsonParts } from '../utils/initialization-helper';
 import { copyFiles, ensureDirectoryExistence, findConflicts, readTemplates } from '../utils/templates';
 
-type Flags = OutputFlags<typeof Init.flags>;
+export type Flags = OutputFlags<typeof Init.flags>;
 
 export default class Init extends Command {
   static description = 'Initializes your project for the SAP Cloud SDK, SAP Cloud Platform Cloud Foundry and CI/CD using the SAP Cloud SDK toolkit';
