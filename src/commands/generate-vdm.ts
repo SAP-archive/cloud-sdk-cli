@@ -13,6 +13,7 @@ export default class GenerateVdm extends Command {
   static examples = ['$ sap-cloud-sdk generate-vdm', '$ sap-cloud-sdk generate-vdm --help'];
 
   static flags = {
+    //Options which are 1:1 to the SDK CLI many are missing (minimal set here. Discussion how to make this elegant
     inputDir: flags.string({
       description: 'Folder containing the service definitions.',
       required: true,
@@ -25,6 +26,10 @@ export default class GenerateVdm extends Command {
       char: 'o',
       name: 'outputDir'
     }),
+    //see generator-cli.ts for missing ones
+    //...
+
+    //Options relevant to the CLI. They are convinient and make testing possible as well.
     force: flags.boolean({
       hidden: true,
       description: 'Does everything without asking questions.'
