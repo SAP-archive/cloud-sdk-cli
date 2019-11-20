@@ -67,11 +67,12 @@ export default class Init extends Command {
 
     try {
       cli.action.start('Reading templates');
+      const excludes =
+        initType === InitType.existingProject ? ['test', 'jest.config.js', 'jest.integration-test.config.js', 'jets.unit-test.config.js'] : [];
       const files = readTemplates({
         from: [path.resolve(__dirname, '..', 'templates', 'init')],
         to: flags.projectDir,
-        exclude:
-          initType === InitType.existingProject ? ['test', 'jest.config.js', 'jest.integration-test.config.js', 'jets.unit-test.config.js'] : []
+        exclude: excludes
       });
       cli.action.stop();
 
@@ -192,29 +193,39 @@ export default class Init extends Command {
     }
     packageJson.scripts = { ...packageJson.scripts, ...scripts };
 
-    await this.addDependencies(packageJsonData.dependencies, false, packageJson, flags.projectDir);
-    await this.addDependencies(packageJsonData.devDependencies, true, packageJson, flags.projectDir);
+    packageJson.dependencies = await this.addDependencies(packageJsonData.dependencies, packageJson.dependencies, flags.projectDir);
+    packageJson.devDependencies = await this.addDependencies(packageJsonData.devDependencies, packageJson.devDependencies, flags.projectDir);
 
     fs.writeFileSync(path.resolve(flags.projectDir, 'package.json'), JSON.stringify(packageJson, null, 2));
   }
 
-  private async addDependencies(dependencies: string[], isDev: boolean, packageJson: any, projectDir: string) {
-    packageJson.devDependencies = packageJson.devDependencies ? packageJson.devDependencies : {};
-    packageJson.dependencies = packageJson.dependencies ? packageJson.dependencies : {};
+  private async addDependencies(
+    dependencies: string[],
+    toBeAdded: { [key: string]: string },
+    projectDir: string
+  ): Promise<{ [key: string]: string }> {
+    const copy: { [key: string]: string } = {};
+    if (toBeAdded) {
+      Object.entries(toBeAdded).forEach(([key, value]) => (copy[key] = value));
+    }
     const promises = dependencies.map(async dependency => {
-      try {
-        const latestVersion = (await execa('npm', ['view', dependency, 'version'], { cwd: projectDir })).stdout;
-        if (isDev) {
-          packageJson.devDependencies[dependency] = `^${latestVersion}`;
-        } else {
-          packageJson.dependencies[dependency] = `^${latestVersion}`;
-        }
-      } catch (err) {
-        this.error(`Error in finding version for dependency ${dependency}`);
+      const latestVersion = await this.getVersionOfDependency(dependency, projectDir);
+      if (latestVersion) {
+        copy[dependency] = `^${latestVersion}`;
       }
       return Promise.resolve();
     });
-    return Promise.all(promises);
+    await Promise.all(promises);
+    return copy;
+  }
+
+  private async getVersionOfDependency(dependency: string, projectDir: string): Promise<string | undefined> {
+    try {
+      return (await execa('npm', ['view', dependency, 'version'], { cwd: projectDir })).stdout;
+    } catch (err) {
+      this.error(`Error in finding version for dependency ${dependency}`);
+      return undefined;
+    }
   }
 
   private async installDependencies(flags: Flags, initType: InitType) {
