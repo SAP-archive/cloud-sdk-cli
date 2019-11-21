@@ -88,9 +88,8 @@ export default class Init extends Command {
       await this.modifyPackageJson(flags, initType);
       cli.action.stop();
 
-      cli.action.start('Installing dependencies');
-      await this.installDependencies(flags, initType);
-      cli.action.stop();
+      this.log('Installing dependencies');
+      await this.installDependencies(flags);
 
       cli.action.start('Modify .gitignore');
       this.modifyGitIgnore(flags);
@@ -175,74 +174,57 @@ export default class Init extends Command {
   private async modifyPackageJson(flags: Flags, initializationType: InitType) {
     const packageJsonData = packageJsonParts(initializationType);
 
-    const packageJson = this.packageJson(flags);
+    const untouchedPackageJson = this.packageJson(flags);
     const addFrontendScripts: boolean =
-      flags.frontendScripts || (!flags.skipFrontendScripts && (await cli.confirm('Should frontend-related npm scripts for CI/CD be added?')));
+      flags.frontendScripts ||
+      (!flags.skipFrontendScripts && (await cli.confirm('Should frontend-related npm scriptsToBeAdded for CI/CD be added?')));
     const backendScritps = { ...packageJsonData.backendBuildScripts, ...packageJsonData.backendTestScripts };
-    const scripts = addFrontendScripts ? { ...backendScritps, ...packageJsonData.frontendScripts } : backendScritps;
+    const scriptsToBeAdded = addFrontendScripts ? { ...backendScritps, ...packageJsonData.frontendScripts } : backendScritps;
+    const scriptsAlreadyThere = untouchedPackageJson.scripts;
 
-    const conflicts = packageJson.scripts ? Object.keys(scripts).filter(name => Object.keys(packageJson.scripts).includes(name)) : [];
+    const conflicts = scriptsAlreadyThere ? Object.keys(scriptsToBeAdded).filter(name => Object.keys(scriptsAlreadyThere).includes(name)) : [];
 
     if (
       conflicts.length &&
       !(await cli.confirm(`Script(s) with the name(s) "${conflicts.join('", "')}" already exist(s). Should they be overwritten?`))
     ) {
-      this.error('Script exits as npm scripts could not be written.', {
+      this.error('Script exits as npm scriptsToBeAdded could not be written.', {
         exit: 11
       });
     }
-    packageJson.scripts = { ...packageJson.scripts, ...scripts };
 
-    packageJson.dependencies = await this.addDependencies(packageJsonData.dependencies, packageJson.dependencies, flags.projectDir);
-    packageJson.devDependencies = await this.addDependencies(packageJsonData.devDependencies, packageJson.devDependencies, flags.projectDir);
+    const adjustedPackageJson = {
+      ...this.packageJson(flags),
+      scripts: { ...untouchedPackageJson.scripts, ...scriptsToBeAdded },
+      dependencies: { ...untouchedPackageJson.dependencies, ...(await this.addDependencies(packageJsonData.dependencies)) },
+      devDependencies: { ...untouchedPackageJson.devDependencies, ...(await this.addDependencies(packageJsonData.devDependencies)) }
+    };
 
-    fs.writeFileSync(path.resolve(flags.projectDir, 'package.json'), JSON.stringify(packageJson, null, 2));
+    fs.writeFileSync(path.resolve(flags.projectDir, 'package.json'), JSON.stringify(adjustedPackageJson, null, 2));
   }
 
-  private async addDependencies(
-    dependencies: string[],
-    toBeAdded: { [key: string]: string },
-    projectDir: string
-  ): Promise<{ [key: string]: string }> {
-    const copy: { [key: string]: string } = {};
-    if (toBeAdded) {
-      Object.entries(toBeAdded).forEach(([key, value]) => (copy[key] = value));
-    }
-    const promises = dependencies.map(async dependency => {
-      const latestVersion = await this.getVersionOfDependency(dependency, projectDir);
-      if (latestVersion) {
-        copy[dependency] = `^${latestVersion}`;
-      }
-      return Promise.resolve();
-    });
-    await Promise.all(promises);
-    return copy;
+  private async addDependencies(dependencies: string[]): Promise<{ [key: string]: string }> {
+    const result: { [key: string]: string } = {};
+    const versionLookups = dependencies.map(dependency => this.getVersionOfDependency(dependency).then(version => (result[dependency] = version)));
+    return Promise.all(versionLookups).then(() => result);
   }
 
-  private async getVersionOfDependency(dependency: string, projectDir: string): Promise<string | undefined> {
+  private async getVersionOfDependency(dependency: string): Promise<string> {
     try {
-      return (await execa('npm', ['view', dependency, 'version'], { cwd: projectDir })).stdout;
+      const defaultOptions = ['view', dependency, 'version'];
+      const version = dependency.includes('@sap')
+        ? execa('npm', [...defaultOptions, '--registry', 'https://npm.sap.com'])
+        : execa('npm', defaultOptions);
+
+      return `^${(await version).stdout}`;
     } catch (err) {
-      this.error(`Error in finding version for dependency ${dependency}`);
-      return undefined;
+      this.warn(`Error in finding version for dependency ${dependency} - use LATEST as fallback.`);
+      return 'latest';
     }
   }
 
-  private async installDependencies(flags: Flags, initType: InitType) {
-    try {
-      switch (initType) {
-        case InitType.existingProject:
-          const packageJsonPart = packageJsonParts(initType);
-          const sdkOnly = [...packageJsonPart.dependencies, ...packageJsonPart.devDependencies];
-          await execa('npm', ['install', ...sdkOnly], { cwd: flags.projectDir });
-          break;
-        case InitType.freshExpress:
-          await execa('npm', ['install'], { cwd: flags.projectDir });
-          break;
-      }
-    } catch (err) {
-      this.error(`Error in npm install ${err.message}`);
-    }
+  private async installDependencies(flags: Flags) {
+    return execa('npm', ['install'], { cwd: flags.projectDir, stdout: 'inherit' }).catch(err => this.error(`Error in npm install ${err.message}`));
   }
 
   private modifyGitIgnore(flags: Flags) {
