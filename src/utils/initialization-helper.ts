@@ -28,7 +28,6 @@ interface SharedScripts {
   backendBuildScripts: BackendBuildScripts;
 }
 
-// TODO Autodetect testing framework (?) and make sure it outputs junit
 const sharedScriptsForTypes: SharedScripts = {
   frontendScripts: {
     'ci-e2e': 'echo "Test your application and write results in a JUnit format to `s4hana_pipeline/reports/e2e/`"',

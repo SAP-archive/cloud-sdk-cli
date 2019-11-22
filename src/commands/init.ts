@@ -173,16 +173,14 @@ export default class Init extends Command {
 
   private async modifyPackageJson(flags: Flags, initializationType: InitType) {
     const packageJsonData = packageJsonParts(initializationType);
-
-    const untouchedPackageJson = this.packageJson(flags);
+    const { scripts, dependencies, devDependencies } = this.packageJson(flags);
     const addFrontendScripts: boolean =
       flags.frontendScripts ||
       (!flags.skipFrontendScripts && (await cli.confirm('Should frontend-related npm scriptsToBeAdded for CI/CD be added?')));
     const backendScritps = { ...packageJsonData.backendBuildScripts, ...packageJsonData.backendTestScripts };
     const scriptsToBeAdded = addFrontendScripts ? { ...backendScritps, ...packageJsonData.frontendScripts } : backendScritps;
-    const scriptsAlreadyThere = untouchedPackageJson.scripts;
 
-    const conflicts = scriptsAlreadyThere ? Object.keys(scriptsToBeAdded).filter(name => Object.keys(scriptsAlreadyThere).includes(name)) : [];
+    const conflicts = scripts ? Object.keys(scriptsToBeAdded).filter(name => Object.keys(scripts).includes(name)) : [];
 
     if (
       conflicts.length &&
@@ -195,9 +193,9 @@ export default class Init extends Command {
 
     const adjustedPackageJson = {
       ...this.packageJson(flags),
-      scripts: { ...untouchedPackageJson.scripts, ...scriptsToBeAdded },
-      dependencies: { ...untouchedPackageJson.dependencies, ...(await this.addDependencies(packageJsonData.dependencies)) },
-      devDependencies: { ...untouchedPackageJson.devDependencies, ...(await this.addDependencies(packageJsonData.devDependencies)) }
+      scripts: { ...scripts, ...scriptsToBeAdded },
+      dependencies: { ...dependencies, ...(await this.addDependencies(packageJsonData.dependencies)) },
+      devDependencies: { ...devDependencies, ...(await this.addDependencies(packageJsonData.devDependencies)) }
     };
 
     fs.writeFileSync(path.resolve(flags.projectDir, 'package.json'), JSON.stringify(adjustedPackageJson, null, 2));
@@ -205,13 +203,7 @@ export default class Init extends Command {
 
   private async addDependencies(dependencies: string[]): Promise<{ [key: string]: string }> {
     const versions = await Promise.all(dependencies.map(dependency => this.getVersionOfDependency(dependency)));
-    return dependencies.reduce(
-      (result, dependency, index) => {
-        result[dependency] = versions[index];
-        return result;
-      },
-      {} as any
-    );
+    return dependencies.reduce((result, dependency, index) => ({ ...result, [dependency]: versions[index] }), {} as any);
   }
 
   private async getVersionOfDependency(dependency: string): Promise<string> {
@@ -232,7 +224,7 @@ export default class Init extends Command {
     return execa('npm', ['install'], {
       cwd: flags.projectDir,
       stdout: 'inherit'
-    }).catch(err => this.error(`Error in npm install ${err.message}`, { exit: 1 }));
+    }).catch(err => this.error(`Error in npm install ${err.message}`, { exit: 12 }));
   }
 
   private modifyGitIgnore(flags: Flags) {
