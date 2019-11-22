@@ -188,7 +188,7 @@ export default class Init extends Command {
       conflicts.length &&
       !(await cli.confirm(`Script(s) with the name(s) "${conflicts.join('", "')}" already exist(s). Should they be overwritten?`))
     ) {
-      this.error('Script exits as npm scriptsToBeAdded could not be written.', {
+      this.error('Script exits as npm scripts could not be written.', {
         exit: 11
       });
     }
@@ -204,9 +204,14 @@ export default class Init extends Command {
   }
 
   private async addDependencies(dependencies: string[]): Promise<{ [key: string]: string }> {
-    const result: { [key: string]: string } = {};
-    const versionLookups = dependencies.map(dependency => this.getVersionOfDependency(dependency).then(version => (result[dependency] = version)));
-    return Promise.all(versionLookups).then(() => result);
+    const versions = await Promise.all(dependencies.map(dependency => this.getVersionOfDependency(dependency)));
+    return dependencies.reduce(
+      (result, dependency, index) => {
+        result[dependency] = versions[index];
+        return result;
+      },
+      {} as any
+    );
   }
 
   private async getVersionOfDependency(dependency: string): Promise<string> {
@@ -224,7 +229,10 @@ export default class Init extends Command {
   }
 
   private async installDependencies(flags: Flags) {
-    return execa('npm', ['install'], { cwd: flags.projectDir, stdout: 'inherit' }).catch(err => this.error(`Error in npm install ${err.message}`));
+    return execa('npm', ['install'], {
+      cwd: flags.projectDir,
+      stdout: 'inherit'
+    }).catch(err => this.error(`Error in npm install ${err.message}`, { exit: 1 }));
   }
 
   private modifyGitIgnore(flags: Flags) {
