@@ -8,6 +8,7 @@ import cli from 'cli-ux';
 import * as execa from 'execa';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as rm from 'rimraf';
 import { InitType, packageJsonParts } from '../utils/initialization-helper';
 import { copyFiles, ensureDirectoryExistence, findConflicts, readTemplates } from '../utils/templates';
 
@@ -37,9 +38,9 @@ export default class Init extends Command {
       description: 'Skip frontend-related npm scripts and dont ask to add them.',
       exclusive: ['frontendScripts']
     }),
-    initWithExpress: flags.boolean({
+    buildScaffold: flags.boolean({
       hidden: true,
-      description: 'If the folder is empty, use express-generator to create a project scaffold.'
+      description: 'If the folder is empty, use nest-cli to create a project scaffold.'
     }),
     projectDir: flags.string({
       default: '.',
@@ -61,7 +62,9 @@ export default class Init extends Command {
     ensureDirectoryExistence(flags.projectDir, true);
 
     const initType = await this.determineInitializationType(flags);
-    await this.initProject(flags, initType);
+    if (initType === InitType.buildScaffold) {
+      await this.buildScaffold(flags);
+    }
 
     const options = await this.getOptions(flags);
 
@@ -102,41 +105,29 @@ export default class Init extends Command {
   }
 
   private async determineInitializationType(flags: Flags): Promise<InitType> {
+    if (flags.buildScaffold) {
+      return InitType.buildScaffold;
+    }
+
     if (fs.existsSync(path.resolve(flags.projectDir, 'package.json'))) {
       return InitType.existingProject;
     }
 
     this.log('This folder does not contain a `package.json`.');
-    if (flags.initWithExpress || (await cli.confirm('Should a new `express.js` project be initialized in this folder?'))) {
-      return InitType.freshExpress;
-    }
 
-    return InitType.existingProject;
+    return (await cli.confirm('Should a new `nest.js` project be initialized in this folder?')) ? InitType.buildScaffold : InitType.existingProject;
   }
 
-  private async initProject(flags: Flags, initializationType: InitType): Promise<void> {
-    switch (initializationType) {
-      case InitType.freshExpress:
-        return this.initExpressProject(flags);
-      case InitType.existingProject:
-        return;
-    }
-  }
+  private async buildScaffold(flags: Flags): Promise<void> {
+    cli.action.start('Building application scaffold');
 
-  private async initExpressProject(flags: Flags): Promise<void> {
-    cli.action.start('Initializing Express project');
-
-    const params = ['express-generator', '--no-view', '--git'];
     const dirEmpty = fs.readdirSync(flags.projectDir).length === 0;
-
-    if (!dirEmpty && (flags.force || (await cli.confirm('Directory is not empty. Should the project be initialized anyway?')))) {
-      params.push('--force');
+    if (!dirEmpty && (flags.force || (await cli.confirm('Directory is not empty. Should the project?')))) {
+      rm.sync(`${flags.projectDir}/{*,.*}`);
     }
-    await execa('npx', params, { cwd: flags.projectDir });
+    const { stdout } = await execa('npx', ['@nestjs/cli', 'new', '.', '--skip-install', '--package-manager', 'npm'], { cwd: flags.projectDir });
+    this.log(stdout);
 
-    if (!fs.existsSync('.git')) {
-      await execa('git', ['init'], { cwd: flags.projectDir });
-    }
     cli.action.stop();
   }
 

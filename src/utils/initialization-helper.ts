@@ -3,7 +3,7 @@
  */
 
 export enum InitType {
-  freshExpress,
+  buildScaffold,
   existingProject
 }
 
@@ -44,8 +44,7 @@ const expressPackageJsonParts: PackageJsonParts = {
   ...sharedScriptsForTypes,
   backendTestScripts: {
     'ci-integration-test': 'jest --ci --config=jest.integration-test.config.js',
-    'ci-backend-unit-test': 'jest --ci --config=jest.unit-test.config.js',
-    'test': 'jest'
+    'ci-backend-unit-test': 'jest --ci --config=jest.unit-test.config.js'
   },
   devDependencies: ['jest', 'jest-junit', '@sap/cloud-sdk-test-util'],
   dependencies: ['@sap/cloud-sdk-core']
@@ -73,7 +72,7 @@ interface PackageJsonParts {
 
 export function packageJsonParts(type: InitType): PackageJsonParts {
   switch (type) {
-    case InitType.freshExpress:
+    case InitType.buildScaffold:
       return expressPackageJsonParts;
     case InitType.existingProject:
       return userDefinedJsonParts;
