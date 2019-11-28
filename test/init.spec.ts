@@ -65,7 +65,6 @@ describe('Init', () => {
     await Init.run(argv);
 
     // execute the local tests
-    await execa('npm', ['install'], { cwd: projectDir });
     await execa('npm', ['test'], { cwd: projectDir });
 
     // execute the ci scripts and check if the reports are written
@@ -94,6 +93,14 @@ describe('Init', () => {
       .forEach(path => {
         expect(fs.existsSync(path)).toBe(true);
       });
+
+    ['jest.config.js', 'jest.integration-test.config.js', 'jets.unit-test.config.js']
+      .map(file => path.resolve(projectDir, file))
+      .forEach(path => {
+        expect(fs.existsSync(path)).toBe(false);
+      });
+
+    expect(fs.existsSync(path.resolve(projectDir, 'test'))).toBe(false);
   }, 20000);
 
   it('init should detect and ask if there are conflicts', async () => {
