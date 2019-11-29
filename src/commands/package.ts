@@ -45,6 +45,10 @@ export default class Package extends Command {
       char: 'e',
       default: '',
       description: 'Comma seperated list of files or globs to exclude'
+    }),
+    verbose: flags.boolean({
+      char: 'v',
+      description: 'Show more detailed output.'
     })
   };
 
@@ -85,13 +89,12 @@ export default class Package extends Command {
     cli.action.stop();
 
     if (!flags.skipInstall) {
-      cli.action.start('Install productive dependencies');
+      cli.log('Install productive dependencies...');
       try {
-        await execa('npm', ['install', '--production', '--prefix', outputDir]);
+        await execa('npm', ['install', '--production', '--prefix', outputDir], { stdio: flags.verbose ? 'inherit' : 'ignore' });
       } catch (error) {
         this.error(error, { exit: 10 });
       }
-      cli.action.stop();
     }
   }
 }

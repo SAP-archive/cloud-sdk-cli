@@ -87,8 +87,9 @@ async function getVersionOfDependency(dependency: string): Promise<string> {
   }
 }
 
-export async function installDependencies(flags: any) {
+export async function installDependencies(projectDir: string, verbose: boolean) {
   return execa('npm', ['install'], {
-    cwd: flags.projectDir
+    cwd: projectDir,
+    stdio: verbose ? 'inherit' : 'ignore'
   });
 }

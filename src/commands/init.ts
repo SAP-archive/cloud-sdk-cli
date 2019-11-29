@@ -9,6 +9,7 @@ import * as execa from 'execa';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as rm from 'rimraf';
+import { action } from '../utils/cli-action';
 import { installDependencies, modifyPackageJson, packageJson } from '../utils/package-json';
 import { copyFiles, ensureDirectoryExistence, findConflicts, readTemplates } from '../utils/templates';
 
@@ -53,21 +54,23 @@ export default class Init extends Command {
     help: flags.help({
       char: 'h',
       description: 'Show help for the new command.'
+    }),
+    verbose: flags.boolean({
+      char: 'v',
+      description: 'Show more detailed output.'
     })
   };
 
   async run() {
     const { flags } = this.parse(Init);
+    const { verbose } = flags;
 
     try {
       ensureDirectoryExistence(flags.projectDir, true);
 
       const buildScaffold = await this.shouldBuildScaffold(flags);
       if (buildScaffold) {
-        cli.action.start('Building application scaffold');
-        const { stdout } = await this.buildScaffold(flags);
-        this.log(stdout);
-        cli.action.stop();
+        await action('Building application scaffold', !verbose, this.buildScaffold(flags));
       }
 
       const options = await this.getOptions(flags);
@@ -79,28 +82,16 @@ export default class Init extends Command {
       });
       cli.action.stop();
 
-      cli.action.start('Finding potential conflicts');
-      await findConflicts(files, flags.force, this.error);
-      cli.action.stop();
+      await action('Finding potential conflicts', true, findConflicts(files, flags.force, this.error));
+      await action('Creating files', true, copyFiles(files, options)).catch(e => this.error(e, { exit: 2 }));
 
-      cli.action.start('Creating files');
-      await copyFiles(files, options).catch(e => this.error(e, { exit: 2 }));
-      cli.action.stop();
-
-      cli.action.start('Adding dependencies to package.json');
       const addFrontendScripts: boolean =
         flags.frontendScripts ||
         (!flags.skipFrontendScripts && (await cli.confirm('Should frontend-related npm scriptsToBeAdded for CI/CD be added?')));
-      await modifyPackageJson(flags, addFrontendScripts, buildScaffold);
-      cli.action.stop();
-
-      cli.action.start('Installing dependencies');
-      try {
-        await installDependencies(flags);
-      } catch (err) {
-        this.error(`Error in npm install ${err.message}`, { exit: 3 });
-      }
-      cli.action.stop();
+      await action('Adding dependencies to package.json', true, modifyPackageJson(flags, addFrontendScripts, buildScaffold));
+      await action('Installing dependencies', !verbose, installDependencies(flags.projectDir, verbose)).catch(e =>
+        this.error(`Error during npm install: ${e.message}`, { exit: 2 })
+      );
 
       cli.action.start('Modify .gitignore');
       this.modifyGitIgnore(flags);
@@ -126,14 +117,17 @@ export default class Init extends Command {
     return cli.confirm('Should a new `nest.js` project be initialized in this folder?');
   }
 
-  private async buildScaffold({ projectDir, force }: Flags) {
+  private async buildScaffold({ projectDir, force, verbose }: Flags) {
     if (fs.readdirSync(projectDir).length !== 0) {
       const dirString = projectDir === '.' ? 'this directory' : projectDir;
       if (force || (await cli.confirm(`Directory is not empty. Remove all files in ${dirString}?`))) {
         rm.sync(`${projectDir}/{*,.*}`);
       }
     }
-    return execa('npx', ['@nestjs/cli', 'new', '.', '--skip-install', '--package-manager', 'npm'], { cwd: projectDir });
+    return execa('npx', ['@nestjs/cli', 'new', '.', '--skip-install', '--package-manager', 'npm'], {
+      cwd: projectDir,
+      stdio: verbose ? 'inherit' : 'ignore'
+    });
   }
 
   private async getOptions(flags: Flags) {
