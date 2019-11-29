@@ -8,7 +8,7 @@ import * as path from 'path';
 
 const frontendScripts = {
   'ci-frontend-unit-test':
-    'echo "Test your application and write results in a JUnit format to `s4hana_pipeline/reports/backend-integration/` and coverage in a cobertura format to `s4hana_pipeline/reports/coverage/backend-integration/`"',
+    'echo "Test your application and write results in a JUnit format to `s4hana_pipeline/reports/frontend-unit/` and coverage in a cobertura format to `s4hana_pipeline/reports/coverage/frontend-unit/`"',
   'ci-e2e': 'echo "Test your application and write results in a JUnit format to `s4hana_pipeline/reports/e2e/`"'
 };
 
@@ -17,7 +17,7 @@ const scaffoldPackageJsonParts = {
     'ci-build': 'echo "Use this to compile or minify your application"',
     'ci-package': 'echo "Copy all deployment-relevant files to the `deployment` folder"',
     'ci-integration-test': 'jest --ci --config ./test/jest-e2e.json',
-    'ci-backend-unit-test': 'npm run test:cov'
+    'ci-backend-unit-test': 'jest --ci --coverage'
   },
   devDependencies: ['jest', 'jest-junit', '@sap/cloud-sdk-test-util'],
   dependencies: ['@sap/cloud-sdk-core']
