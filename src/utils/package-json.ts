@@ -16,8 +16,8 @@ const scaffoldPackageJsonParts = {
   scripts: {
     'ci-build': 'echo "Use this to compile or minify your application"',
     'ci-package': 'echo "Copy all deployment-relevant files to the `deployment` folder"',
-    'ci-integration-test': 'jest --ci --config=jest.integration-test.config.js',
-    'ci-backend-unit-test': 'jest --ci --config=jest.unit-test.config.js'
+    'ci-integration-test': 'jest --ci --config ./test/jest-e2e.json',
+    'ci-backend-unit-test': 'npm run test:cov'
   },
   devDependencies: ['jest', 'jest-junit', '@sap/cloud-sdk-test-util'],
   dependencies: ['@sap/cloud-sdk-core']
