@@ -33,10 +33,11 @@ $ npm install -g @sap-cloud-sdk/cli@latest
 
 <!-- usage -->
 ```sh-session
+$ npm install -g @sap-cloud-sdk/cli
 $ sap-cloud-sdk COMMAND
 running command...
 $ sap-cloud-sdk (-v|--version|version)
-@sap-cloud-sdk/cli/0.0.6 darwin-x64 node-v12.9.0
+@sap-cloud-sdk/cli/0.0.6 darwin-x64 node-v11.12.0
 $ sap-cloud-sdk --help [COMMAND]
 USAGE
   $ sap-cloud-sdk COMMAND
@@ -178,6 +179,7 @@ USAGE
 
 OPTIONS
   -h, --help               Show help for the new command.
+  -v, --verbose            Show more detailed output.
   --projectDir=projectDir  [default: .] Path to the folder in which the project should be created.
 
 EXAMPLES
@@ -203,6 +205,8 @@ OPTIONS
                          globs to include
 
   -o, --output=output    [default: deployment] Output and deployment folder
+
+  -v, --verbose          Show more detailed output.
 
   --skipInstall          Skip `npm i --production` during packaging
 

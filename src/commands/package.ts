@@ -9,6 +9,7 @@ import * as glob from 'fast-glob';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as rm from 'rimraf';
+import { action } from '../utils/cli-action';
 import { ensureDirectoryExistence } from '../utils/templates';
 
 export default class Package extends Command {
@@ -89,12 +90,8 @@ export default class Package extends Command {
     cli.action.stop();
 
     if (!flags.skipInstall) {
-      cli.log('Install productive dependencies...');
-      try {
-        await execa('npm', ['install', '--production', '--prefix', outputDir], { stdio: flags.verbose ? 'inherit' : 'ignore' });
-      } catch (error) {
-        this.error(error, { exit: 10 });
-      }
+      const installPromise = execa('npm', ['install', '--production', '--prefix', outputDir], { stdio: flags.verbose ? 'inherit' : 'ignore' });
+      await action('Install productive dependencies...', flags.verbose, installPromise).catch(e => this.error(e, { exit: 10 }));
     }
   }
 }
