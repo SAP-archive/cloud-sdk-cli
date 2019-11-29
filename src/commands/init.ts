@@ -78,7 +78,8 @@ export default class Init extends Command {
       cli.action.start('Reading templates');
       const files = readTemplates({
         from: [path.resolve(__dirname, '..', 'templates', 'init')],
-        to: flags.projectDir
+        to: flags.projectDir,
+        exclude: buildScaffold ? [] : ['test']
       });
       cli.action.stop();
 
