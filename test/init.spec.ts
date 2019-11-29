@@ -45,7 +45,7 @@ describe('Init', () => {
       fs.removeSync(projectDir);
     }
 
-    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--frontendScripts', '--initWithExpress', `--projectDir=${projectDir}`];
+    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--frontendScripts', '--buildScaffold', `--projectDir=${projectDir}`];
     await Init.run(argv);
 
     ['.npmrc', 'credentials.json', 'systems.json', 'manifest.yml']
@@ -55,13 +55,13 @@ describe('Init', () => {
       });
   }, 60000);
 
-  it('should create test cases for a fresh express project.', async () => {
+  it('should create test cases when building a project with scaffold', async () => {
     const projectDir = path.resolve(pathPrefix, 'full-init-with-test');
     if (fs.existsSync(projectDir)) {
       fs.removeSync(projectDir);
     }
 
-    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--frontendScripts', '--initWithExpress', `--projectDir=${projectDir}`];
+    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--frontendScripts', '--buildScaffold', `--projectDir=${projectDir}`];
     await Init.run(argv);
 
     // execute the local tests
@@ -111,7 +111,7 @@ describe('Init', () => {
 
     fs.createFileSync(`${projectDir}/.npmrc`);
 
-    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--frontendScripts', '--initWithExpress', `--projectDir=${projectDir}`];
+    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--frontendScripts', '--buildScaffold', `--projectDir=${projectDir}`];
     await Init.run(argv);
 
     expect(confirm).toHaveBeenCalledWith('File(s) ".npmrc" already exist(s). Should they be overwritten?');

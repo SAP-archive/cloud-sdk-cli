@@ -9,7 +9,7 @@ import * as execa from 'execa';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as rm from 'rimraf';
-import { InitType, packageJsonParts } from '../utils/initialization-helper';
+import { installDependencies, modifyPackageJson, packageJson } from '../utils/package-json';
 import { copyFiles, ensureDirectoryExistence, findConflicts, readTemplates } from '../utils/templates';
 
 type Flags = OutputFlags<typeof Init.flags>;
@@ -59,23 +59,23 @@ export default class Init extends Command {
   async run() {
     const { flags } = this.parse(Init);
 
-    ensureDirectoryExistence(flags.projectDir, true);
-
-    const initType = await this.determineInitializationType(flags);
-    if (initType === InitType.buildScaffold) {
-      await this.buildScaffold(flags);
-    }
-
-    const options = await this.getOptions(flags);
-
     try {
+      ensureDirectoryExistence(flags.projectDir, true);
+
+      const buildScaffold = await this.shouldBuildScaffold(flags);
+      if (buildScaffold) {
+        cli.action.start('Building application scaffold');
+        const { stdout } = await this.buildScaffold(flags);
+        this.log(stdout);
+        cli.action.stop();
+      }
+
+      const options = await this.getOptions(flags);
+
       cli.action.start('Reading templates');
-      const excludes =
-        initType === InitType.existingProject ? ['test', 'jest.config.js', 'jest.integration-test.config.js', 'jets.unit-test.config.js'] : [];
       const files = readTemplates({
         from: [path.resolve(__dirname, '..', 'templates', 'init')],
-        to: flags.projectDir,
-        exclude: excludes
+        to: flags.projectDir
       });
       cli.action.stop();
 
@@ -88,11 +88,19 @@ export default class Init extends Command {
       cli.action.stop();
 
       cli.action.start('Adding dependencies to package.json');
-      await this.modifyPackageJson(flags, initType);
+      const addFrontendScripts: boolean =
+        flags.frontendScripts ||
+        (!flags.skipFrontendScripts && (await cli.confirm('Should frontend-related npm scriptsToBeAdded for CI/CD be added?')));
+      await modifyPackageJson(flags, addFrontendScripts, buildScaffold);
       cli.action.stop();
 
-      this.log('Installing dependencies');
-      await this.installDependencies(flags);
+      cli.action.start('Installing dependencies');
+      try {
+        await installDependencies(flags);
+      } catch (err) {
+        this.error(`Error in npm install ${err.message}`, { exit: 3 });
+      }
+      cli.action.stop();
 
       cli.action.start('Modify .gitignore');
       this.modifyGitIgnore(flags);
@@ -104,118 +112,50 @@ export default class Init extends Command {
     }
   }
 
-  private async determineInitializationType(flags: Flags): Promise<InitType> {
+  private async shouldBuildScaffold(flags: Flags) {
     if (flags.buildScaffold) {
-      return InitType.buildScaffold;
+      return true;
     }
 
     if (fs.existsSync(path.resolve(flags.projectDir, 'package.json'))) {
-      return InitType.existingProject;
+      return false;
     }
 
     this.log('This folder does not contain a `package.json`.');
 
-    return (await cli.confirm('Should a new `nest.js` project be initialized in this folder?')) ? InitType.buildScaffold : InitType.existingProject;
+    return cli.confirm('Should a new `nest.js` project be initialized in this folder?');
   }
 
-  private async buildScaffold(flags: Flags): Promise<void> {
-    cli.action.start('Building application scaffold');
-
-    const dirEmpty = fs.readdirSync(flags.projectDir).length === 0;
-    if (!dirEmpty && (flags.force || (await cli.confirm('Directory is not empty. Should the project?')))) {
-      rm.sync(`${flags.projectDir}/{*,.*}`);
+  private async buildScaffold({ projectDir, force }: Flags) {
+    if (fs.readdirSync(projectDir).length !== 0) {
+      const dirString = projectDir === '.' ? 'this directory' : projectDir;
+      if (force || (await cli.confirm(`Directory is not empty. Remove all files in ${dirString}?`))) {
+        rm.sync(`${projectDir}/{*,.*}`);
+      }
     }
-    const { stdout } = await execa('npx', ['@nestjs/cli', 'new', '.', '--skip-install', '--package-manager', 'npm'], { cwd: flags.projectDir });
-    this.log(stdout);
-
-    cli.action.stop();
+    return execa('npx', ['@nestjs/cli', 'new', '.', '--skip-install', '--package-manager', 'npm'], { cwd: projectDir });
   }
 
   private async getOptions(flags: Flags) {
-    const options: { [key: string]: string } = {
-      projectName:
-        flags.projectName ||
-        (await cli.prompt('Enter project name (for use in manifest.yml)', {
-          default: this.packageJson(flags).name
-        })),
-      command:
-        flags.startCommand ||
-        (await cli.prompt('Enter the command to start your server', {
-          default: this.packageJson(flags).scripts.start ? 'npm start' : ''
-        }))
-    };
-
-    return options;
-  }
-
-  private packageJson(flags: Flags) {
     try {
-      if (fs.existsSync(path.resolve(flags.projectDir, 'package.json'))) {
-        return JSON.parse(
-          fs.readFileSync(path.resolve(flags.projectDir, 'package.json'), {
-            encoding: 'utf8'
-          })
-        );
-      }
+      const options: { [key: string]: string } = {
+        projectName:
+          flags.projectName ||
+          (await cli.prompt('Enter project name (for use in manifest.yml)', {
+            default: packageJson(flags.projectDir).name
+          })),
+        command:
+          flags.startCommand ||
+          (await cli.prompt('Enter the command to start your server', {
+            default: packageJson(flags.projectDir).scripts.start ? 'npm start' : ''
+          }))
+      };
+
+      return options;
     } catch (error) {
       this.error('Your package.json does not contain valid JSON. Please repair or delete it.', { exit: 10 });
+      return {}; // to satisfy tsc, which does not realize this is unreachable
     }
-  }
-
-  private async modifyPackageJson(flags: Flags, initializationType: InitType) {
-    const packageJsonData = packageJsonParts(initializationType);
-    const { scripts, dependencies, devDependencies } = this.packageJson(flags);
-    const addFrontendScripts: boolean =
-      flags.frontendScripts ||
-      (!flags.skipFrontendScripts && (await cli.confirm('Should frontend-related npm scriptsToBeAdded for CI/CD be added?')));
-    const backendScritps = { ...packageJsonData.backendBuildScripts, ...packageJsonData.backendTestScripts };
-    const scriptsToBeAdded = addFrontendScripts ? { ...backendScritps, ...packageJsonData.frontendScripts } : backendScritps;
-
-    const conflicts = scripts ? Object.keys(scriptsToBeAdded).filter(name => Object.keys(scripts).includes(name)) : [];
-
-    if (
-      conflicts.length &&
-      !(await cli.confirm(`Script(s) with the name(s) "${conflicts.join('", "')}" already exist(s). Should they be overwritten?`))
-    ) {
-      this.error('Script exits as npm scripts could not be written.', {
-        exit: 11
-      });
-    }
-
-    const adjustedPackageJson = {
-      ...this.packageJson(flags),
-      scripts: { ...scripts, ...scriptsToBeAdded },
-      dependencies: { ...dependencies, ...(await this.addDependencies(packageJsonData.dependencies)) },
-      devDependencies: { ...devDependencies, ...(await this.addDependencies(packageJsonData.devDependencies)) }
-    };
-
-    fs.writeFileSync(path.resolve(flags.projectDir, 'package.json'), JSON.stringify(adjustedPackageJson, null, 2));
-  }
-
-  private async addDependencies(dependencies: string[]): Promise<{ [key: string]: string }> {
-    const versions = await Promise.all(dependencies.map(dependency => this.getVersionOfDependency(dependency)));
-    return dependencies.reduce((result, dependency, index) => ({ ...result, [dependency]: versions[index] }), {} as any);
-  }
-
-  private async getVersionOfDependency(dependency: string): Promise<string> {
-    try {
-      const defaultOptions = ['view', dependency, 'version'];
-      const version = dependency.includes('@sap')
-        ? execa('npm', [...defaultOptions, '--registry', 'https://npm.sap.com'])
-        : execa('npm', defaultOptions);
-
-      return `^${(await version).stdout}`;
-    } catch (err) {
-      this.warn(`Error in finding version for dependency ${dependency} - use LATEST as fallback.`);
-      return 'latest';
-    }
-  }
-
-  private async installDependencies(flags: Flags) {
-    return execa('npm', ['install'], {
-      cwd: flags.projectDir,
-      stdout: 'inherit'
-    }).catch(err => this.error(`Error in npm install ${err.message}`, { exit: 12 }));
   }
 
   private modifyGitIgnore(flags: Flags) {

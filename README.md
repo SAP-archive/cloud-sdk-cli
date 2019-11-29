@@ -44,7 +44,7 @@ USAGE
 ```
 <!-- usagestop -->
 
-The CLI can initialize an express-based project or (the more common case) add everything you need to develop for SAP Cloud Platform to an existing project no matter what backend framework you use.
+The CLI can initialize an nest-based project or (the more common case) add everything you need to develop for SAP Cloud Platform to an existing project no matter what backend framework you use.
 If there are any incompatibilities, please let us know in the [issues](https://github.com/SAP/cloud-sdk-cli/issues/new/choose)!
 
 To get started run
@@ -54,7 +54,7 @@ $ sap-cloud-sdk init
 in the project folder.
 
 It will guide you through the initialization, create the necessary files and add necessary dependencies.
-If you run it in an empty folder, it will ask if you want to initialize a project using [express-generator](https://expressjs.com/en/starter/generator.html).
+If you run it in an empty folder, it will ask if you want to initialize a project using [@nest/cli](https://github.com/nestjs/nest-cli).
 
 To deploy to and run on Cloud Foundry, you need to
 1. Make sure that your app listens to port 8080
