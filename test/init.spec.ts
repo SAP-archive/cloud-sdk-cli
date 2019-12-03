@@ -104,14 +104,15 @@ describe('Init', () => {
   }, 20000);
 
   it('init should detect and ask if there are conflicts', async () => {
+    const appDir = 'test/next/';
     const projectDir = path.resolve(pathPrefix, 'detect-conflicts');
     if (fs.existsSync(projectDir)) {
       fs.removeSync(projectDir);
     }
-
+    fs.copySync(appDir, projectDir, { recursive: true });
     fs.createFileSync(`${projectDir}/.npmrc`);
 
-    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--frontendScripts', '--buildScaffold', `--projectDir=${projectDir}`];
+    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--frontendScripts', `--projectDir=${projectDir}`];
     await Init.run(argv);
 
     expect(confirm).toHaveBeenCalledWith('File(s) ".npmrc" already exist(s). Should they be overwritten?');
