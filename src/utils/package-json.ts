@@ -14,8 +14,9 @@ const frontendScripts = {
 
 const scaffoldPackageJsonParts = {
   scripts: {
+    'deploy': 'npm run ci-build && npm run ci-package && cf push',
     'ci-build': 'npm run build',
-    'ci-package': 'sap-cloud-cli package',
+    'ci-package': 'sap-cloud-sdk package',
     'ci-integration-test': 'jest --ci --config ./test/jest-e2e.json',
     'ci-backend-unit-test': 'jest --ci --coverage'
   },
@@ -46,26 +47,27 @@ export function packageJson(projectDir: string) {
   }
 }
 
-export async function modifyPackageJson(flags: any, addFrontendScripts: boolean, buildScaffold: boolean) {
+export async function modifyPackageJson(projectDir: string, addFrontendScripts: boolean, buildScaffold: boolean) {
   const packageJsonData = buildScaffold ? scaffoldPackageJsonParts : userDefinedJsonParts;
-  const { scripts, dependencies, devDependencies } = packageJson(flags.projectDir);
+  const { scripts, dependencies, devDependencies } = packageJson(projectDir);
   const scriptsToBeAdded = addFrontendScripts ? { ...packageJsonData.scripts, ...frontendScripts } : packageJsonData.scripts;
 
   const conflicts = scripts ? Object.keys(scriptsToBeAdded).filter(name => Object.keys(scripts).includes(name)) : [];
 
-  if (
-    conflicts.length &&
-    !(await cli.confirm(`Script(s) with the name(s) "${conflicts.join('", "')}" already exist(s). Should they be overwritten?`))
-  ) {
+  const question =
+    conflicts.length > 1
+      ? `Scripts with the names "${conflicts.join('", "')}" already exist. Should they be overwritten?`
+      : `A script with the name "${conflicts.join('", "')}" already exists. Should it be overwritten?`;
+  if (conflicts.length && !(await cli.confirm(question))) {
     return cli.error('Script exits as npm scripts could not be written.', { exit: 1 });
   }
   const adjustedPackageJson = {
-    ...packageJson(flags.projectDir),
+    ...packageJson(projectDir),
     scripts: { ...scripts, ...scriptsToBeAdded },
     dependencies: { ...dependencies, ...(await addDependencies(packageJsonData.dependencies)) },
     devDependencies: { ...devDependencies, ...(await addDependencies(packageJsonData.devDependencies)) }
   };
-  fs.writeFileSync(path.resolve(flags.projectDir, 'package.json'), JSON.stringify(adjustedPackageJson, null, 2));
+  fs.writeFileSync(path.resolve(projectDir, 'package.json'), JSON.stringify(adjustedPackageJson, null, 2));
 }
 
 async function addDependencies(dependencies: string[]): Promise<{ [key: string]: string }> {

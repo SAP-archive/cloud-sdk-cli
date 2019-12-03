@@ -183,7 +183,7 @@ ARGUMENTS
 OPTIONS
   -h, --help               Show help for the new command.
   -v, --verbose            Show more detailed output.
-  --projectDir=projectDir  [default: .] Path to the folder in which the project should be created.
+  --projectDir=projectDir  Path to the folder in which the project should be created.
 
 EXAMPLES
   $ sap-cloud-sdk init

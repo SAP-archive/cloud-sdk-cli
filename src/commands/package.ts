@@ -91,7 +91,7 @@ export default class Package extends Command {
 
     if (!flags.skipInstall) {
       const installPromise = execa('npm', ['install', '--production', '--prefix', outputDir], { stdio: flags.verbose ? 'inherit' : 'ignore' });
-      await action('Install productive dependencies...', flags.verbose, installPromise).catch(e => this.error(e, { exit: 10 }));
+      await action('Install productive dependencies', flags.verbose, installPromise).catch(e => this.error(e, { exit: 10 }));
     }
   }
 }

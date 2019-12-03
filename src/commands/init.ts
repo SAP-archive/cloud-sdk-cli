@@ -44,7 +44,6 @@ export default class Init extends Command {
       description: 'If the folder is empty, use nest-cli to create a project scaffold.'
     }),
     projectDir: flags.string({
-      default: '.',
       description: 'Path to the folder in which the project should be created.'
     }),
     force: flags.boolean({
@@ -76,7 +75,7 @@ export default class Init extends Command {
       this.error('Project directory was given via argument and via the `--projectDir` flag. Please only provide one.', { exit: 1 });
     }
 
-    const projectDir = flags.projectDir || args.projectDir;
+    const projectDir: string = flags.projectDir || args.projectDir || '.';
 
     try {
       ensureDirectoryExistence(projectDir, true);
@@ -86,7 +85,7 @@ export default class Init extends Command {
         await action('Building application scaffold', !verbose, this.buildScaffold(projectDir, flags));
       }
 
-      const options = await this.getOptions(projectDir, flags);
+      const options = await this.getOptions(projectDir, buildScaffold ? 'npm run start:prod' : flags.startCommand, flags.projectName);
 
       cli.action.start('Reading templates');
       const files = readTemplates({
@@ -95,22 +94,23 @@ export default class Init extends Command {
       });
       cli.action.stop();
 
-      await action('Finding potential conflicts...', false, findConflicts(files, flags.force));
+      cli.log('Finding potential conflicts...');
+      await findConflicts(files, flags.force);
+
       await action('Creating files', true, copyFiles(files, options)).catch(e => this.error(e, { exit: 2 }));
 
       const addFrontendScripts: boolean =
-        flags.frontendScripts ||
-        (!flags.skipFrontendScripts && (await cli.confirm('Should frontend-related npm scriptsToBeAdded for CI/CD be added?')));
-      await action('Adding dependencies to package.json', true, modifyPackageJson(flags, addFrontendScripts, buildScaffold));
+        flags.frontendScripts || (!flags.skipFrontendScripts && (await cli.confirm('Should frontend-related npm scripts for CI/CD be added?')));
+      cli.log('Adding dependencies to package.json...');
+      await modifyPackageJson(projectDir, addFrontendScripts, buildScaffold);
       await action('Installing dependencies', !verbose, installDependencies(projectDir, verbose)).catch(e =>
         this.error(`Error during npm install: ${e.message}`, { exit: 2 })
       );
 
-      cli.action.start('Modify .gitignore');
+      cli.log('Modify `.gitignore`...');
       this.modifyGitIgnore(projectDir);
-      cli.action.stop();
 
-      this.printSuccessMessage();
+      buildScaffold ? this.printSuccessMessageScaffold() : this.printSuccessMessage();
     } catch (error) {
       this.error(error, { exit: 1 });
     }
@@ -151,7 +151,7 @@ export default class Init extends Command {
     }
   }
 
-  private async getOptions(projectDir: string, { projectName, startCommand }: Flags) {
+  private async getOptions(projectDir: string, startCommand?: string, projectName?: string) {
     try {
       const options: { [key: string]: string } = {
         projectName:
@@ -204,6 +204,17 @@ export default class Init extends Command {
     this.log('| 2. Build your app if necessary                                |');
     this.log('| 3. Run `sap-cloud-sdk package [--include INC][--exclude EXC]` |');
     this.log('| 4. Push to Cloud Foundry (`cf push`)                          |');
+    this.log('|                                                               |');
+    this.log('| 🔨 Consider setting up Jenkins to continuously build your app |');
+    this.log('| Use `sap-cloud-sdk add-cx-server` to create the setup script  |');
+    this.log('+---------------------------------------------------------------+');
+  }
+
+  private printSuccessMessageScaffold() {
+    this.log('+---------------------------------------------------------------+');
+    this.log('| ✅ Init finished successfully.                                |');
+    this.log('|                                                               |');
+    this.log('| 🚀 Next step: Deploy your application (`npm run deploy`)      |');
     this.log('|                                                               |');
     this.log('| 🔨 Consider setting up Jenkins to continuously build your app |');
     this.log('| Use `sap-cloud-sdk add-cx-server` to create the setup script  |');
