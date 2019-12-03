@@ -75,7 +75,7 @@ Start by running [`sap-cloud-sdk add-approuter`](#sap-cloud-sdk-add-approuter) a
 * [`sap-cloud-sdk autocomplete [SHELL]`](#sap-cloud-sdk-autocomplete-shell)
 * [`sap-cloud-sdk help [COMMAND]`](#sap-cloud-sdk-help-command)
 * [`sap-cloud-sdk help-page`](#sap-cloud-sdk-help-page)
-* [`sap-cloud-sdk init`](#sap-cloud-sdk-init)
+* [`sap-cloud-sdk init [PROJECTDIR]`](#sap-cloud-sdk-init-projectdir)
 * [`sap-cloud-sdk package`](#sap-cloud-sdk-package)
 
 ## `sap-cloud-sdk add-approuter`
@@ -169,13 +169,16 @@ OPTIONS
 
 _See code: [src/commands/help-page.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.6/src/commands/help-page.ts)_
 
-## `sap-cloud-sdk init`
+## `sap-cloud-sdk init [PROJECTDIR]`
 
 Initializes your project for the SAP Cloud SDK, SAP Cloud Platform Cloud Foundry and CI/CD using the SAP Cloud SDK toolkit
 
 ```
 USAGE
-  $ sap-cloud-sdk init
+  $ sap-cloud-sdk init [PROJECTDIR]
+
+ARGUMENTS
+  PROJECTDIR  Path to the folder in which the project should be created.
 
 OPTIONS
   -h, --help               Show help for the new command.
