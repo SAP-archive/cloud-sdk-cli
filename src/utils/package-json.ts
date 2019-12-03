@@ -14,8 +14,8 @@ const frontendScripts = {
 
 const scaffoldPackageJsonParts = {
   scripts: {
-    'ci-build': 'echo "Use this to compile or minify your application"',
-    'ci-package': 'echo "Copy all deployment-relevant files to the `deployment` folder"',
+    'ci-build': 'npm run build',
+    'ci-package': 'sap-cloud-cli package',
     'ci-integration-test': 'jest --ci --config ./test/jest-e2e.json',
     'ci-backend-unit-test': 'jest --ci --coverage'
   },
