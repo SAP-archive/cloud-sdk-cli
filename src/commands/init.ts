@@ -61,24 +61,37 @@ export default class Init extends Command {
     })
   };
 
+  static args = [
+    {
+      name: 'projectDir',
+      description: 'Path to the folder in which the project should be created.'
+    }
+  ];
+
   async run() {
-    const { flags } = this.parse(Init);
+    const { flags, args } = this.parse(Init);
     const { verbose } = flags;
 
-    try {
-      ensureDirectoryExistence(flags.projectDir, true);
+    if (typeof flags.projectDir !== 'undefined' && typeof args.projectDir !== 'undefined' && flags.projectDir !== args.projectDir) {
+      this.error('Project directory was given via argument and via the `--projectDir` flag. Please only provide one.', { exit: 1 });
+    }
 
-      const buildScaffold = await this.shouldBuildScaffold(flags);
+    const projectDir = flags.projectDir || args.projectDir;
+
+    try {
+      ensureDirectoryExistence(projectDir, true);
+
+      const buildScaffold = await this.shouldBuildScaffold(projectDir, flags.buildScaffold);
       if (buildScaffold) {
-        await action('Building application scaffold', !verbose, this.buildScaffold(flags));
+        await action('Building application scaffold', !verbose, this.buildScaffold(projectDir, flags));
       }
 
-      const options = await this.getOptions(flags);
+      const options = await this.getOptions(projectDir, flags);
 
       cli.action.start('Reading templates');
       const files = readTemplates({
         from: [path.resolve(__dirname, '..', 'templates', 'init')],
-        to: flags.projectDir
+        to: projectDir
       });
       cli.action.stop();
 
@@ -89,12 +102,12 @@ export default class Init extends Command {
         flags.frontendScripts ||
         (!flags.skipFrontendScripts && (await cli.confirm('Should frontend-related npm scriptsToBeAdded for CI/CD be added?')));
       await action('Adding dependencies to package.json', true, modifyPackageJson(flags, addFrontendScripts, buildScaffold));
-      await action('Installing dependencies', !verbose, installDependencies(flags.projectDir, verbose)).catch(e =>
+      await action('Installing dependencies', !verbose, installDependencies(projectDir, verbose)).catch(e =>
         this.error(`Error during npm install: ${e.message}`, { exit: 2 })
       );
 
       cli.action.start('Modify .gitignore');
-      this.modifyGitIgnore(flags);
+      this.modifyGitIgnore(projectDir);
       cli.action.stop();
 
       this.printSuccessMessage();
@@ -103,12 +116,12 @@ export default class Init extends Command {
     }
   }
 
-  private async shouldBuildScaffold(flags: Flags) {
-    if (flags.buildScaffold) {
+  private async shouldBuildScaffold(projectDir: string, buildScaffold: boolean) {
+    if (buildScaffold) {
       return true;
     }
 
-    if (fs.existsSync(path.resolve(flags.projectDir, 'package.json'))) {
+    if (fs.existsSync(path.resolve(projectDir, 'package.json'))) {
       return false;
     }
 
@@ -117,7 +130,7 @@ export default class Init extends Command {
     return cli.confirm('Should a new `nest.js` project be initialized in this folder?');
   }
 
-  private async buildScaffold({ projectDir, force, verbose }: Flags) {
+  private async buildScaffold(projectDir: string, { force, verbose }: Flags) {
     if (fs.readdirSync(projectDir).length !== 0) {
       const dirString = projectDir === '.' ? 'this directory' : projectDir;
       if (force || (await cli.confirm(`Directory is not empty. Remove all files in ${dirString}?`))) {
@@ -138,18 +151,18 @@ export default class Init extends Command {
     }
   }
 
-  private async getOptions(flags: Flags) {
+  private async getOptions(projectDir: string, { projectName, startCommand }: Flags) {
     try {
       const options: { [key: string]: string } = {
         projectName:
-          flags.projectName ||
+          projectName ||
           (await cli.prompt('Enter project name (for use in manifest.yml)', {
-            default: packageJson(flags.projectDir).name
+            default: packageJson(projectDir).name
           })),
         command:
-          flags.startCommand ||
+          startCommand ||
           (await cli.prompt('Enter the command to start your server', {
-            default: packageJson(flags.projectDir).scripts.start ? 'npm start' : ''
+            default: packageJson(projectDir).scripts.start ? 'npm start' : ''
           }))
       };
 
@@ -160,8 +173,8 @@ export default class Init extends Command {
     }
   }
 
-  private modifyGitIgnore(flags: Flags) {
-    const pathToGitignore = path.resolve(flags.projectDir, '.gitignore');
+  private modifyGitIgnore(projectDir: string) {
+    const pathToGitignore = path.resolve(projectDir, '.gitignore');
     const pathsToIgnore = ['credentials.json', '/s4hana_pipeline', '/deployment'];
 
     if (fs.existsSync(pathToGitignore)) {
