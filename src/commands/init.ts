@@ -200,7 +200,7 @@ export default class Init extends Command {
     this.log('| ✅ Init finished successfully.                                |');
     this.log('|                                                               |');
     this.log('| 🚀 Next steps:                                                |');
-    this.log('| 1. Make sure that your app listens to port 8080               |');
+    this.log('| 1. Make sure that your app listens to `process.env.PORT`      |');
     this.log('| 2. Build your app if necessary                                |');
     this.log('| 3. Run `sap-cloud-sdk package [--include INC][--exclude EXC]` |');
     this.log('| 4. Push to Cloud Foundry (`cf push`)                          |');
