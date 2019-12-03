@@ -104,7 +104,7 @@ describe('Init', () => {
   }, 20000);
 
   it('init should detect and ask if there are conflicts', async () => {
-    const appDir = 'test/next/';
+    const appDir = 'test/nest/';
     const projectDir = path.resolve(pathPrefix, 'detect-conflicts');
     if (fs.existsSync(projectDir)) {
       fs.removeSync(projectDir);
@@ -175,11 +175,8 @@ describe('Init', () => {
 
     expect(dependencies).toContain('@sap/cloud-sdk-core');
     expect(devDependencies).toContain('@sap/cloud-sdk-test-util');
-    expect(scripts).toContain('ci-build');
-    expect(scripts).toContain('ci-package');
-    expect(scripts).toContain('ci-backend-unit-test');
-    expect(scripts).toContain('ci-frontend-unit-test');
-    expect(scripts).toContain('ci-integration-test');
-    expect(scripts).toContain('ci-e2e');
+    ['ci-build', 'ci-package', 'ci-backend-unit-test', 'ci-frontend-unit-test', 'ci-integration-test', 'ci-e2e'].forEach(script =>
+      expect(scripts).toContain(script)
+    );
   }, 20000);
 });
