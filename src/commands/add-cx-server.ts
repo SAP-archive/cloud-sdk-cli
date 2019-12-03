@@ -45,7 +45,7 @@ export default class AddCxServer extends Command {
       }
 
       cli.action.start('Finding potential conflicts');
-      await findConflicts(files, flags.force, this.error);
+      await findConflicts(files, flags.force);
       cli.action.stop();
 
       cli.action.start('Creating files');

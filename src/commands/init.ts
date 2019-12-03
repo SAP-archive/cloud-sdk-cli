@@ -95,7 +95,7 @@ export default class Init extends Command {
       });
       cli.action.stop();
 
-      await action('Finding potential conflicts', true, findConflicts(files, flags.force, this.error));
+      await action('Finding potential conflicts...', false, findConflicts(files, flags.force));
       await action('Creating files', true, copyFiles(files, options)).catch(e => this.error(e, { exit: 2 }));
 
       const addFrontendScripts: boolean =
