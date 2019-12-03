@@ -28,11 +28,6 @@ interface SharedScripts {
   backendBuildScripts: BackendBuildScripts;
 }
 
-interface DevDependencies {
-  [name: string]: string;
-}
-
-// TODO Autodetect testing framework (?) and make sure it outputs junit
 const sharedScriptsForTypes: SharedScripts = {
   frontendScripts: {
     'ci-e2e': 'echo "Test your application and write results in a JUnit format to `s4hana_pipeline/reports/e2e/`"',
@@ -52,10 +47,8 @@ const expressPackageJsonParts: PackageJsonParts = {
     'ci-backend-unit-test': 'jest --ci --config=jest.unit-test.config.js',
     'test': 'jest'
   },
-  devDependencies: {
-    'jest': '^24.9.0',
-    'jest-junit': '^8.0.0'
-  }
+  devDependencies: ['jest', 'jest-junit', '@sap/cloud-sdk-test-util'],
+  dependencies: ['@sap/cloud-sdk-core']
 };
 
 const userDefinedJsonParts: PackageJsonParts = {
@@ -66,14 +59,16 @@ const userDefinedJsonParts: PackageJsonParts = {
     'ci-backend-unit-test':
       'echo "Test your application and write results in a JUnit format to `s4hana_pipeline/reports/backend-unit/` and coverage in a cobertura format to `s4hana_pipeline/reports/coverage/backend-unit/`"'
   },
-  devDependencies: {}
+  devDependencies: ['@sap/cloud-sdk-test-util'],
+  dependencies: ['@sap/cloud-sdk-core']
 };
 
 interface PackageJsonParts {
   backendBuildScripts: BackendBuildScripts;
   frontendScripts: FrontendScripts;
   backendTestScripts: BackendTestScripts;
-  devDependencies: DevDependencies;
+  devDependencies: string[];
+  dependencies: string[];
 }
 
 export function packageJsonParts(type: InitType): PackageJsonParts {

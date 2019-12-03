@@ -67,10 +67,12 @@ export default class Init extends Command {
 
     try {
       cli.action.start('Reading templates');
+      const excludes =
+        initType === InitType.existingProject ? ['test', 'jest.config.js', 'jest.integration-test.config.js', 'jets.unit-test.config.js'] : [];
       const files = readTemplates({
         from: [path.resolve(__dirname, '..', 'templates', 'init')],
         to: flags.projectDir,
-        exclude: initType === InitType.existingProject ? ['test'] : []
+        exclude: excludes
       });
       cli.action.stop();
 
@@ -82,9 +84,12 @@ export default class Init extends Command {
       await copyFiles(files, options).catch(e => this.error(e, { exit: 2 }));
       cli.action.stop();
 
-      cli.action.start('Adding scripts for CI/CD and dependencies to package.json');
+      cli.action.start('Adding dependencies to package.json');
       await this.modifyPackageJson(flags, initType);
       cli.action.stop();
+
+      this.log('Installing dependencies');
+      await this.installDependencies(flags);
 
       cli.action.start('Modify .gitignore');
       this.modifyGitIgnore(flags);
@@ -168,14 +173,14 @@ export default class Init extends Command {
 
   private async modifyPackageJson(flags: Flags, initializationType: InitType) {
     const packageJsonData = packageJsonParts(initializationType);
-
-    const packageJson = this.packageJson(flags);
+    const { scripts, dependencies, devDependencies } = this.packageJson(flags);
     const addFrontendScripts: boolean =
-      flags.frontendScripts || (!flags.skipFrontendScripts && (await cli.confirm('Should frontend-related npm scripts for CI/CD be added?')));
+      flags.frontendScripts ||
+      (!flags.skipFrontendScripts && (await cli.confirm('Should frontend-related npm scriptsToBeAdded for CI/CD be added?')));
     const backendScritps = { ...packageJsonData.backendBuildScripts, ...packageJsonData.backendTestScripts };
-    const scripts = addFrontendScripts ? { ...backendScritps, ...packageJsonData.frontendScripts } : backendScritps;
+    const scriptsToBeAdded = addFrontendScripts ? { ...backendScritps, ...packageJsonData.frontendScripts } : backendScritps;
 
-    const conflicts = packageJson.scripts ? Object.keys(scripts).filter(name => Object.keys(packageJson.scripts).includes(name)) : [];
+    const conflicts = scripts ? Object.keys(scriptsToBeAdded).filter(name => Object.keys(scripts).includes(name)) : [];
 
     if (
       conflicts.length &&
@@ -185,22 +190,41 @@ export default class Init extends Command {
         exit: 11
       });
     }
-    packageJson.scripts = { ...packageJson.scripts, ...scripts };
 
-    if (initializationType === InitType.freshExpress) {
-      packageJson.devDependencies = { ...packageJson.devDependencies, ...packageJsonData.devDependencies };
-    }
+    const adjustedPackageJson = {
+      ...this.packageJson(flags),
+      scripts: { ...scripts, ...scriptsToBeAdded },
+      dependencies: { ...dependencies, ...(await this.addDependencies(packageJsonData.dependencies)) },
+      devDependencies: { ...devDependencies, ...(await this.addDependencies(packageJsonData.devDependencies)) }
+    };
 
-    fs.writeFileSync(path.resolve(flags.projectDir, 'package.json'), JSON.stringify(packageJson, null, 2));
+    fs.writeFileSync(path.resolve(flags.projectDir, 'package.json'), JSON.stringify(adjustedPackageJson, null, 2));
+  }
 
+  private async addDependencies(dependencies: string[]): Promise<{ [key: string]: string }> {
+    const versions = await Promise.all(dependencies.map(dependency => this.getVersionOfDependency(dependency)));
+    return dependencies.reduce((result, dependency, index) => ({ ...result, [dependency]: versions[index] }), {} as any);
+  }
+
+  private async getVersionOfDependency(dependency: string): Promise<string> {
     try {
-      await execa('npm', ['install', '@sap/cloud-sdk-core'], {
-        cwd: flags.projectDir
-      });
-      await execa('npm', ['install', '--save-dev', '@sap/cloud-sdk-test-util'], { cwd: flags.projectDir });
-    } catch (error) {
-      this.error(error, { exit: 12 });
+      const defaultOptions = ['view', dependency, 'version'];
+      const version = dependency.includes('@sap')
+        ? execa('npm', [...defaultOptions, '--registry', 'https://npm.sap.com'])
+        : execa('npm', defaultOptions);
+
+      return `^${(await version).stdout}`;
+    } catch (err) {
+      this.warn(`Error in finding version for dependency ${dependency} - use LATEST as fallback.`);
+      return 'latest';
     }
+  }
+
+  private async installDependencies(flags: Flags) {
+    return execa('npm', ['install'], {
+      cwd: flags.projectDir,
+      stdout: 'inherit'
+    }).catch(err => this.error(`Error in npm install ${err.message}`, { exit: 12 }));
   }
 
   private modifyGitIgnore(flags: Flags) {
