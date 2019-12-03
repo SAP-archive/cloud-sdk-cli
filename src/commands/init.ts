@@ -145,10 +145,20 @@ export default class Init extends Command {
     };
 
     if (fs.existsSync(cliPath)) {
-      return execa(cliPath, ['new', '.', '--skip-install', '--package-manager', 'npm'], options);
+      await execa(cliPath, ['new', '.', '--skip-install', '--package-manager', 'npm'], options);
     } else {
-      return execa('npx', ['@nestjs/cli', 'new', '.', '--skip-install', '--package-manager', 'npm'], options);
+      await execa('npx', ['@nestjs/cli', 'new', '.', '--skip-install', '--package-manager', 'npm'], options);
     }
+
+    const pathToMainTs = path.resolve(projectDir, 'src', 'main.ts');
+    const mainTs = fs.readFileSync(pathToMainTs, { encoding: 'utf8' });
+    const modifiedMainTs = mainTs.replace('.listen(3000)', '.listen(process.env.PORT || 3000)');
+
+    if (mainTs === modifiedMainTs) {
+      cli.warn('Could not adjust listening port to `process.env.PORT`. Please adjust manually.');
+    }
+
+    fs.writeFileSync(pathToMainTs, modifiedMainTs);
   }
 
   private async getOptions(projectDir: string, startCommand?: string, projectName?: string) {
