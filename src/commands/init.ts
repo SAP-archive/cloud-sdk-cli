@@ -124,10 +124,18 @@ export default class Init extends Command {
         rm.sync(`${projectDir}/{*,.*}`);
       }
     }
-    return execa('npx', ['@nestjs/cli', 'new', '.', '--skip-install', '--package-manager', 'npm'], {
+
+    const cliPath = path.resolve('node_modules/.bin/nest');
+    const options: { [key: string]: string } = {
       cwd: projectDir,
       stdio: verbose ? 'inherit' : 'ignore'
-    });
+    };
+
+    if (fs.existsSync(cliPath)) {
+      return execa(cliPath, ['new', '.', '--skip-install', '--package-manager', 'npm'], options);
+    } else {
+      return execa('npx', ['@nestjs/cli', 'new', '.', '--skip-install', '--package-manager', 'npm'], options);
+    }
   }
 
   private async getOptions(flags: Flags) {
