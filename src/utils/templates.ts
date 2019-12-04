@@ -33,16 +33,21 @@ export function readTemplates({ from, to, exclude = [] }: TemplateParam): CopyDe
   }, results);
 }
 
-export async function findConflicts(files: CopyDescriptor[], force: boolean) {
+export async function findConflicts(files: CopyDescriptor[], force: boolean = false) {
   const conflicts = files.filter(file => fs.existsSync(file.fileName));
 
   if (conflicts.length) {
-    cli.error(
-      conflicts.length > 1
-        ? `Files with the names "${conflicts.join('", "')}" already exist. Please rerun the command with \`--force\`.`
-        : `A file with the name "${conflicts.join('", "')}" already exists. Please rerun the command with \`--force\`.`,
-      { exit: 11 }
-    );
+    if (force) {
+      conflicts.forEach(file => fs.unlinkSync(file.fileName));
+    } else {
+      const listOfFiles = conflicts.map(f => path.basename(f.fileName)).join('", "');
+      cli.error(
+        conflicts.length > 1
+          ? `Files with the names "${listOfFiles}" already exist. Please rerun the command with \`--force\`.`
+          : `A file with the name "${listOfFiles}" already exists. Please rerun the command with \`--force\`.`,
+        { exit: 1 }
+      );
+    }
   }
 }
 

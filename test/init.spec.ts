@@ -1,7 +1,7 @@
 /*!
  * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
-const confirm = jest.fn().mockResolvedValue(true);
+const error = jest.fn();
 jest.mock('cli-ux', () => {
   // Mocking needs to happen before the command is imported
   const cli = jest.requireActual('cli-ux');
@@ -9,7 +9,7 @@ jest.mock('cli-ux', () => {
     ...cli,
     default: {
       ...cli.default,
-      confirm
+      error
     }
   };
 });
@@ -103,7 +103,7 @@ describe('Init', () => {
     expect(fs.existsSync(path.resolve(projectDir, 'test'))).toBe(false);
   }, 20000);
 
-  it('init should detect and ask if there are conflicts', async () => {
+  it('init should detect and fail if there are conflicts', async () => {
     const appDir = 'test/nest/';
     const projectDir = path.resolve(pathPrefix, 'detect-conflicts');
     if (fs.existsSync(projectDir)) {
@@ -115,7 +115,7 @@ describe('Init', () => {
     const argv = ['--projectName=testingApp', '--startCommand="npm start"', `--projectDir=${projectDir}`];
     await Init.run(argv);
 
-    expect(confirm).toHaveBeenCalledWith('File(s) ".npmrc" already exist(s). Should they be overwritten?');
+    expect(error).toHaveBeenCalledWith('A file with the name ".npmrc" already exists. Please rerun the command with `--force`.', { exit: 1 });
   }, 60000);
 
   it('should add to gitignore if there is one', async () => {

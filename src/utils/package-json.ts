@@ -47,7 +47,7 @@ export function parsePackageJson(projectDir: string) {
   }
 }
 
-export async function modifyPackageJson(projectDir: string, addFrontendScripts: boolean, buildScaffold: boolean) {
+export async function modifyPackageJson(projectDir: string, buildScaffold: boolean, addFrontendScripts: boolean, force: boolean = false) {
   const packageJsonData = buildScaffold ? scaffoldPackageJsonParts : userDefinedJsonParts;
   const originalPackageJson = parsePackageJson(projectDir);
   const { scripts, dependencies, devDependencies } = originalPackageJson;
@@ -55,12 +55,14 @@ export async function modifyPackageJson(projectDir: string, addFrontendScripts: 
 
   const conflicts = scripts ? Object.keys(scriptsToBeAdded).filter(name => Object.keys(scripts).includes(name)) : [];
 
-  cli.error(
-    conflicts.length > 1
-      ? `Scripts with the names "${conflicts.join('", "')}" already exist. Please rerun the command with \`--force\`.`
-      : `A script with the name "${conflicts.join('", "')}" already exists. Please rerun the command with \`--force\`.`,
-    { exit: 12 }
-  );
+  if (conflicts.length && !force) {
+    return cli.error(
+      conflicts.length > 1
+        ? `Scripts with the names "${conflicts.join('", "')}" already exist. Please rerun the command with \`--force\`.`
+        : `A script with the name "${conflicts.join('", "')}" already exists. Please rerun the command with \`--force\`.`,
+      { exit: 12 }
+    );
+  }
 
   const adjustedPackageJson = {
     ...originalPackageJson,
