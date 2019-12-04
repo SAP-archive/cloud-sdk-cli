@@ -88,6 +88,7 @@ USAGE
 
 OPTIONS
   -h, --help  show CLI help
+  --force     Do not fail if a file already exist and overwrite it.
 
 ALIASES
   $ sap-cloud-sdk add-app-router
@@ -108,6 +109,7 @@ USAGE
 
 OPTIONS
   -h, --help  show CLI help
+  --force     Do not fail if a file already exist and overwrite it.
 
 EXAMPLE
   $ sap-cloud-sdk add-cx-server
@@ -183,6 +185,8 @@ ARGUMENTS
 OPTIONS
   -h, --help               Show help for the new command.
   -v, --verbose            Show more detailed output.
+  --force                  Do not fail if a file or npm script already exist and overwrite it.
+  --frontendScripts        Add frontend-related npm scripts which are executed by our CI/CD toolkit.
   --projectDir=projectDir  Path to the folder in which the project should be created.
 
 EXAMPLES

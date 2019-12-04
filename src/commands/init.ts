@@ -128,7 +128,7 @@ export default class Init extends Command {
 
     this.log('This folder does not contain a `package.json`.');
 
-    if (cli.confirm('Should a new `nest.js` project be initialized in this folder?')) {
+    if (await cli.confirm('Should a new `nest.js` project be initialized in this folder?')) {
       if (fs.readdirSync(projectDir).length !== 0) {
         const dirString = projectDir === '.' ? 'this directory' : projectDir;
         if (force || (await cli.confirm(`Directory is not empty. Remove all files in ${dirString}?`))) {
