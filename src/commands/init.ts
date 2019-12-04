@@ -98,7 +98,7 @@ export default class Init extends Command {
         this.error(`Error during npm install: ${e.message}`, { exit: 2 })
       );
 
-      cli.log('Modify `.gitignore`...');
+      cli.log('Modifying `.gitignore`...');
       this.modifyGitIgnore(projectDir);
 
       buildScaffold ? this.printSuccessMessageScaffold() : this.printSuccessMessage();
