@@ -37,14 +37,12 @@ export async function findConflicts(files: CopyDescriptor[], force: boolean) {
   const conflicts = files.filter(file => fs.existsSync(file.fileName));
 
   if (conflicts.length) {
-    const overwrite =
-      force ||
-      (await cli.confirm(`File(s) "${conflicts.map(f => path.basename(f.fileName)).join('", "')}" already exist(s). Should they be overwritten?`));
-    if (overwrite) {
-      conflicts.forEach(file => fs.unlinkSync(file.fileName));
-    } else {
-      cli.error('Script exits now as file(s) cannot be overwritten', { exit: 11 });
-    }
+    cli.error(
+      conflicts.length > 1
+        ? `Files with the names "${conflicts.join('", "')}" already exist. Please rerun the command with \`--force\`.`
+        : `A file with the name "${conflicts.join('", "')}" already exists. Please rerun the command with \`--force\`.`,
+      { exit: 11 }
+    );
   }
 }
 

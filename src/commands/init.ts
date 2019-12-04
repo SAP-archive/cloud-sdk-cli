@@ -7,9 +7,9 @@ import { OutputFlags } from '@oclif/parser';
 import cli from 'cli-ux';
 import * as execa from 'execa';
 import * as fs from 'fs';
+import * as Listr from 'listr';
 import * as path from 'path';
 import * as rm from 'rimraf';
-import { action } from '../utils/cli-action';
 import { installDependencies, modifyPackageJson, parsePackageJson } from '../utils/package-json';
 import { copyFiles, ensureDirectoryExistence, findConflicts, readTemplates } from '../utils/templates';
 
@@ -29,19 +29,18 @@ export default class Init extends Command {
       hidden: true,
       description: 'Give a command which is used to start the application productively.'
     }),
-    frontendScripts: flags.boolean({
-      description: 'Add frontend-related npm scripts which are executed by our CI/CD toolkit.'
-    }),
     buildScaffold: flags.boolean({
       hidden: true,
       description: 'If the folder is empty, use nest-cli to create a project scaffold.'
     }),
+    force: flags.boolean({
+      description: 'Do not fail if a file or npm script already exist and overwrite it.'
+    }),
+    frontendScripts: flags.boolean({
+      description: 'Add frontend-related npm scripts which are executed by our CI/CD toolkit.'
+    }),
     projectDir: flags.string({
       description: 'Path to the folder in which the project should be created.'
-    }),
-    force: flags.boolean({
-      hidden: true,
-      description: 'Overwrite files without asking if conflicts are found.'
     }),
     help: flags.help({
       char: 'h',
@@ -72,34 +71,45 @@ export default class Init extends Command {
 
     try {
       ensureDirectoryExistence(projectDir, true);
-
-      const buildScaffold = await this.shouldBuildScaffold(projectDir, flags.buildScaffold);
+      const buildScaffold = await this.shouldBuildScaffold(projectDir, flags);
       if (buildScaffold) {
-        await action('Building application scaffold', !verbose, this.buildScaffold(projectDir, flags));
+        await this.buildScaffold(projectDir, flags.verbose);
       }
-
       const options = await this.getOptions(projectDir, buildScaffold ? 'npm run start:prod' : flags.startCommand, flags.projectName);
 
-      cli.action.start('Reading templates');
-      const files = readTemplates({
-        from: [path.resolve(__dirname, '..', 'templates', 'init')],
-        to: projectDir
-      });
-      cli.action.stop();
+      const tasks = new Listr([
+        {
+          title: 'Reading templates',
+          task: async ctx => {
+            ctx.files = readTemplates({
+              from: [path.resolve(__dirname, '..', 'templates', 'init')],
+              to: projectDir
+            });
+          }
+        },
+        {
+          title: 'Finding potential conflicts',
+          task: ctx => findConflicts(ctx.files, flags.force)
+        },
+        {
+          title: 'Creating files',
+          task: ctx => copyFiles(ctx.files, options).catch(e => this.error(e, { exit: 2 }))
+        },
+        {
+          title: 'Adding dependencies to package.json',
+          task: () => modifyPackageJson(projectDir, flags.frontendScripts, buildScaffold)
+        },
+        {
+          title: 'Installing dependencies',
+          task: () => installDependencies(projectDir, verbose).catch(e => this.error(`Error during npm install: ${e.message}`, { exit: 2 }))
+        },
+        {
+          title: 'Modifying `.gitignore`',
+          task: () => this.modifyGitIgnore(projectDir)
+        }
+      ]);
 
-      cli.log('Finding potential conflicts...');
-      await findConflicts(files, flags.force);
-
-      await action('Creating files', true, copyFiles(files, options)).catch(e => this.error(e, { exit: 2 }));
-
-      cli.log('Adding dependencies to package.json...');
-      await modifyPackageJson(projectDir, flags.frontendScripts, buildScaffold);
-      await action('Installing dependencies', !verbose, installDependencies(projectDir, verbose)).catch(e =>
-        this.error(`Error during npm install: ${e.message}`, { exit: 2 })
-      );
-
-      cli.log('Modifying `.gitignore`...');
-      this.modifyGitIgnore(projectDir);
+      await tasks.run();
 
       buildScaffold ? this.printSuccessMessageScaffold() : this.printSuccessMessage();
     } catch (error) {
@@ -107,7 +117,7 @@ export default class Init extends Command {
     }
   }
 
-  private async shouldBuildScaffold(projectDir: string, buildScaffold: boolean) {
+  private async shouldBuildScaffold(projectDir: string, { buildScaffold, force }: Flags) {
     if (buildScaffold) {
       return true;
     }
@@ -118,19 +128,23 @@ export default class Init extends Command {
 
     this.log('This folder does not contain a `package.json`.');
 
-    return cli.confirm('Should a new `nest.js` project be initialized in this folder?');
+    if (cli.confirm('Should a new `nest.js` project be initialized in this folder?')) {
+      if (fs.readdirSync(projectDir).length !== 0) {
+        const dirString = projectDir === '.' ? 'this directory' : projectDir;
+        if (force || (await cli.confirm(`Directory is not empty. Remove all files in ${dirString}?`))) {
+          rm.sync(`${projectDir}/{*,.*}`);
+        }
+      }
+      return true;
+    } else {
+      return false;
+    }
   }
 
-  private async buildScaffold(projectDir: string, { force, verbose }: Flags) {
-    if (fs.readdirSync(projectDir).length !== 0) {
-      const dirString = projectDir === '.' ? 'this directory' : projectDir;
-      if (force || (await cli.confirm(`Directory is not empty. Remove all files in ${dirString}?`))) {
-        rm.sync(`${projectDir}/{*,.*}`);
-      }
-    }
-
+  private async buildScaffold(projectDir: string, verbose: boolean) {
+    cli.action.start('Building application scaffold');
     const cliPath = path.resolve('node_modules/.bin/nest');
-    const options: { [key: string]: string } = {
+    const options: execa.Options = {
       cwd: projectDir,
       stdio: verbose ? 'inherit' : 'ignore'
     };
@@ -146,10 +160,11 @@ export default class Init extends Command {
     const modifiedMainTs = mainTs.replace('.listen(3000)', '.listen(process.env.PORT || 3000)');
 
     if (mainTs === modifiedMainTs) {
-      cli.warn('Could not adjust listening port to `process.env.PORT`. Please adjust manually.');
+      this.warn('Could not adjust listening port to `process.env.PORT`. Please adjust manually.');
     }
 
     fs.writeFileSync(pathToMainTs, modifiedMainTs);
+    cli.action.stop();
   }
 
   private async getOptions(projectDir: string, startCommand?: string, projectName?: string) {

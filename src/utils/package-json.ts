@@ -55,13 +55,12 @@ export async function modifyPackageJson(projectDir: string, addFrontendScripts: 
 
   const conflicts = scripts ? Object.keys(scriptsToBeAdded).filter(name => Object.keys(scripts).includes(name)) : [];
 
-  const question =
+  cli.error(
     conflicts.length > 1
-      ? `Scripts with the names "${conflicts.join('", "')}" already exist. Should they be overwritten?`
-      : `A script with the name "${conflicts.join('", "')}" already exists. Should it be overwritten?`;
-  if (conflicts.length && !(await cli.confirm(question))) {
-    return cli.error('Script exits as npm scripts could not be written.', { exit: 1 });
-  }
+      ? `Scripts with the names "${conflicts.join('", "')}" already exist. Please rerun the command with \`--force\`.`
+      : `A script with the name "${conflicts.join('", "')}" already exists. Please rerun the command with \`--force\`.`,
+    { exit: 12 }
+  );
 
   const adjustedPackageJson = {
     ...originalPackageJson,

@@ -6,6 +6,7 @@ import { Command, flags } from '@oclif/command';
 import cli from 'cli-ux';
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
+import * as Listr from 'listr';
 import * as path from 'path';
 import { copyFiles, findConflicts, readTemplates } from '../utils/templates';
 
@@ -21,8 +22,7 @@ export default class AddApprouter extends Command {
       description: 'Path to the folder in which the project should be created.'
     }),
     force: flags.boolean({
-      hidden: true,
-      description: 'Overwrite files without asking if conflicts are found.'
+      description: 'Do not fail if a file already exist and overwrite it.'
     }),
     help: flags.help({ char: 'h' })
   };
@@ -30,17 +30,25 @@ export default class AddApprouter extends Command {
   async run() {
     const { flags } = this.parse(AddApprouter);
     try {
-      cli.action.start('Reading templates');
-      const files = readTemplates({ from: [path.resolve(__dirname, '..', 'templates', 'add-approuter')], to: flags.projectDir });
-      cli.action.stop();
+      const options = await this.getOptions();
+      const tasks = new Listr([
+        {
+          title: 'Reading templates',
+          task: ctx => {
+            ctx.files = readTemplates({ from: [path.resolve(__dirname, '..', 'templates', 'add-approuter')], to: flags.projectDir });
+          }
+        },
+        {
+          title: 'Finding potential conflicts',
+          task: ctx => findConflicts(ctx.files, flags.force)
+        },
+        {
+          title: 'Creating files',
+          task: ctx => copyFiles(ctx.files, options).catch(e => this.error(e, { exit: 2 }))
+        }
+      ]);
 
-      cli.action.start('Finding potential conflicts');
-      await findConflicts(files, flags.force);
-      cli.action.stop();
-
-      cli.action.start('Creating files');
-      await copyFiles(files, await this.getOptions()).catch(e => this.error(e, { exit: 2 }));
-      cli.action.stop();
+      await tasks.run();
 
       this.printSuccessMessage();
     } catch (error) {
@@ -73,17 +81,13 @@ export default class AddApprouter extends Command {
   }
 
   private printSuccessMessage() {
-    this.log('✅ Successfully added approuter.');
-    this.log('');
-    this.log('⚠️ Please verify these generated files:');
     this.log(
-      '- xs-security.json (for help check https://help.sap.com/viewer/4505d0bdaf4948449b7f7379d24d0f0d/2.0.02/en-US/e6fc90df44464a29952e1c2c36dd9861.html)'
-    );
-    this.log(
-      '- xs-app.json (for help check https://help.sap.com/viewer/65de2977205c403bbc107264b8eccf4b/Cloud/en-US/c103fb414988447ead2023f768096dcc.html)'
-    );
-    this.log(
-      '- mainfest.yml (for help check https://help.sap.com/viewer/65de2977205c403bbc107264b8eccf4b/Cloud/en-US/ba527058dc4d423a9e0a69ecc67f4593.html)'
+      `✅ Successfully added approuter.
+
+Please verify these generated files:
+- xs-security.json (for help check https://help.sap.com/viewer/4505d0bdaf4948449b7f7379d24d0f0d/2.0.02/en-US/e6fc90df44464a29952e1c2c36dd9861.html)
+- xs-app.json (for help check https://help.sap.com/viewer/65de2977205c403bbc107264b8eccf4b/Cloud/en-US/c103fb414988447ead2023f768096dcc.html)
+- mainfest.yml (for help check https://help.sap.com/viewer/65de2977205c403bbc107264b8eccf4b/Cloud/en-US/ba527058dc4d423a9e0a69ecc67f4593.html)`
     );
   }
 }

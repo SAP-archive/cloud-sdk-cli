@@ -3,13 +3,12 @@
  */
 
 import { Command, flags } from '@oclif/command';
-import cli from 'cli-ux';
 import * as execa from 'execa';
 import * as glob from 'fast-glob';
 import * as fs from 'fs';
+import * as Listr from 'listr';
 import * as path from 'path';
 import * as rm from 'rimraf';
-import { action } from '../utils/cli-action';
 import { ensureDirectoryExistence } from '../utils/templates';
 
 export default class Package extends Command {
@@ -57,41 +56,53 @@ export default class Package extends Command {
     const { flags } = this.parse(Package);
     const outputDir = path.resolve(flags.projectDir, flags.output);
 
-    cli.action.start(`Overwrite ${flags.output}`);
-    try {
-      if (fs.existsSync(outputDir)) {
-        rm.sync(outputDir);
+    const tasks = new Listr([
+      {
+        title: `Overwrite ${flags.output}`,
+        task: () => {
+          try {
+            if (fs.existsSync(outputDir)) {
+              rm.sync(outputDir);
+            }
+            fs.mkdirSync(outputDir);
+          } catch (error) {
+            this.error(error, { exit: 1 });
+          }
+        }
+      },
+      {
+        title: 'Copying files',
+        task: async () => {
+          const include = await glob(flags.include.split(','), {
+            dot: true,
+            absolute: true,
+            cwd: flags.projectDir
+          });
+          const exclude: string[] = flags.exclude.length
+            ? await glob(flags.exclude.split(','), {
+                dot: true,
+                absolute: true,
+                cwd: flags.projectDir
+              })
+            : [];
+          const filtered = include.filter(filepath => !exclude.includes(filepath)).map(filepath => path.relative(flags.projectDir, filepath));
+
+          filtered.forEach(filepath => {
+            ensureDirectoryExistence(path.resolve(outputDir, filepath));
+            fs.copyFileSync(filepath, path.resolve(outputDir, filepath));
+          });
+        }
+      },
+      {
+        title: 'Install productive dependencies',
+        enabled: () => !flags.skipInstall,
+        task: async () => {
+          execa('npm', ['install', '--production', '--prefix', outputDir], { stdio: flags.verbose ? 'inherit' : 'ignore' }).catch(e =>
+            this.error(e, { exit: 10 })
+          );
+        }
       }
-      fs.mkdirSync(outputDir);
-    } catch (error) {
-      this.error(error, { exit: 1 });
-    }
-    cli.action.stop();
-
-    cli.action.start('Copying files');
-    const include = await glob(flags.include.split(','), {
-      dot: true,
-      absolute: true,
-      cwd: flags.projectDir
-    });
-    const exclude: string[] = flags.exclude.length
-      ? await glob(flags.exclude.split(','), {
-          dot: true,
-          absolute: true,
-          cwd: flags.projectDir
-        })
-      : [];
-    const filtered = include.filter(filepath => !exclude.includes(filepath)).map(filepath => path.relative(flags.projectDir, filepath));
-
-    filtered.forEach(filepath => {
-      ensureDirectoryExistence(path.resolve(outputDir, filepath));
-      fs.copyFileSync(filepath, path.resolve(outputDir, filepath));
-    });
-    cli.action.stop();
-
-    if (!flags.skipInstall) {
-      const installPromise = execa('npm', ['install', '--production', '--prefix', outputDir], { stdio: flags.verbose ? 'inherit' : 'ignore' });
-      await action('Install productive dependencies', flags.verbose, installPromise).catch(e => this.error(e, { exit: 10 }));
-    }
+    ]);
+    tasks.run();
   }
 }
