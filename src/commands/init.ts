@@ -10,7 +10,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as rm from 'rimraf';
 import { action } from '../utils/cli-action';
-import { installDependencies, modifyPackageJson, packageJson } from '../utils/package-json';
+import { installDependencies, modifyPackageJson, parsePackageJson } from '../utils/package-json';
 import { copyFiles, ensureDirectoryExistence, findConflicts, readTemplates } from '../utils/templates';
 
 type Flags = OutputFlags<typeof Init.flags>;
@@ -163,23 +163,24 @@ export default class Init extends Command {
 
   private async getOptions(projectDir: string, startCommand?: string, projectName?: string) {
     try {
+      const { name, scripts } = parsePackageJson(projectDir);
+
       const options: { [key: string]: string } = {
         projectName:
           projectName ||
           (await cli.prompt('Enter project name (for use in manifest.yml)', {
-            default: packageJson(projectDir).name
+            default: name
           })),
         command:
           startCommand ||
           (await cli.prompt('Enter the command to start your server', {
-            default: packageJson(projectDir).scripts.start ? 'npm start' : ''
+            default: scripts.start ? 'npm start' : ''
           }))
       };
 
       return options;
     } catch (error) {
-      this.error('Your package.json does not contain valid JSON. Please repair or delete it.', { exit: 10 });
-      return {}; // to satisfy tsc, which does not realize this is unreachable
+      return this.error('Your package.json does not contain valid JSON. Please repair or delete it.', { exit: 10 });
     }
   }
 

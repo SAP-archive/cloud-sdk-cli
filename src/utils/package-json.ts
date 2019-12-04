@@ -37,7 +37,7 @@ const userDefinedJsonParts = {
   dependencies: ['@sap/cloud-sdk-core']
 };
 
-export function packageJson(projectDir: string) {
+export function parsePackageJson(projectDir: string) {
   if (fs.existsSync(path.resolve(projectDir, 'package.json'))) {
     return JSON.parse(
       fs.readFileSync(path.resolve(projectDir, 'package.json'), {
@@ -49,7 +49,8 @@ export function packageJson(projectDir: string) {
 
 export async function modifyPackageJson(projectDir: string, addFrontendScripts: boolean, buildScaffold: boolean) {
   const packageJsonData = buildScaffold ? scaffoldPackageJsonParts : userDefinedJsonParts;
-  const { scripts, dependencies, devDependencies } = packageJson(projectDir);
+  const originalPackageJson = parsePackageJson(projectDir);
+  const { scripts, dependencies, devDependencies } = originalPackageJson;
   const scriptsToBeAdded = addFrontendScripts ? { ...packageJsonData.scripts, ...frontendScripts } : packageJsonData.scripts;
 
   const conflicts = scripts ? Object.keys(scriptsToBeAdded).filter(name => Object.keys(scripts).includes(name)) : [];
@@ -61,8 +62,9 @@ export async function modifyPackageJson(projectDir: string, addFrontendScripts: 
   if (conflicts.length && !(await cli.confirm(question))) {
     return cli.error('Script exits as npm scripts could not be written.', { exit: 1 });
   }
+
   const adjustedPackageJson = {
-    ...packageJson(projectDir),
+    ...originalPackageJson,
     scripts: { ...scripts, ...scriptsToBeAdded },
     dependencies: { ...dependencies, ...(await addDependencies(packageJsonData.dependencies)) },
     devDependencies: { ...devDependencies, ...(await addDependencies(packageJsonData.devDependencies)) }
