@@ -45,7 +45,7 @@ describe('Init', () => {
       fs.removeSync(projectDir);
     }
 
-    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--frontendScripts', '--buildScaffold', `--projectDir=${projectDir}`];
+    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--buildScaffold', `--projectDir=${projectDir}`];
     await Init.run(argv);
 
     ['.npmrc', 'credentials.json', 'systems.json', 'manifest.yml']
@@ -61,7 +61,7 @@ describe('Init', () => {
       fs.removeSync(projectDir);
     }
 
-    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--frontendScripts', '--buildScaffold', `--projectDir=${projectDir}`];
+    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--buildScaffold', `--projectDir=${projectDir}`];
     await Init.run(argv);
 
     // execute the local tests
@@ -86,7 +86,7 @@ describe('Init', () => {
     }
     fs.copySync(expressAppDir, projectDir, { recursive: true });
 
-    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--skipFrontendScripts', `--projectDir=${projectDir}`, '--force'];
+    const argv = ['--projectName=testingApp', '--startCommand="npm start"', `--projectDir=${projectDir}`, '--force'];
     await Init.run(argv);
     ['.npmrc', 'credentials.json', 'systems.json', 'manifest.yml']
       .map(file => path.resolve(projectDir, file))
@@ -112,7 +112,7 @@ describe('Init', () => {
     fs.copySync(appDir, projectDir, { recursive: true });
     fs.createFileSync(`${projectDir}/.npmrc`);
 
-    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--frontendScripts', `--projectDir=${projectDir}`];
+    const argv = ['--projectName=testingApp', '--startCommand="npm start"', `--projectDir=${projectDir}`];
     await Init.run(argv);
 
     expect(confirm).toHaveBeenCalledWith('File(s) ".npmrc" already exist(s). Should they be overwritten?');
@@ -126,7 +126,7 @@ describe('Init', () => {
     }
     fs.copySync(exampleAppDir, projectDir, { recursive: true });
 
-    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--skipFrontendScripts', `--projectDir=${projectDir}`];
+    const argv = ['--projectName=testingApp', '--startCommand="npm start"', `--projectDir=${projectDir}`];
     await Init.run(argv);
 
     const gitignoreEntries = fs
@@ -149,7 +149,7 @@ describe('Init', () => {
     fs.createFileSync(path.resolve(projectDir, 'package.json'));
     fs.writeFileSync(path.resolve(projectDir, 'package.json'), JSON.stringify({ name: 'project' }), 'utf8');
 
-    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--skipFrontendScripts', `--projectDir=${projectDir}`];
+    const argv = ['--projectName=testingApp', '--startCommand="npm start"', `--projectDir=${projectDir}`];
     await Init.run(argv);
 
     expect(warn).toHaveBeenCalledWith('No .gitignore file found!');

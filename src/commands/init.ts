@@ -30,14 +30,7 @@ export default class Init extends Command {
       description: 'Give a command which is used to start the application productively.'
     }),
     frontendScripts: flags.boolean({
-      hidden: true,
-      description: 'Add frontend-related npm scripts which are needed for CI/CD.',
-      exclusive: ['skipFrontendScripts']
-    }),
-    skipFrontendScripts: flags.boolean({
-      hidden: true,
-      description: 'Skip frontend-related npm scripts and dont ask to add them.',
-      exclusive: ['frontendScripts']
+      description: 'Add frontend-related npm scripts which are executed by our CI/CD toolkit.'
     }),
     buildScaffold: flags.boolean({
       hidden: true,
@@ -99,10 +92,8 @@ export default class Init extends Command {
 
       await action('Creating files', true, copyFiles(files, options)).catch(e => this.error(e, { exit: 2 }));
 
-      const addFrontendScripts: boolean =
-        flags.frontendScripts || (!flags.skipFrontendScripts && (await cli.confirm('Should frontend-related npm scripts for CI/CD be added?')));
       cli.log('Adding dependencies to package.json...');
-      await modifyPackageJson(projectDir, addFrontendScripts, buildScaffold);
+      await modifyPackageJson(projectDir, flags.frontendScripts, buildScaffold);
       await action('Installing dependencies', !verbose, installDependencies(projectDir, verbose)).catch(e =>
         this.error(`Error during npm install: ${e.message}`, { exit: 2 })
       );
