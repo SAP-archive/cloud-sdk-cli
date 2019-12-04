@@ -20,7 +20,7 @@ const scaffoldPackageJsonParts = {
     'ci-integration-test': 'jest --ci --config ./test/jest-e2e.json',
     'ci-backend-unit-test': 'jest --ci --coverage'
   },
-  devDependencies: ['jest', 'jest-junit', '@sap/cloud-sdk-test-util'],
+  devDependencies: ['jest', 'jest-junit', '@sap/cloud-sdk-test-util', '@sap-cloud-sdk/cli'],
   dependencies: ['@sap/cloud-sdk-core']
 };
 
@@ -33,7 +33,7 @@ const userDefinedJsonParts = {
     'ci-backend-unit-test':
       'echo "Test your application and write results in a JUnit format to `s4hana_pipeline/reports/backend-unit/` and coverage in a cobertura format to `s4hana_pipeline/reports/coverage/backend-unit/`"'
   },
-  devDependencies: ['@sap/cloud-sdk-test-util'],
+  devDependencies: ['@sap/cloud-sdk-test-util', '@sap-cloud-sdk/cli'],
   dependencies: ['@sap/cloud-sdk-core']
 };
 
