@@ -27,7 +27,7 @@ const scaffoldPackageJsonParts = {
 const userDefinedJsonParts = {
   scripts: {
     'ci-build': 'echo "Use this to compile or minify your application"',
-    'ci-package': 'echo "Copy all deployment-relevant files to the `deployment` folder"',
+    'ci-package': 'sap-cloud-sdk package --include="package.json,package-lock.json,index.js,dist/**/*"',
     'ci-integration-test':
       'echo "Test your application and write results in a JUnit format to `s4hana_pipeline/reports/backend-integration/` and coverage in a cobertura format to `s4hana_pipeline/reports/coverage/backend-integration/`"',
     'ci-backend-unit-test':

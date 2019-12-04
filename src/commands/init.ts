@@ -131,7 +131,7 @@ export default class Init extends Command {
     if (await cli.confirm('Should a new `nest.js` project be initialized in this folder?')) {
       if (fs.readdirSync(projectDir).length !== 0) {
         const dirString = projectDir === '.' ? 'this directory' : projectDir;
-        if (force || (await cli.confirm(`Directory is not empty. Remove all files in ${dirString}?`))) {
+        if (force || (await cli.confirm(`Directory is not empty. Should all files in ${dirString} be removed?`))) {
           rm.sync(`${projectDir}/{*,.*}`);
         }
       }
@@ -179,7 +179,7 @@ export default class Init extends Command {
           })),
         command:
           startCommand ||
-          (await cli.prompt('Enter the command to start your server', {
+          (await cli.prompt('Enter the command to start your application', {
             default: scripts.start ? 'npm start' : ''
           }))
       };
@@ -231,7 +231,9 @@ export default class Init extends Command {
     this.log('+---------------------------------------------------------------+');
     this.log('| ✅ Init finished successfully.                                |');
     this.log('|                                                               |');
-    this.log('| 🚀 Next step: Deploy your application (`npm run deploy`)      |');
+    this.log('| 🚀 Next steps:                                                |');
+    this.log('| - Run the application locally (`npm run start:dev`)           |');
+    this.log('| - Deploy your application (`npm run deploy`)                  |');
     this.log('|                                                               |');
     this.log('| 🔨 Consider setting up Jenkins to continuously build your app |');
     this.log('| Use `sap-cloud-sdk add-cx-server` to create the setup script  |');
