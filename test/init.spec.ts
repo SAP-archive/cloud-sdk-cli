@@ -1,7 +1,14 @@
 /*!
  * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
-const confirm = jest.fn().mockResolvedValue(true);
+const error = jest.fn();
+const warn = jest.fn(message => console.log('MOCKED WARNING: ', message));
+jest.mock('@oclif/command', () => {
+  const command = jest.requireActual('@oclif/command');
+  command.Command.prototype.warn = warn;
+  return command;
+});
+
 jest.mock('cli-ux', () => {
   // Mocking needs to happen before the command is imported
   const cli = jest.requireActual('cli-ux');
@@ -9,16 +16,10 @@ jest.mock('cli-ux', () => {
     ...cli,
     default: {
       ...cli.default,
-      confirm
+      error,
+      warn
     }
   };
-});
-
-const warn = jest.fn(message => console.log('MOCKED WARNING: ', message));
-jest.mock('@oclif/command', () => {
-  const command = jest.requireActual('@oclif/command');
-  command.Command.prototype.warn = warn;
-  return command;
 });
 
 import execa = require('execa');
@@ -45,7 +46,7 @@ describe('Init', () => {
       fs.removeSync(projectDir);
     }
 
-    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--frontendScripts', '--initWithExpress', `--projectDir=${projectDir}`];
+    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--buildScaffold', `--projectDir=${projectDir}`];
     await Init.run(argv);
 
     ['.npmrc', 'credentials.json', 'systems.json', 'manifest.yml']
@@ -55,13 +56,13 @@ describe('Init', () => {
       });
   }, 60000);
 
-  it('should create test cases for a fresh express project.', async () => {
+  it('should create test cases when building a project with scaffold', async () => {
     const projectDir = path.resolve(pathPrefix, 'full-init-with-test');
     if (fs.existsSync(projectDir)) {
       fs.removeSync(projectDir);
     }
 
-    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--frontendScripts', '--initWithExpress', `--projectDir=${projectDir}`];
+    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--buildScaffold', `--projectDir=${projectDir}`];
     await Init.run(argv);
 
     // execute the local tests
@@ -86,7 +87,7 @@ describe('Init', () => {
     }
     fs.copySync(expressAppDir, projectDir, { recursive: true });
 
-    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--skipFrontendScripts', `--projectDir=${projectDir}`, '--force'];
+    const argv = ['--projectName=testingApp', '--startCommand="npm start"', `--projectDir=${projectDir}`, '--force'];
     await Init.run(argv);
     ['.npmrc', 'credentials.json', 'systems.json', 'manifest.yml']
       .map(file => path.resolve(projectDir, file))
@@ -103,18 +104,22 @@ describe('Init', () => {
     expect(fs.existsSync(path.resolve(projectDir, 'test'))).toBe(false);
   }, 20000);
 
-  it('init should detect and ask if there are conflicts', async () => {
+  it('init should detect and fail if there are conflicts', async () => {
+    const appDir = 'test/nest/';
     const projectDir = path.resolve(pathPrefix, 'detect-conflicts');
     if (fs.existsSync(projectDir)) {
       fs.removeSync(projectDir);
     }
-
+    fs.copySync(appDir, projectDir, { recursive: true });
     fs.createFileSync(`${projectDir}/.npmrc`);
 
-    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--frontendScripts', '--initWithExpress', `--projectDir=${projectDir}`];
+    const argv = ['--projectName=testingApp', '--startCommand="npm start"', `--projectDir=${projectDir}`];
     await Init.run(argv);
 
-    expect(confirm).toHaveBeenCalledWith('File(s) ".npmrc" already exist(s). Should they be overwritten?');
+    expect(error).toHaveBeenCalledWith(
+      'A file with the name ".npmrc" already exists. If you want to overwrite it, rerun the command with `--force`.',
+      { exit: 1 }
+    );
   }, 60000);
 
   it('should add to gitignore if there is one', async () => {
@@ -125,7 +130,7 @@ describe('Init', () => {
     }
     fs.copySync(exampleAppDir, projectDir, { recursive: true });
 
-    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--skipFrontendScripts', `--projectDir=${projectDir}`];
+    const argv = ['--projectName=testingApp', '--startCommand="npm start"', `--projectDir=${projectDir}`];
     await Init.run(argv);
 
     const gitignoreEntries = fs
@@ -148,7 +153,7 @@ describe('Init', () => {
     fs.createFileSync(path.resolve(projectDir, 'package.json'));
     fs.writeFileSync(path.resolve(projectDir, 'package.json'), JSON.stringify({ name: 'project' }), 'utf8');
 
-    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--skipFrontendScripts', `--projectDir=${projectDir}`];
+    const argv = ['--projectName=testingApp', '--startCommand="npm start"', `--projectDir=${projectDir}`];
     await Init.run(argv);
 
     expect(warn).toHaveBeenCalledWith('No .gitignore file found!');
@@ -174,11 +179,8 @@ describe('Init', () => {
 
     expect(dependencies).toContain('@sap/cloud-sdk-core');
     expect(devDependencies).toContain('@sap/cloud-sdk-test-util');
-    expect(scripts).toContain('ci-build');
-    expect(scripts).toContain('ci-package');
-    expect(scripts).toContain('ci-backend-unit-test');
-    expect(scripts).toContain('ci-frontend-unit-test');
-    expect(scripts).toContain('ci-integration-test');
-    expect(scripts).toContain('ci-e2e');
+    ['ci-build', 'ci-package', 'ci-backend-unit-test', 'ci-frontend-unit-test', 'ci-integration-test', 'ci-e2e'].forEach(script =>
+      expect(scripts).toContain(script)
+    );
   }, 20000);
 });

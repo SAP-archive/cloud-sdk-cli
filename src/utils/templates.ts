@@ -33,25 +33,20 @@ export function readTemplates({ from, to, exclude = [] }: TemplateParam): CopyDe
   }, results);
 }
 
-type stderr = (
-  input: string | Error,
-  options?: {
-    code?: string;
-    exit?: number;
-  }
-) => never;
-
-export async function findConflicts(files: CopyDescriptor[], force: boolean, stderr: stderr) {
+export async function findConflicts(files: CopyDescriptor[], force: boolean = false) {
   const conflicts = files.filter(file => fs.existsSync(file.fileName));
 
   if (conflicts.length) {
-    const overwrite =
-      force ||
-      (await cli.confirm(`File(s) "${conflicts.map(f => path.basename(f.fileName)).join('", "')}" already exist(s). Should they be overwritten?`));
-    if (overwrite) {
+    if (force) {
       conflicts.forEach(file => fs.unlinkSync(file.fileName));
     } else {
-      stderr('Script exits now as file(s) cannot be overwritten', { exit: 11 });
+      const listOfFiles = conflicts.map(f => path.basename(f.fileName)).join('", "');
+      cli.error(
+        conflicts.length > 1
+          ? `Files with the names "${listOfFiles}" already exist. If you want to overwrite them, rerun the command with \`--force\`.`
+          : `A file with the name "${listOfFiles}" already exists. If you want to overwrite it, rerun the command with \`--force\`.`,
+        { exit: 1 }
+      );
     }
   }
 }

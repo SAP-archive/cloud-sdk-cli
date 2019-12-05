@@ -3,7 +3,7 @@
  */
 
 const prompt = jest.fn().mockResolvedValue('mock-project');
-const confirm = jest.fn().mockResolvedValue(true);
+const error = jest.fn();
 jest.mock('cli-ux', () => {
   // Mocking needs to happen before the command is imported
   const cli = jest.requireActual('cli-ux');
@@ -12,7 +12,7 @@ jest.mock('cli-ux', () => {
     default: {
       ...cli.default,
       prompt,
-      confirm
+      error
     }
   };
 });
@@ -76,7 +76,7 @@ describe('Add Approuter', () => {
     expect(approuterFiles).toContain('xs-security.json');
   }, 30000);
 
-  it('should detect and ask if there are conflicts', async () => {
+  it('should detect and fail if there are conflicts', async () => {
     const projectDir = path.resolve(pathPrefix, 'approuter-conflict');
     if (fs.existsSync(projectDir)) {
       fs.removeSync(projectDir);
@@ -90,6 +90,11 @@ describe('Add Approuter', () => {
     const argv = [`--projectDir=${projectDir}`];
     await AddApprouter.run(argv);
 
-    expect(confirm).toHaveBeenCalledWith('File(s) "xs-security.json" already exist(s). Should they be overwritten?');
+    expect(error).toHaveBeenCalledWith(
+      'A file with the name "xs-security.json" already exists. If you want to overwrite it, rerun the command with `--force`.',
+      {
+        exit: 1
+      }
+    );
   }, 30000);
 });

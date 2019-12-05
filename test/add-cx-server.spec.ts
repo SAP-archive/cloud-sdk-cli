@@ -2,7 +2,7 @@
  * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
-const confirm = jest.fn().mockResolvedValue(true);
+const error = jest.fn();
 jest.mock('cli-ux', () => {
   // Mocking needs to happen before the command is imported
   const cli = jest.requireActual('cli-ux');
@@ -10,7 +10,7 @@ jest.mock('cli-ux', () => {
     ...cli,
     default: {
       ...cli.default,
-      confirm
+      error
     }
   };
 });
@@ -86,7 +86,7 @@ describe('Add CX Server', () => {
     expect(approuterFiles).toContain('server.cfg');
   }, 30000);
 
-  it('should detect and ask if there are conflicts', async () => {
+  it('should detect and fail if there are conflicts', async () => {
     const projectDir = path.resolve(pathPrefix, 'add-cx-server-conflicts');
     if (fs.existsSync(projectDir)) {
       fs.removeSync(projectDir);
@@ -99,6 +99,11 @@ describe('Add CX Server', () => {
     const argv = [`--projectDir=${projectDir}`];
     await AddCxServer.run(argv);
 
-    expect(confirm).toHaveBeenCalledWith('File(s) "cx-server" already exist(s). Should they be overwritten?');
+    expect(error).toHaveBeenCalledWith(
+      'A file with the name "cx-server" already exists. If you want to overwrite it, rerun the command with `--force`.',
+      {
+        exit: 1
+      }
+    );
   }, 30000);
 });
