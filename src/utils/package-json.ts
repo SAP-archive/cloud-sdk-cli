@@ -29,7 +29,7 @@ const scaffoldProjectPackageJson = {
         'jest-junit',
         {
           suiteName: 'backend unit tests',
-          outputDirectory: '../s4hana_pipeline/reports/backend-unit'
+          outputDirectory: './s4hana_pipeline/reports/backend-unit'
         }
       ]
     ],
@@ -86,9 +86,11 @@ export async function modifyPackageJson(projectDir: string, isScaffold: boolean,
     dependencies: { ...(await addDependencies(packageJson.dependencies)), ...dependencies },
     devDependencies: { ...(await addDependencies(packageJson.devDependencies)), ...devDependencies }
   };
+
   if (isScaffold) {
     adjustedPackageJson.jest = { ...originalPackageJson.jest, ...scaffoldProjectPackageJson.jest };
   }
+
   fs.writeFileSync(path.resolve(projectDir, 'package.json'), JSON.stringify(adjustedPackageJson, null, 2));
 }
 

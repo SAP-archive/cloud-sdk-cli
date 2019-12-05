@@ -70,7 +70,7 @@ export default class Init extends Command {
 
     try {
       ensureDirectoryExistence(projectDir, true);
-      const isScaffold = await shouldBuildScaffold(projectDir, flags);
+      const isScaffold = await shouldBuildScaffold(projectDir, flags.buildScaffold, flags.force);
       if (isScaffold) {
         await buildScaffold(projectDir, flags.verbose);
       }
