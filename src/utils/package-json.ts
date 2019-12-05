@@ -49,8 +49,8 @@ export function parsePackageJson(projectDir: string) {
   }
 }
 
-export async function modifyPackageJson(projectDir: string, buildScaffold: boolean, addFrontendScripts: boolean, force: boolean = false) {
-  const packageJson = buildScaffold ? scaffoldProjectPackageJson : existingProjectPackageJson;
+export async function modifyPackageJson(projectDir: string, isScaffolding: boolean, addFrontendScripts: boolean, force: boolean = false) {
+  const packageJson = isScaffolding ? scaffoldProjectPackageJson : existingProjectPackageJson;
   const originalPackageJson = parsePackageJson(projectDir);
   const { scripts, dependencies, devDependencies } = originalPackageJson;
   const scriptsToBeAdded = addFrontendScripts ? { ...packageJson.scripts, ...frontendScripts } : packageJson.scripts;

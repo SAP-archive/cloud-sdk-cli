@@ -3,17 +3,13 @@
  */
 
 import { Command, flags } from '@oclif/command';
-import { OutputFlags } from '@oclif/parser';
 import cli from 'cli-ux';
-import * as execa from 'execa';
-import * as fs from 'fs';
 import * as Listr from 'listr';
 import * as path from 'path';
-import * as rm from 'rimraf';
+import { modifyGitIgnore } from '../utils/git-ignore';
 import { installDependencies, modifyPackageJson, parsePackageJson } from '../utils/package-json';
+import { buildScaffold, shouldBuildScaffold } from '../utils/scaffold';
 import { copyFiles, ensureDirectoryExistence, findConflicts, readTemplates } from '../utils/templates';
-
-type Flags = OutputFlags<typeof Init.flags>;
 
 export default class Init extends Command {
   static description = 'Initializes your project for the SAP Cloud SDK, SAP Cloud Platform Cloud Foundry and CI/CD using the SAP Cloud SDK toolkit';
@@ -74,11 +70,11 @@ export default class Init extends Command {
 
     try {
       ensureDirectoryExistence(projectDir, true);
-      const buildScaffold = await this.shouldBuildScaffold(projectDir, flags);
-      if (buildScaffold) {
-        await this.buildScaffold(projectDir, flags.verbose);
+      const isScaffolding = await shouldBuildScaffold(projectDir, flags);
+      if (isScaffolding) {
+        await buildScaffold(projectDir, flags.verbose);
       }
-      const options = await this.getOptions(projectDir, buildScaffold ? 'npm run start:prod' : flags.startCommand, flags.projectName);
+      const options = await this.getOptions(projectDir, isScaffolding ? 'npm run start:prod' : flags.startCommand, flags.projectName);
 
       const tasks = new Listr([
         {
@@ -100,7 +96,7 @@ export default class Init extends Command {
         },
         {
           title: 'Adding dependencies to package.json',
-          task: () => modifyPackageJson(projectDir, buildScaffold, flags.frontendScripts, flags.force)
+          task: () => modifyPackageJson(projectDir, isScaffolding, flags.frontendScripts, flags.force)
         },
         {
           title: 'Installing dependencies',
@@ -108,65 +104,15 @@ export default class Init extends Command {
         },
         {
           title: 'Modifying `.gitignore`',
-          task: () => this.modifyGitIgnore(projectDir)
+          task: () => modifyGitIgnore(projectDir)
         }
       ]);
 
       await tasks.run();
-      this.printSuccessMessage(buildScaffold);
+      this.printSuccessMessage(isScaffolding);
     } catch (error) {
       this.error(error, { exit: 1 });
     }
-  }
-
-  private async shouldBuildScaffold(projectDir: string, { buildScaffold, force }: Flags): Promise<boolean> {
-    if (buildScaffold) {
-      return true;
-    }
-
-    if (fs.existsSync(path.resolve(projectDir, 'package.json'))) {
-      return false;
-    }
-
-    this.log('This folder does not contain a `package.json`.');
-
-    if (await cli.confirm('Should a new `nest.js` project be initialized in this folder?')) {
-      if (fs.readdirSync(projectDir).length !== 0) {
-        const dirString = projectDir === '.' ? 'this directory' : projectDir;
-        if (force || (await cli.confirm(`Directory is not empty. Should all files in ${dirString} be removed?`))) {
-          rm.sync(`${projectDir}/{*,.*}`);
-        }
-      }
-      return true;
-    }
-    this.warn('Cancelling `init` because a valid `package.json` is required to run.');
-    return this.exit(1);
-  }
-
-  private async buildScaffold(projectDir: string, verbose: boolean) {
-    cli.action.start('Building application scaffold');
-    const cliPath = path.resolve('node_modules/.bin/nest');
-    const options: execa.Options = {
-      cwd: projectDir,
-      stdio: verbose ? 'inherit' : 'ignore'
-    };
-
-    if (fs.existsSync(cliPath)) {
-      await execa(cliPath, ['new', '.', '--skip-install', '--package-manager', 'npm'], options);
-    } else {
-      await execa('npx', ['@nestjs/cli', 'new', '.', '--skip-install', '--package-manager', 'npm'], options);
-    }
-
-    const pathToMainTs = path.resolve(projectDir, 'src', 'main.ts');
-    const mainTs = fs.readFileSync(pathToMainTs, { encoding: 'utf8' });
-    const modifiedMainTs = mainTs.replace('.listen(3000)', '.listen(process.env.PORT || 3000)');
-
-    if (mainTs === modifiedMainTs) {
-      this.warn('Could not adjust listening port to `process.env.PORT`. Please adjust manually.');
-    }
-
-    fs.writeFileSync(pathToMainTs, modifiedMainTs);
-    cli.action.stop();
   }
 
   private async getOptions(projectDir: string, startCommand?: string, projectName?: string) {
@@ -188,35 +134,13 @@ export default class Init extends Command {
     return options;
   }
 
-  private modifyGitIgnore(projectDir: string) {
-    const pathToGitignore = path.resolve(projectDir, '.gitignore');
-    const pathsToIgnore = ['credentials.json', '/s4hana_pipeline', '/deployment'];
-
-    if (fs.existsSync(pathToGitignore)) {
-      try {
-        const fileContent = fs.readFileSync(pathToGitignore, 'utf8');
-        const newPaths = pathsToIgnore.filter(path => !fileContent.includes(path));
-        const newFileContent = fileContent + (newPaths.length ? `\n${newPaths.join('\n')}\n` : '');
-
-        fs.writeFileSync(pathToGitignore, newFileContent, 'utf8');
-      } catch (error) {
-        this.warn('There was a problem writing to the .gitignore.');
-        this.log('If your project is using a different version control system, please make sure the following paths are not tracked:');
-        pathsToIgnore.forEach(path => this.log('  ' + path));
-      }
-    } else {
-      this.warn('No .gitignore file found!');
-      this.log('If your project is using a different version control system, please make sure the following paths are not tracked:');
-    }
-  }
-
-  private printSuccessMessage(buildScaffold: boolean) {
+  private printSuccessMessage(isScaffolding: boolean) {
     this.log('+---------------------------------------------------------------+');
     this.log('| ✅ Init finished successfully.                                |');
     this.log('|                                                               |');
     this.log('| 🚀 Next steps:                                                |');
 
-    buildScaffold ? this.printNextStepsScaffold() : this.printNextStepsBase();
+    isScaffolding ? this.printNextStepsScaffold() : this.printNextStepsBase();
 
     this.log('|                                                               |');
     this.log('| 🔨 Consider setting up Jenkins to continuously build your app |');
