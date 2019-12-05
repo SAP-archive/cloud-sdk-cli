@@ -86,32 +86,30 @@ describe('generate-vdm', () => {
   });
 
   it('should pass each boolean flags correctly', async () => {
-    await Promise.all(
-      Object.keys(generatorOptionsSDK).map(async key => {
-        const option = generatorOptionsSDK[key as keyof GeneratorOptionsSDK];
-        const expected = getDefault('/somePrefix');
-        const args = ['-i', 'input', '-o', 'output', '--projectDir', '/somePrefix'];
+    return Object.keys(generatorOptionsSDK).map(async key => {
+      const option = generatorOptionsSDK[key as keyof GeneratorOptionsSDK];
+      const expected = getDefault('/somePrefix');
+      const args = ['-i', 'input', '-o', 'output', '--projectDir', '/somePrefix'];
 
-        if (option !== undefined && option.type === 'boolean') {
-          const casted = key as keyof GeneratorOptionsSDK;
-          if (!option.default) {
-            args.push(`--${key}`);
-            (expected[casted] as any) = true;
-          } else {
-            args.push(`--no-${key}`);
-            (expected[casted] as any) = false;
-          }
-          const spyToGeneratorSDK1 = jest.spyOn(foo, 'toGeneratorSDK');
-          try {
-            await GenerateVdm.run(args);
-          } catch (e) {
-            expect(spyToGeneratorSDK1).toHaveReturnedWith(expected);
-            return Promise.resolve();
-          }
+      if (option !== undefined && option.type === 'boolean') {
+        const casted = key as keyof GeneratorOptionsSDK;
+        if (!option.default) {
+          args.push(`--${key}`);
+          (expected[casted] as any) = true;
+        } else {
+          args.push(`--no-${key}`);
+          (expected[casted] as any) = false;
         }
-      })
-    );
-  });
+        const spyToGeneratorSDK1 = jest.spyOn(foo, 'toGeneratorSDK');
+        try {
+          await GenerateVdm.run(args);
+        } catch (e) {
+          expect(spyToGeneratorSDK1).toHaveReturnedWith(expected);
+        }
+      }
+      return Promise.resolve();
+    });
+  }, 10000);
 
   function getInputAllFalse(): string[] {
     const allFalse = getAllFalse();
