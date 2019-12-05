@@ -90,8 +90,11 @@ describe('Add Approuter', () => {
     const argv = [`--projectDir=${projectDir}`];
     await AddApprouter.run(argv);
 
-    expect(error).toHaveBeenCalledWith('A file with the name "xs-security.json" already exists. Please rerun the command with `--force`.', {
-      exit: 1
-    });
+    expect(error).toHaveBeenCalledWith(
+      'A file with the name "xs-security.json" already exists. If you want to overwrite it, rerun the command with `--force`.',
+      {
+        exit: 1
+      }
+    );
   }, 30000);
 });

@@ -12,7 +12,7 @@ const frontendScripts = {
   'ci-e2e': 'echo "Test your application and write results in a JUnit format to `s4hana_pipeline/reports/e2e/`"'
 };
 
-const scaffoldPackageJsonParts = {
+const scaffoldProjectPackageJson = {
   scripts: {
     'deploy': 'npm run ci-build && npm run ci-package && cf push',
     'ci-build': 'npm run build',
@@ -24,7 +24,7 @@ const scaffoldPackageJsonParts = {
   dependencies: ['@sap/cloud-sdk-core']
 };
 
-const userDefinedJsonParts = {
+const existingProjectPackageJson = {
   scripts: {
     'ci-build': 'echo "Use this to compile or minify your application"',
     'ci-package': 'sap-cloud-sdk package --include="package.json,package-lock.json,index.js,dist/**/*"',
@@ -38,28 +38,30 @@ const userDefinedJsonParts = {
 };
 
 export function parsePackageJson(projectDir: string) {
-  if (fs.existsSync(path.resolve(projectDir, 'package.json'))) {
+  try {
     return JSON.parse(
       fs.readFileSync(path.resolve(projectDir, 'package.json'), {
         encoding: 'utf8'
       })
     );
+  } catch (error) {
+    return cli.error('Your package.json does not contain valid JSON. Please repair or delete it.', { exit: 10 });
   }
 }
 
 export async function modifyPackageJson(projectDir: string, buildScaffold: boolean, addFrontendScripts: boolean, force: boolean = false) {
-  const packageJsonData = buildScaffold ? scaffoldPackageJsonParts : userDefinedJsonParts;
+  const packageJson = buildScaffold ? scaffoldProjectPackageJson : existingProjectPackageJson;
   const originalPackageJson = parsePackageJson(projectDir);
   const { scripts, dependencies, devDependencies } = originalPackageJson;
-  const scriptsToBeAdded = addFrontendScripts ? { ...packageJsonData.scripts, ...frontendScripts } : packageJsonData.scripts;
+  const scriptsToBeAdded = addFrontendScripts ? { ...packageJson.scripts, ...frontendScripts } : packageJson.scripts;
 
   const conflicts = scripts ? Object.keys(scriptsToBeAdded).filter(name => Object.keys(scripts).includes(name)) : [];
 
   if (conflicts.length && !force) {
     return cli.error(
       conflicts.length > 1
-        ? `Scripts with the names "${conflicts.join('", "')}" already exist. Please rerun the command with \`--force\`.`
-        : `A script with the name "${conflicts.join('", "')}" already exists. Please rerun the command with \`--force\`.`,
+        ? `Scripts with the names "${conflicts.join('", "')}" already exist. If you want to overwrite them, rerun the command with \`--force\`.`
+        : `A script with the name "${conflicts.join('", "')}" already exists. If you want to overwrite it, rerun the command with \`--force\`.`,
       { exit: 12 }
     );
   }
@@ -67,8 +69,8 @@ export async function modifyPackageJson(projectDir: string, buildScaffold: boole
   const adjustedPackageJson = {
     ...originalPackageJson,
     scripts: { ...scripts, ...scriptsToBeAdded },
-    dependencies: { ...dependencies, ...(await addDependencies(packageJsonData.dependencies)) },
-    devDependencies: { ...devDependencies, ...(await addDependencies(packageJsonData.devDependencies)) }
+    dependencies: { ...(await addDependencies(packageJson.dependencies)), ...dependencies },
+    devDependencies: { ...(await addDependencies(packageJson.devDependencies)), ...devDependencies }
   };
   fs.writeFileSync(path.resolve(projectDir, 'package.json'), JSON.stringify(adjustedPackageJson, null, 2));
 }
@@ -80,10 +82,8 @@ async function addDependencies(dependencies: string[]): Promise<{ [key: string]:
 
 async function getVersionOfDependency(dependency: string): Promise<string> {
   try {
-    const defaultOptions = ['view', dependency, 'version'];
-    const version = dependency.includes('@sap')
-      ? execa('npm', [...defaultOptions, '--registry', 'https://npm.sap.com'])
-      : execa('npm', defaultOptions);
+    const args = ['view', dependency, 'version'];
+    const version = dependency.includes('@sap') ? execa('npm', [...args, '--registry', 'https://npm.sap.com']) : execa('npm', args);
 
     return `^${(await version).stdout}`;
   } catch (err) {

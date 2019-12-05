@@ -43,8 +43,8 @@ export async function findConflicts(files: CopyDescriptor[], force: boolean = fa
       const listOfFiles = conflicts.map(f => path.basename(f.fileName)).join('", "');
       cli.error(
         conflicts.length > 1
-          ? `Files with the names "${listOfFiles}" already exist. Please rerun the command with \`--force\`.`
-          : `A file with the name "${listOfFiles}" already exists. Please rerun the command with \`--force\`.`,
+          ? `Files with the names "${listOfFiles}" already exist. If you want to overwrite them, rerun the command with \`--force\`.`
+          : `A file with the name "${listOfFiles}" already exists. If you want to overwrite it, rerun the command with \`--force\`.`,
         { exit: 1 }
       );
     }

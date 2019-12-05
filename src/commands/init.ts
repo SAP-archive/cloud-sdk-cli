@@ -170,26 +170,22 @@ export default class Init extends Command {
   }
 
   private async getOptions(projectDir: string, startCommand?: string, projectName?: string) {
-    try {
-      const { name, scripts } = parsePackageJson(projectDir);
+    const { name, scripts } = parsePackageJson(projectDir);
 
-      const options: { [key: string]: string } = {
-        projectName:
-          projectName ||
-          (await cli.prompt('Enter project name (for use in manifest.yml)', {
-            default: name
-          })),
-        command:
-          startCommand ||
-          (await cli.prompt('Enter the command to start your application', {
-            default: scripts.start ? 'npm start' : ''
-          }))
-      };
+    const options: { [key: string]: string } = {
+      projectName:
+        projectName ||
+        (await cli.prompt('Enter project name (for use in manifest.yml)', {
+          default: name
+        })),
+      command:
+        startCommand ||
+        (await cli.prompt('Enter the command to start your application', {
+          default: scripts.start ? 'npm start' : ''
+        }))
+    };
 
-      return options;
-    } catch (error) {
-      return this.error('Your package.json does not contain valid JSON. Please repair or delete it.', { exit: 10 });
-    }
+    return options;
   }
 
   private modifyGitIgnore(projectDir: string) {

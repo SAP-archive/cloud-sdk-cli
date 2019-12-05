@@ -115,7 +115,10 @@ describe('Init', () => {
     const argv = ['--projectName=testingApp', '--startCommand="npm start"', `--projectDir=${projectDir}`];
     await Init.run(argv);
 
-    expect(error).toHaveBeenCalledWith('A file with the name ".npmrc" already exists. Please rerun the command with `--force`.', { exit: 1 });
+    expect(error).toHaveBeenCalledWith(
+      'A file with the name ".npmrc" already exists. If you want to overwrite it, rerun the command with `--force`.',
+      { exit: 1 }
+    );
   }, 60000);
 
   it('should add to gitignore if there is one', async () => {

@@ -99,6 +99,10 @@ describe('Add CX Server', () => {
     const argv = [`--projectDir=${projectDir}`];
     await AddCxServer.run(argv);
 
-    expect(error).toHaveBeenCalledWith('A file with the name "cx-server" already exists. Please rerun the command with `--force`.', { exit: 1 });
+    expect(
+      error
+    ).toHaveBeenCalledWith('A file with the name "cx-server" already exists. If you want to overwrite it, rerun the command with `--force`.', {
+      exit: 1
+    });
   }, 30000);
 });
