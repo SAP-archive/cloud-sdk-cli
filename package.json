@@ -1,7 +1,7 @@
 {
   "name": "@sap-cloud-sdk/cli",
   "description": "CLI for the SAP Cloud SDK for JavaScript",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "author": "SAP",
   "bin": {
     "sap-cloud-sdk": "./bin/run"
