@@ -2,9 +2,48 @@
  * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
-import { Command, flags } from '@oclif/command';
-import cli from 'cli-ux';
-import * as execa from 'execa';
+import { Command } from '@oclif/command';
+import { IBooleanFlag, IOptionFlag } from '@oclif/parser/lib/flags';
+import { generate, GeneratorOptions as GeneratorOptionsSDK, generatorOptionsCli as generatorOptionsSDK } from '@sap/cloud-sdk-generator';
+import { Options } from 'yargs';
+import { toBoolean, toGeneratorSDK, toOptionFlag } from '../utils/generate-vdm-util';
+
+export interface GeneratorOptionCLI {
+  projectDir: Options;
+}
+
+export const generatorOptionCLI: GeneratorOptionCLI = {
+  projectDir: {
+    default: '.',
+    describe: 'Path to the folder in which the VDM should be created. The input and output dir are relative to this directory.',
+    type: 'string'
+  }
+};
+
+type AllOptions = GeneratorOptionsSDK & GeneratorOptionCLI;
+export type AllKeys = keyof AllOptions;
+
+// OClif distinguishes between boolean and string flags. Split the keys to get proper typing
+type FilterBooleanKeys<Base> = {
+  [Key in keyof Base]: Base[Key] extends boolean ? Key : never;
+};
+
+type BoolArgKeys = NonNullable<FilterBooleanKeys<AllOptions>[keyof AllOptions]>;
+type BoolArgType = {
+  [optionName in BoolArgKeys]: IBooleanFlag<boolean>;
+};
+
+type StringArgKeys = keyof Omit<AllOptions, BoolArgKeys>;
+type StringArgType = {
+  [optionName in StringArgKeys]: IOptionFlag<string | undefined>;
+};
+// These keys should be the same as AllKeys. We use this to check that no key got lost in the splitting of bool and string
+export type AllKeysTest = BoolArgKeys | StringArgKeys;
+
+type Flags = BoolArgType & StringArgType;
+export type FlagsParsed = {
+  [Key in AllKeys]: AllOptions[Key] extends boolean ? boolean : string | undefined;
+};
 
 export default class GenerateVdm extends Command {
   static description =
@@ -12,55 +51,32 @@ export default class GenerateVdm extends Command {
 
   static examples = ['$ sap-cloud-sdk generate-vdm', '$ sap-cloud-sdk generate-vdm --help'];
 
-  static flags = {
-    //Options which are 1:1 to the SDK CLI many are missing (minimal set here. Discussion how to make this elegant
-    inputDir: flags.string({
-      description: 'Folder containing the service definitions.',
-      required: true,
-      char: 'i',
-      name: 'inputDir'
-    }),
-    outputDir: flags.string({
-      description: 'Folder to which the vdm is written',
-      required: true,
-      char: 'o',
-      name: 'outputDir'
-    }),
-    //see generator-cli.ts for missing ones
-    //...
-
-    //Options relevant to the CLI. They are convinient and make testing possible as well.
-    force: flags.boolean({
-      hidden: true,
-      description: 'Does everything without asking questions.'
-    }),
-    projectDir: flags.string({
-      default: '.',
-      description: 'Path to the folder in which the VDM should be created. The input and output dir are relative to this directory.'
-    })
+  static flags: Flags = {
+    // Options which are 1:1 to the SDK CLI
+    inputDir: toOptionFlag(generatorOptionsSDK.inputDir),
+    outputDir: toOptionFlag(generatorOptionsSDK.outputDir),
+    generateCSN: toBoolean(generatorOptionsSDK.generateCSN),
+    generateJs: toBoolean(generatorOptionsSDK.generateJs),
+    generatePackageJson: toBoolean(generatorOptionsSDK.generatePackageJson),
+    generateTypedocJson: toBoolean(generatorOptionsSDK.generateTypedocJson),
+    generateNpmrc: toBoolean(generatorOptionsSDK.generateNpmrc),
+    useSwagger: toBoolean(generatorOptionsSDK.useSwagger),
+    serviceMapping: toOptionFlag(generatorOptionsSDK.serviceMapping),
+    writeReadme: toBoolean(generatorOptionsSDK.writeReadme),
+    changelogFile: toOptionFlag(generatorOptionsSDK.changelogFile),
+    clearOutputDir: toBoolean(generatorOptionsSDK.clearOutputDir),
+    aggregatorDirectoryName: toOptionFlag(generatorOptionsSDK.aggregatorDirectoryName),
+    aggregatorNpmPackageName: toOptionFlag(generatorOptionsSDK.aggregatorNpmPackageName),
+    sdkAfterVersionScript: toBoolean(generatorOptionsSDK.sdkAfterVersionScript),
+    s4hanaCloud: toBoolean(generatorOptionsSDK.s4hanaCloud),
+    forceOverwrite: toBoolean(generatorOptionsSDK.forceOverwrite),
+    // Options related to the CLI some of them are mapped to SDK CLI attributes
+    projectDir: toOptionFlag(generatorOptionCLI.projectDir)
   };
 
   async run() {
     const { flags } = this.parse(GenerateVdm);
 
-    if (!(await this.isSKDgeneratorInstalled())) {
-      const installGenerator =
-        flags.force ||
-        (await cli.confirm('The @sap/cloud-sdk-generator is needed to generate VDM and it is not installed yet. Do you want to install it?'));
-      if (installGenerator) {
-        cli.action.start('Installing @sap/cloud-sdk-generator.');
-        await execa('npm', ['i', '@sap/cloud-sdk-generator', '--devSave'], { cwd: flags.projectDir });
-        cli.action.stop();
-      } else {
-        return;
-      }
-    }
-    await execa('npx', ['generate-odata-client', '-i', flags.inputDir, '-o', flags.outputDir], { cwd: flags.projectDir });
-  }
-
-  private async isSKDgeneratorInstalled(): Promise<boolean> {
-    return execa('npm', ['info', '@sap/cloud-sdk-generator'])
-      .then(() => true)
-      .catch(() => false);
+    await generate(toGeneratorSDK(flags));
   }
 }

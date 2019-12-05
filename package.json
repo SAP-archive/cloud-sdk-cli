@@ -10,18 +10,20 @@
   "dependencies": {
     "@oclif/command": "^1.5.19",
     "@oclif/config": "^1.13.3",
+    "@oclif/parser": "^3.8.4",
     "@oclif/plugin-autocomplete": "^0.1.4",
     "@oclif/plugin-help": "^2.2.1",
     "@oclif/plugin-not-found": "^1.2.3",
     "@oclif/plugin-warn-if-update-available": "^1.7.0",
-    "@oclif/parser": "^3.8.4",
+    "@sap/cloud-sdk-generator": "1.14.0",
     "cli-ux": "^5.3.2",
     "execa": "^3.2.0",
     "fast-glob": "^3.1.0",
-    "handlebars": "^4.4.3",
+    "handlebars": "^4.5.3",
     "js-yaml": "^3.13.1",
     "rimraf": "^2.7.1",
-    "tslib": "^1.10.0"
+    "tslib": "^1.10.0",
+    "yargs": "14.0.0"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1.22.2",
@@ -83,7 +85,7 @@
   "repository": "https://github.com/SAP/cloud-sdk-cli",
   "scripts": {
     "postpack": "rm -f oclif.manifest.json",
-    "pretest": "tslint -p . -t stylish && tslint -p test -t stylish && prettier -c \"**/*.ts\"",
+    "pretest": "tslint -p . -t stylish && tslint -p test -t stylish && prettier -c \"**/*.ts\"" ,
     "prettier": "prettier --write \"**/*.ts\"",
     "prepack": "rm -rf lib && tsc -b && cp -R src/templates lib/ && oclif-dev manifest && oclif-dev readme",
     "test": "jest",
