@@ -21,7 +21,21 @@ const scaffoldProjectPackageJson = {
     'ci-backend-unit-test': 'jest --ci --coverage'
   },
   devDependencies: ['jest', 'jest-junit', '@sap/cloud-sdk-test-util', '@sap-cloud-sdk/cli'],
-  dependencies: ['@sap/cloud-sdk-core']
+  dependencies: ['@sap/cloud-sdk-core'],
+  jest: {
+    reporters: [
+      'default',
+      [
+        'jest-junit',
+        {
+          suiteName: 'backend unit tests',
+          outputDirectory: '../s4hana_pipeline/reports/backend-unit'
+        }
+      ]
+    ],
+    coverageReporters: ['text', 'cobertura'],
+    coverageDirectory: '../s4hana_pipeline/reports/coverage-reports/backend-unit'
+  }
 };
 
 const existingProjectPackageJson = {
@@ -72,6 +86,9 @@ export async function modifyPackageJson(projectDir: string, isScaffold: boolean,
     dependencies: { ...(await addDependencies(packageJson.dependencies)), ...dependencies },
     devDependencies: { ...(await addDependencies(packageJson.devDependencies)), ...devDependencies }
   };
+  if (isScaffold) {
+    adjustedPackageJson.jest = { ...originalPackageJson.jest, ...scaffoldProjectPackageJson.jest };
+  }
   fs.writeFileSync(path.resolve(projectDir, 'package.json'), JSON.stringify(adjustedPackageJson, null, 2));
 }
 
