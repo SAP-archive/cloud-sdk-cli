@@ -70,11 +70,11 @@ export default class Init extends Command {
 
     try {
       ensureDirectoryExistence(projectDir, true);
-      const isScaffolding = await shouldBuildScaffold(projectDir, flags);
-      if (isScaffolding) {
+      const isScaffold = await shouldBuildScaffold(projectDir, flags);
+      if (isScaffold) {
         await buildScaffold(projectDir, flags.verbose);
       }
-      const options = await this.getOptions(projectDir, isScaffolding ? 'npm run start:prod' : flags.startCommand, flags.projectName);
+      const options = await this.getOptions(projectDir, isScaffold ? 'npm run start:prod' : flags.startCommand, flags.projectName);
 
       const tasks = new Listr([
         {
@@ -96,7 +96,7 @@ export default class Init extends Command {
         },
         {
           title: 'Adding dependencies to package.json',
-          task: () => modifyPackageJson(projectDir, isScaffolding, flags.frontendScripts, flags.force)
+          task: () => modifyPackageJson(projectDir, isScaffold, flags.frontendScripts, flags.force)
         },
         {
           title: 'Installing dependencies',
@@ -109,7 +109,7 @@ export default class Init extends Command {
       ]);
 
       await tasks.run();
-      this.printSuccessMessage(isScaffolding);
+      this.printSuccessMessage(isScaffold);
     } catch (error) {
       this.error(error, { exit: 1 });
     }
@@ -134,13 +134,13 @@ export default class Init extends Command {
     return options;
   }
 
-  private printSuccessMessage(isScaffolding: boolean) {
+  private printSuccessMessage(isScaffold: boolean) {
     this.log('+---------------------------------------------------------------+');
     this.log('| ✅ Init finished successfully.                                |');
     this.log('|                                                               |');
     this.log('| 🚀 Next steps:                                                |');
 
-    isScaffolding ? this.printNextStepsScaffold() : this.printNextStepsBase();
+    isScaffold ? this.printNextStepsScaffold() : this.printNextStepsBase();
 
     this.log('|                                                               |');
     this.log('| 🔨 Consider setting up Jenkins to continuously build your app |');
