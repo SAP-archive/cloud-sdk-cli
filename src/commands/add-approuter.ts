@@ -82,9 +82,9 @@ export default class AddApprouter extends Command {
 
   private printSuccessMessage() {
     this.log(
-      `✅ Successfully added approuter.
+      `✅ Successfully added approuter to your project.
 
-Please verify these generated files:
+Generated files might need customization. Documentation available here:
 - xs-security.json (for help check https://help.sap.com/viewer/4505d0bdaf4948449b7f7379d24d0f0d/2.0.02/en-US/e6fc90df44464a29952e1c2c36dd9861.html)
 - xs-app.json (for help check https://help.sap.com/viewer/65de2977205c403bbc107264b8eccf4b/Cloud/en-US/c103fb414988447ead2023f768096dcc.html)
 - mainfest.yml (for help check https://help.sap.com/viewer/65de2977205c403bbc107264b8eccf4b/Cloud/en-US/ba527058dc4d423a9e0a69ecc67f4593.html)`

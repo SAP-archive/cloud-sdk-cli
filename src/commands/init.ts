@@ -64,7 +64,10 @@ export default class Init extends Command {
     const { verbose } = flags;
 
     if (typeof flags.projectDir !== 'undefined' && typeof args.projectDir !== 'undefined' && flags.projectDir !== args.projectDir) {
-      this.error('Project directory was given via argument and via the `--projectDir` flag. Please only provide one.', { exit: 1 });
+      this.error(
+        `Project directory was given via argument (${args.projectDir}) and via the \`--projectDir\` flag (${flags.projectDir}). Please only provide one.`,
+        { exit: 1 }
+      );
     }
 
     const projectDir: string = flags.projectDir || args.projectDir || '.';
@@ -110,14 +113,13 @@ export default class Init extends Command {
       ]);
 
       await tasks.run();
-
-      buildScaffold ? this.printSuccessMessageScaffold() : this.printSuccessMessage();
+      this.printSuccessMessage(buildScaffold);
     } catch (error) {
       this.error(error, { exit: 1 });
     }
   }
 
-  private async shouldBuildScaffold(projectDir: string, { buildScaffold, force }: Flags) {
+  private async shouldBuildScaffold(projectDir: string, { buildScaffold, force }: Flags): Promise<boolean> {
     if (buildScaffold) {
       return true;
     }
@@ -136,9 +138,9 @@ export default class Init extends Command {
         }
       }
       return true;
-    } else {
-      return false;
     }
+    this.warn('Cancelling `init` because a valid `package.json` is required to run.');
+    return this.exit(1);
   }
 
   private async buildScaffold(projectDir: string, verbose: boolean) {
@@ -212,31 +214,29 @@ export default class Init extends Command {
     }
   }
 
-  private printSuccessMessage() {
+  private printSuccessMessage(buildScaffold: boolean) {
     this.log('+---------------------------------------------------------------+');
     this.log('| ✅ Init finished successfully.                                |');
     this.log('|                                                               |');
     this.log('| 🚀 Next steps:                                                |');
-    this.log('| 1. Make sure that your app listens to `process.env.PORT`      |');
-    this.log('| 2. Build your app if necessary                                |');
-    this.log('| 3. Run `sap-cloud-sdk package [--include INC][--exclude EXC]` |');
-    this.log('| 4. Push to Cloud Foundry (`cf push`)                          |');
+
+    buildScaffold ? this.printNextStepsScaffold() : this.printNextStepsBase();
+
     this.log('|                                                               |');
     this.log('| 🔨 Consider setting up Jenkins to continuously build your app |');
     this.log('| Use `sap-cloud-sdk add-cx-server` to create the setup script  |');
     this.log('+---------------------------------------------------------------+');
   }
 
-  private printSuccessMessageScaffold() {
-    this.log('+---------------------------------------------------------------+');
-    this.log('| ✅ Init finished successfully.                                |');
-    this.log('|                                                               |');
-    this.log('| 🚀 Next steps:                                                |');
+  private printNextStepsBase() {
+    this.log('| 1. Make sure that your app listens to `process.env.PORT`      |');
+    this.log('| 2. Build your app if necessary                                |');
+    this.log('| 3. Run `sap-cloud-sdk package [--include INC][--exclude EXC]` |');
+    this.log('| 4. Push to Cloud Foundry (`cf push`)                          |');
+  }
+
+  private printNextStepsScaffold() {
     this.log('| - Run the application locally (`npm run start:dev`)           |');
     this.log('| - Deploy your application (`npm run deploy`)                  |');
-    this.log('|                                                               |');
-    this.log('| 🔨 Consider setting up Jenkins to continuously build your app |');
-    this.log('| Use `sap-cloud-sdk add-cx-server` to create the setup script  |');
-    this.log('+---------------------------------------------------------------+');
   }
 }
