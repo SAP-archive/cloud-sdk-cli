@@ -35,17 +35,15 @@ describe('generate-vdm', () => {
   beforeAll(() => {
     const pathForResources = path.resolve(__dirname, 'resources', 'template-generator-vdm');
     fs.copySync(pathForResources, pathForTests);
-    spyToGeneratorSDK.mockClear();
   });
 
   afterAll(() => {
     fs.removeSync(pathForTests);
-    spyToGeneratorSDK.mockClear();
   });
 
-  afterEach(()=>{
+  afterEach(() => {
     spyToGeneratorSDK.mockClear();
-  })
+  });
 
   beforeEach(() => {
     spyToGeneratorSDK.mockClear();
@@ -88,27 +86,31 @@ describe('generate-vdm', () => {
   });
 
   it('should pass each boolean flags correctly', async () => {
-    return Object.keys(generatorOptionsSDK).map(async key => {
-      const option = generatorOptionsSDK[key as keyof GeneratorOptionsSDK];
-      const expected = getDefault('root');
-      const args = ['-i', '/input', '-o', '/output', '--projectDir', '/'];
+    await Promise.all(
+      Object.keys(generatorOptionsSDK).map(async key => {
+        const option = generatorOptionsSDK[key as keyof GeneratorOptionsSDK];
+        const expected = getDefault('/somePrefix');
+        const args = ['-i', 'input', '-o', 'output', '--projectDir', '/somePrefix'];
 
-      if (option !== undefined && option.type === 'boolean') {
-        const casted = key as keyof GeneratorOptionsSDK;
-        if (!option.default) {
-          args.push(`--${key}`);
-          (expected[casted] as any) = true;
-        } else {
-          args.push(`--no-${key}`);
-          (expected[casted] as any) = false;
+        if (option !== undefined && option.type === 'boolean') {
+          const casted = key as keyof GeneratorOptionsSDK;
+          if (!option.default) {
+            args.push(`--${key}`);
+            (expected[casted] as any) = true;
+          } else {
+            args.push(`--no-${key}`);
+            (expected[casted] as any) = false;
+          }
+          const spyToGeneratorSDK1 = jest.spyOn(foo, 'toGeneratorSDK');
+          try {
+            await GenerateVdm.run(args);
+          } catch (e) {
+            expect(spyToGeneratorSDK1).toHaveReturnedWith(expected);
+            return Promise.resolve();
+          }
         }
-        try {
-          await GenerateVdm.run(args);
-        } catch (e) {
-          expect(spyToGeneratorSDK).toHaveReturnedWith(expected);
-        }
-      }
-    });
+      })
+    );
   });
 
   function getInputAllFalse(): string[] {
@@ -129,16 +131,13 @@ describe('generate-vdm', () => {
   }
 
   function getDefault(root: string): GeneratorOptionsSDK {
-    const options = Object.keys(generatorOptionsSDK).reduce(
-      (prev, current) => {
-        const value = generatorOptionsSDK[current as keyof GeneratorOptionsSDK];
-        if (value !== undefined) {
-          prev[current as keyof GeneratorOptionsSDK] = value.default;
-        }
-        return prev;
-      },
-      {} as any
-    ) as GeneratorOptionsSDK;
+    const options = Object.keys(generatorOptionsSDK).reduce((prev, current) => {
+      const value = generatorOptionsSDK[current as keyof GeneratorOptionsSDK];
+      if (value !== undefined) {
+        prev[current as keyof GeneratorOptionsSDK] = value.default;
+      }
+      return prev;
+    }, {} as any) as GeneratorOptionsSDK;
     options.inputDir = path.resolve(root, 'input');
     options.outputDir = path.resolve(root, 'output');
     options.serviceMapping = path.resolve(root, 'input', 'service-mapping.json');

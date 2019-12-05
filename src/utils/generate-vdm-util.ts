@@ -61,7 +61,8 @@ export function toOptionFlag(yarnBool: Options | undefined): IOptionFlag<string 
       if (context.argv.includes('--projectDir')) {
         projectDir = context.argv[context.argv.indexOf('--projectDir') + 1];
       }
-      return path.resolve(projectDir, input);
+      const resolved = path.resolve(projectDir, input);
+      return resolved;
     };
   }
   return flags.string(options);
