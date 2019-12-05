@@ -2,7 +2,7 @@
 
 # SAP Cloud SDK CLI
 
-![Tests Badge](https://github.com/SAP/cloud-sdk-cli/workflows/Tests/badge.svg)
+![Tests Badge](https://github.com/SAP/cloud-sdk-cli/workflows/Tests/badge.svg?branch=master)
 ![NPM Downloads](https://img.shields.io/npm/dw/@sap-cloud-sdk/cli)
 
 A nifty command line interface (CLI) for the SAP Cloud SDK for JavaScript to initialize and package your SAP Cloud Platform application.
@@ -33,10 +33,11 @@ $ npm install -g @sap-cloud-sdk/cli@latest
 
 <!-- usage -->
 ```sh-session
+$ npm install -g @sap-cloud-sdk/cli
 $ sap-cloud-sdk COMMAND
 running command...
 $ sap-cloud-sdk (-v|--version|version)
-@sap-cloud-sdk/cli/0.0.6 darwin-x64 node-v12.9.0
+@sap-cloud-sdk/cli/0.0.7 darwin-x64 node-v11.12.0
 $ sap-cloud-sdk --help [COMMAND]
 USAGE
   $ sap-cloud-sdk COMMAND
@@ -44,7 +45,7 @@ USAGE
 ```
 <!-- usagestop -->
 
-The CLI can initialize an express-based project or (the more common case) add everything you need to develop for SAP Cloud Platform to an existing project no matter what backend framework you use.
+The CLI can initialize an nest-based project or (the more common case) add everything you need to develop for SAP Cloud Platform to an existing project no matter what backend framework you use.
 If there are any incompatibilities, please let us know in the [issues](https://github.com/SAP/cloud-sdk-cli/issues/new/choose)!
 
 To get started run
@@ -54,7 +55,7 @@ $ sap-cloud-sdk init
 in the project folder.
 
 It will guide you through the initialization, create the necessary files and add necessary dependencies.
-If you run it in an empty folder, it will ask if you want to initialize a project using [express-generator](https://expressjs.com/en/starter/generator.html).
+If you run it in an empty folder, it will ask if you want to initialize a project using [@nest/cli](https://github.com/nestjs/nest-cli).
 
 To deploy to and run on Cloud Foundry, you need to
 1. Make sure that your app listens to port 8080
@@ -74,7 +75,7 @@ Start by running [`sap-cloud-sdk add-approuter`](#sap-cloud-sdk-add-approuter) a
 * [`sap-cloud-sdk autocomplete [SHELL]`](#sap-cloud-sdk-autocomplete-shell)
 * [`sap-cloud-sdk help [COMMAND]`](#sap-cloud-sdk-help-command)
 * [`sap-cloud-sdk help-page`](#sap-cloud-sdk-help-page)
-* [`sap-cloud-sdk init`](#sap-cloud-sdk-init)
+* [`sap-cloud-sdk init [PROJECTDIR]`](#sap-cloud-sdk-init-projectdir)
 * [`sap-cloud-sdk package`](#sap-cloud-sdk-package)
 
 ## `sap-cloud-sdk add-approuter`
@@ -87,6 +88,7 @@ USAGE
 
 OPTIONS
   -h, --help  show CLI help
+  --force     Do not fail if a file already exist and overwrite it.
 
 ALIASES
   $ sap-cloud-sdk add-app-router
@@ -95,7 +97,7 @@ EXAMPLE
   $ sap-cloud-sdk add-approuter
 ```
 
-_See code: [src/commands/add-approuter.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.6/src/commands/add-approuter.ts)_
+_See code: [src/commands/add-approuter.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.7/src/commands/add-approuter.ts)_
 
 ## `sap-cloud-sdk add-cx-server`
 
@@ -107,12 +109,13 @@ USAGE
 
 OPTIONS
   -h, --help  show CLI help
+  --force     Do not fail if a file already exist and overwrite it.
 
 EXAMPLE
   $ sap-cloud-sdk add-cx-server
 ```
 
-_See code: [src/commands/add-cx-server.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.6/src/commands/add-cx-server.ts)_
+_See code: [src/commands/add-cx-server.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.7/src/commands/add-cx-server.ts)_
 
 ## `sap-cloud-sdk autocomplete [SHELL]`
 
@@ -166,26 +169,32 @@ OPTIONS
   -h, --help  show CLI help
 ```
 
-_See code: [src/commands/help-page.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.6/src/commands/help-page.ts)_
+_See code: [src/commands/help-page.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.7/src/commands/help-page.ts)_
 
-## `sap-cloud-sdk init`
+## `sap-cloud-sdk init [PROJECTDIR]`
 
 Initializes your project for the SAP Cloud SDK, SAP Cloud Platform Cloud Foundry and CI/CD using the SAP Cloud SDK toolkit
 
 ```
 USAGE
-  $ sap-cloud-sdk init
+  $ sap-cloud-sdk init [PROJECTDIR]
+
+ARGUMENTS
+  PROJECTDIR  Path to the folder in which the project should be created.
 
 OPTIONS
   -h, --help               Show help for the new command.
-  --projectDir=projectDir  [default: .] Path to the folder in which the project should be created.
+  -v, --verbose            Show more detailed output.
+  --force                  Do not fail if a file or npm script already exist and overwrite it.
+  --frontendScripts        Add frontend-related npm scripts which are executed by our CI/CD toolkit.
+  --projectDir=projectDir  Path to the folder in which the project should be created.
 
 EXAMPLES
   $ sap-cloud-sdk init
   $ sap-cloud-sdk init --help
 ```
 
-_See code: [src/commands/init.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.6/src/commands/init.ts)_
+_See code: [src/commands/init.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.7/src/commands/init.ts)_
 
 ## `sap-cloud-sdk package`
 
@@ -204,6 +213,8 @@ OPTIONS
 
   -o, --output=output    [default: deployment] Output and deployment folder
 
+  -v, --verbose          Show more detailed output.
+
   --skipInstall          Skip `npm i --production` during packaging
 
 EXAMPLES
@@ -212,7 +223,7 @@ EXAMPLES
   $ sap-cloud-sdk package --include="package.json,package-lock.json,index.js,dist/**/*" --exclude="**/*.java"
 ```
 
-_See code: [src/commands/package.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.6/src/commands/package.ts)_
+_See code: [src/commands/package.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.7/src/commands/package.ts)_
 <!-- commandsstop -->
 
 ## Contribute

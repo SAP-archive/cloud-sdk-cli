@@ -4,7 +4,7 @@
 
 import { Command, flags } from '@oclif/command';
 import { OutputFlags } from '@oclif/parser';
-import cli from 'cli-ux';
+import * as Listr from 'listr';
 import * as path from 'path';
 import { CopyDescriptor } from '../utils/copy-list';
 import { copyFiles, findConflicts } from '../utils/templates';
@@ -22,8 +22,7 @@ export default class AddCxServer extends Command {
       description: 'Path to the folder in which the project should be created.'
     }),
     force: flags.boolean({
-      hidden: true,
-      description: 'Overwrite files without asking if conflicts are found.'
+      description: 'Do not fail if a file already exist and overwrite it.'
     }),
     platform: flags.string({
       hidden: true,
@@ -39,18 +38,22 @@ export default class AddCxServer extends Command {
 
     try {
       const files = [this.copyFromGithub('cx-server', flags), this.copyFromGithub('server.cfg', flags)];
-
       if (flags.platform === 'win32') {
         files.push(this.copyFromGithub('cx-server.bat', flags));
       }
 
-      cli.action.start('Finding potential conflicts');
-      await findConflicts(files, flags.force, this.error);
-      cli.action.stop();
+      const tasks = new Listr([
+        {
+          title: 'Finding potential conflicts',
+          task: () => findConflicts(files, flags.force)
+        },
+        {
+          title: 'Creating files',
+          task: () => copyFiles(files, options).catch(e => this.error(e, { exit: 2 }))
+        }
+      ]);
 
-      cli.action.start('Creating files');
-      await copyFiles(files, options).catch(e => this.error(e, { exit: 2 }));
-      cli.action.stop();
+      await tasks.run();
     } catch (error) {
       this.error(error, { exit: 1 });
     }
@@ -66,7 +69,7 @@ export default class AddCxServer extends Command {
     };
   }
 
-  private getOptions() {
+  private async getOptions() {
     return {};
   }
 }
