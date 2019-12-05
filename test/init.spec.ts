@@ -2,6 +2,13 @@
  * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
 const error = jest.fn();
+const warn = jest.fn(message => console.log('MOCKED WARNING: ', message));
+jest.mock('@oclif/command', () => {
+  const command = jest.requireActual('@oclif/command');
+  command.Command.prototype.warn = warn;
+  return command;
+});
+
 jest.mock('cli-ux', () => {
   // Mocking needs to happen before the command is imported
   const cli = jest.requireActual('cli-ux');
@@ -9,16 +16,10 @@ jest.mock('cli-ux', () => {
     ...cli,
     default: {
       ...cli.default,
-      error
+      error,
+      warn
     }
   };
-});
-
-const warn = jest.fn(message => console.log('MOCKED WARNING: ', message));
-jest.mock('@oclif/command', () => {
-  const command = jest.requireActual('@oclif/command');
-  command.Command.prototype.warn = warn;
-  return command;
 });
 
 import execa = require('execa');
