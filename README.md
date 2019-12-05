@@ -2,7 +2,7 @@
 
 # SAP Cloud SDK CLI
 
-![Tests Badge](https://github.com/SAP/cloud-sdk-cli/workflows/Tests/badge.svg)
+![Tests Badge](https://github.com/SAP/cloud-sdk-cli/workflows/Tests/badge.svg?branch=master)
 ![NPM Downloads](https://img.shields.io/npm/dw/@sap-cloud-sdk/cli)
 
 A nifty command line interface (CLI) for the SAP Cloud SDK for JavaScript to initialize and package your SAP Cloud Platform application.
