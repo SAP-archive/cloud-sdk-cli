@@ -44,7 +44,7 @@ export default class AddApprouter extends Command {
         },
         {
           title: 'Creating files',
-          task: ctx => copyFiles(ctx.files, options).catch(e => this.error(e, { exit: 2 }))
+          task: ctx => copyFiles(ctx.files, options)
         }
       ]);
 

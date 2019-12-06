@@ -28,7 +28,7 @@ Any data that is sent during the analytics process is anonymized.
 This means that neither your project's name nor other personally identifiable information is collected.
 Instead, we create a pseudonym _p_ for every project, by concatenating the project's name and a randomly generated salt value, and hashing this value using a cryptographic hash function (currently SAH-256).
 Neither the project name nor the salt itself will be transmitted, only the resulting pseudonym.
-However, should you host your project publicly, e.g. on GitHub, and make both your project's name and your salt value publicly available, it is technically possible for us to recreate the corresponding pseudonym.
+However, should you host your project publicly, e.g. on GitHub, and make both your project's name and your salt value publicly available, it would technically possible for us to recreate the corresponding pseudonym.
 
 ## What data is collected?
 
@@ -44,8 +44,8 @@ We're collecting the following data:
 
 ## Opt-in
 
-Currently, you need to manually create a file called `sap-cloud-sdk-analytics.json` in the root directory of your project.
-Copy the following code snippet and save it as `sap-cloud-sdk-analytics.json`:
+When you initialize your project with the CLI, you will be asked if you want to provide analytics.
+This will create `sap-cloud-sdk-analytics.json`:
 
 ```json
 {
@@ -68,5 +68,5 @@ Please make sure not make up your own value, as this may lessen the guarantees a
 ## Opt-out
 
 Should you ever decide to opt-out again, you can either set the value for `"enabled"` to `false`, or delete the configuration file altogether.
-Usage data will be sent if and only if there's a file with the name `sap-cloud-sdk-analytics.json` in the root of the given project and `enabled` is so to true.
+Usage data will be sent if and only if there's a file with the name `sap-cloud-sdk-analytics.json` in the root of the given project and `enabled` is set to true.
 If any of these conditions are not met, no data will be sent.
