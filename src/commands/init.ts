@@ -7,6 +7,7 @@ import cli from 'cli-ux';
 import * as Listr from 'listr';
 import * as path from 'path';
 import { modifyGitIgnore } from '../utils/git-ignore';
+import { getJestConfig, modifyJestConfig } from '../utils/jest-config';
 import { installDependencies, modifyPackageJson, parsePackageJson } from '../utils/package-json';
 import { buildScaffold, shouldBuildScaffold } from '../utils/scaffold';
 import { copyFiles, ensureDirectoryExistence, findConflicts, readTemplates } from '../utils/templates';
@@ -93,6 +94,11 @@ export default class Init extends Command {
         {
           title: 'Creating files',
           task: ctx => copyFiles(ctx.files, options).catch(e => this.error(e, { exit: 2 }))
+        },
+        {
+          title: 'Modifying test config',
+          task: () => modifyJestConfig(projectDir, path.resolve('test', 'jest-e2e.json'), getJestConfig(false)),
+          enabled: () => isScaffold
         },
         {
           title: 'Adding dependencies to package.json',
