@@ -6,11 +6,21 @@ import { Command, flags } from '@oclif/command';
 import cli from 'cli-ux';
 import * as Listr from 'listr';
 import * as path from 'path';
-import { modifyGitIgnore } from '../utils/git-ignore';
-import { getJestConfig, modifyJestConfig } from '../utils/jest-config';
-import { installDependencies, modifyPackageJson, parsePackageJson } from '../utils/package-json';
-import { buildScaffold, shouldBuildScaffold } from '../utils/scaffold';
-import { copyFiles, ensureDirectoryExistence, findConflicts, readTemplates } from '../utils/templates';
+import {
+  buildScaffold,
+  copyFiles,
+  ensureDirectoryExistence,
+  findConflicts,
+  getJestConfig,
+  installDependencies,
+  modifyGitIgnore,
+  modifyJestConfig,
+  modifyPackageJson,
+  parsePackageJson,
+  readTemplates,
+  shouldBuildScaffold,
+  usageAnalytics
+} from '../utils/';
 
 export default class Init extends Command {
   static description = 'Initializes your project for the SAP Cloud SDK, SAP Cloud Platform Cloud Foundry and CI/CD using the SAP Cloud SDK toolkit';
@@ -29,6 +39,11 @@ export default class Init extends Command {
     buildScaffold: flags.boolean({
       hidden: true,
       description: 'If the folder is empty, use nest-cli to create a project scaffold.'
+    }),
+    analytics: flags.boolean({
+      hidden: true,
+      allowNo: true,
+      description: 'Enable or disable collection of anonymous usage data.'
     }),
     force: flags.boolean({
       description: 'Do not fail if a file or npm script already exist and overwrite it.'
@@ -106,7 +121,7 @@ export default class Init extends Command {
         },
         {
           title: 'Installing dependencies',
-          task: () => installDependencies(projectDir, verbose).catch(e => this.error(`Error during npm install: ${e.message}`, { exit: 2 }))
+          task: () => installDependencies(projectDir, verbose).catch(e => this.error(`Error during npm install: ${e.message}`, { exit: 13 }))
         },
         {
           title: 'Modifying `.gitignore`',
@@ -115,6 +130,8 @@ export default class Init extends Command {
       ]);
 
       await tasks.run();
+
+      await usageAnalytics(projectDir, flags.analytics);
       this.printSuccessMessage(isScaffold);
     } catch (error) {
       this.error(error, { exit: 1 });

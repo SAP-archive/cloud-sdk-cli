@@ -6,8 +6,7 @@ import { Command, flags } from '@oclif/command';
 import { OutputFlags } from '@oclif/parser';
 import * as Listr from 'listr';
 import * as path from 'path';
-import { CopyDescriptor } from '../utils/copy-list';
-import { copyFiles, findConflicts } from '../utils/templates';
+import { CopyDescriptor, copyFiles, findConflicts } from '../utils/';
 
 type Flags = OutputFlags<typeof AddCxServer.flags>;
 
@@ -49,7 +48,7 @@ export default class AddCxServer extends Command {
         },
         {
           title: 'Creating files',
-          task: () => copyFiles(files, options).catch(e => this.error(e, { exit: 2 }))
+          task: () => copyFiles(files, options)
         }
       ]);
 
