@@ -44,8 +44,8 @@ We're collecting the following data:
 
 ## Opt-in
 
-Currently, you need to manually create a file called `sap-cloud-sdk-analytics.json` in the root directory of your project.
-Copy the following code snippet and save it as `sap-cloud-sdk-analytics.json`:
+When you initialize your project with the CLI, you will be asked if you want to provide analytics.
+This will create `sap-cloud-sdk-analytics.json`:
 
 ```json
 {
