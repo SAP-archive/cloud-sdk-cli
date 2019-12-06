@@ -42,6 +42,7 @@ export default class Init extends Command {
     }),
     analytics: flags.boolean({
       hidden: true,
+      allowNo: true,
       description: 'Set analytics as enabled or disabled.'
     }),
     force: flags.boolean({
