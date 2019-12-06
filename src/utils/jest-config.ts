@@ -18,6 +18,7 @@ export function getJestConfig(isUnitTests: boolean) {
         }
       ]
     ],
+    collectCoverage: true,
     coverageReporters: ['text', 'cobertura'],
     coverageDirectory: `../s4hana_pipeline/reports/coverage-reports/backend-${isUnitTests ? 'unit' : 'integration'}`
   };

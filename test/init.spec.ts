@@ -46,7 +46,7 @@ describe('Init', () => {
       fs.removeSync(projectDir);
     }
 
-    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--buildScaffold', `--projectDir=${projectDir}`];
+    const argv = ['--projectName=testingApp', '--buildScaffold', `--projectDir=${projectDir}`];
     await Init.run(argv);
 
     ['.npmrc', 'credentials.json', 'systems.json', 'manifest.yml']
@@ -62,23 +62,25 @@ describe('Init', () => {
       fs.removeSync(projectDir);
     }
 
-    const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--buildScaffold', `--projectDir=${projectDir}`];
+    const argv = ['--projectName=testingApp', '--buildScaffold', `--projectDir=${projectDir}`];
     await Init.run(argv);
 
     const reportsPath = path.resolve(projectDir, 's4hana_pipeline', 'reports');
 
     // execute the ci scripts and check if the reports are written
-    await execa('npm', ['run', 'ci-integration-test'], { cwd: projectDir });
-    const pathBackendIntegration = path.resolve(reportsPath, 'backend-integration');
-    const pathCoverageIntegration = path.resolve(reportsPath, 'coverage-reports', 'backend-integration');
-    expect(fs.readdirSync(pathBackendIntegration).length).toBeGreaterThan(1);
-    expect(fs.readdirSync(pathCoverageIntegration).length).toBeGreaterThan(1);
-
-    await execa('npm', ['run', 'ci-backend-unit-test'], { cwd: projectDir });
+    await execa('npm', ['run', 'ci-backend-unit-test'], { cwd: projectDir, stdio: 'inherit' });
     const pathBackendUnit = path.resolve(reportsPath, 'backend-unit');
-    const pathCoverageUnit = path.resolve(reportsPath, 'coverage-reports', 'backend-integration');
+    const pathCoverageUnit = path.resolve(reportsPath, 'coverage-reports', 'backend-unit');
     expect(fs.readdirSync(pathBackendUnit).length).toBeGreaterThan(1);
     expect(fs.readdirSync(pathCoverageUnit).length).toBeGreaterThan(1);
+
+    await execa('npm', ['run', 'ci-integration-test'], { cwd: projectDir, stdio: 'inherit' });
+    const pathBackendIntegration = path.resolve(reportsPath, 'backend-integration');
+    const pathCoverageIntegration = path.resolve(reportsPath, 'coverage-reports', 'backend-integration');
+    console.log('Backend Integration', fs.readdirSync(pathBackendIntegration));
+    console.log('Coverage Integration', fs.readdirSync(pathCoverageIntegration));
+    expect(fs.readdirSync(pathBackendIntegration).length).toBeGreaterThan(1);
+    expect(fs.readdirSync(pathCoverageIntegration).length).toBeGreaterThan(1);
   }, 60000);
 
   it('should add necessary files to an existing project', async () => {

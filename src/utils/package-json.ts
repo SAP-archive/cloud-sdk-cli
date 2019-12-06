@@ -18,8 +18,8 @@ const scaffoldProjectPackageJson = {
     'deploy': 'npm run ci-build && npm run ci-package && cf push',
     'ci-build': 'npm run build',
     'ci-package': 'sap-cloud-sdk package',
-    'ci-integration-test': 'jest --ci --coverage --config ./test/jest-e2e.json',
-    'ci-backend-unit-test': 'jest --ci --coverage'
+    'ci-integration-test': 'jest --ci --config ./test/jest-e2e.json',
+    'ci-backend-unit-test': 'jest --ci'
   },
   devDependencies: ['jest', 'jest-junit', '@sap/cloud-sdk-test-util', '@sap-cloud-sdk/cli'],
   dependencies: ['@sap/cloud-sdk-core']
