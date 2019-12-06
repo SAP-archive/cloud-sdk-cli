@@ -21,7 +21,7 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import AddApprouter from '../src/commands/add-approuter';
 
-describe('Add Approuter', () => {
+describe.skip('Add Approuter', () => {
   const pathPrefix = path.resolve(__dirname, __filename.replace(/\./g, '-')).replace('-ts', '');
 
   beforeAll(() => {

@@ -19,7 +19,7 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import AddCxServer from '../src/commands/add-cx-server';
 
-describe('Add CX Server', () => {
+describe.skip('Add CX Server', () => {
   const pathPrefix = path.resolve(__dirname, __filename.replace(/\./g, '-')).replace('-ts', '');
 
   beforeAll(() => {

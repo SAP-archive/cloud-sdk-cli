@@ -51,8 +51,11 @@ describe('Init', () => {
     fs.removeSync(pathPrefix);
   });
 
-  it('should create a new project with the necessary files', async () => {
+  it.only('should create a new project with the necessary files', async () => {
     const projectDir = getCleanProjectDir('full-init');
+
+    execa('npx', ['-v'], { stdio: 'inherit' });
+    execa('npx', ['@nestjs/cli', '--version'], { stdio: 'inherit' });
 
     await Init.run(['--projectName=testingApp', '--buildScaffold', `--projectDir=${projectDir}`]);
 
