@@ -20,7 +20,7 @@ export async function shouldBuildScaffold(projectDir: string, buildScaffold: boo
 
   cli.log('This folder does not contain a `package.json`.');
 
-  if (await cli.confirm('Should a new `nest.js` project be initialized in this folder?')) {
+  if (await cli.confirm('Should a new `nest.js` project be initialized in this folder? (y|n)')) {
     await checkForEmptyDir(projectDir, force);
     return true;
   }
@@ -31,7 +31,7 @@ export async function shouldBuildScaffold(projectDir: string, buildScaffold: boo
 async function checkForEmptyDir(projectDir: string, force: boolean) {
   if (fs.readdirSync(projectDir).length !== 0) {
     const dirString = projectDir === '.' ? 'this directory' : `"${projectDir}"`;
-    const question = `Directory is not empty. Creating the scaffold will fail if there are conflicting files. Should ALL files in ${dirString} be removed?`;
+    const question = `Directory is not empty. Creating the scaffold will fail if there are conflicting files. Should ALL files in ${dirString} be removed? (y|n)`;
     if (force || (await cli.confirm(question))) {
       rm.sync(`${projectDir}/{*,.*}`);
     }
