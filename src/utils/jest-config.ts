@@ -4,7 +4,6 @@
 
 import cli from 'cli-ux';
 import * as fs from 'fs';
-import * as path from 'path';
 
 export function getJestConfig(isUnitTests: boolean) {
   return {
@@ -24,11 +23,10 @@ export function getJestConfig(isUnitTests: boolean) {
   };
 }
 
-export function modifyJestConfig(projectDir: string, jestConfigPath: string, data: any) {
+export function modifyJestConfig(jestConfigPath: string, data: any) {
   try {
-    const fullPath = path.resolve(projectDir, jestConfigPath);
     const jestConfig = JSON.parse(
-      fs.readFileSync(fullPath, {
+      fs.readFileSync(jestConfigPath, {
         encoding: 'utf8'
       })
     );
@@ -37,8 +35,9 @@ export function modifyJestConfig(projectDir: string, jestConfigPath: string, dat
       ...data
     };
 
-    fs.writeFileSync(fullPath, JSON.stringify(adjustedJestConfig, null, 2));
+    fs.writeFileSync(jestConfigPath, JSON.stringify(adjustedJestConfig, null, 2));
   } catch (error) {
+    cli.warn(error);
     return cli.warn(
       `Could not edit your Jest config at "${jestConfigPath}". Please verify if the location is correct and consider opening a bug ticket at github.com/SAP/cloud-sdk-cli`
     );

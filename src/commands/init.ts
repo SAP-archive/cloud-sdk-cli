@@ -97,7 +97,7 @@ export default class Init extends Command {
         },
         {
           title: 'Modifying test config',
-          task: () => modifyJestConfig(projectDir, path.resolve('test', 'jest-e2e.json'), getJestConfig(false)),
+          task: () => modifyJestConfig(path.resolve(projectDir, 'test', 'jest-e2e.json'), getJestConfig(false)),
           enabled: () => isScaffold
         },
         {

@@ -69,12 +69,14 @@ describe('Init', () => {
 
     // execute the ci scripts and check if the reports are written
     await execa('npm', ['run', 'ci-backend-unit-test'], { cwd: projectDir, stdio: 'inherit' });
+
     const pathBackendUnit = path.resolve(reportsPath, 'backend-unit');
     const pathCoverageUnit = path.resolve(reportsPath, 'coverage-reports', 'backend-unit');
     expect(fs.readdirSync(pathBackendUnit).length).toBeGreaterThan(1);
     expect(fs.readdirSync(pathCoverageUnit).length).toBeGreaterThan(1);
 
     await execa('npm', ['run', 'ci-integration-test'], { cwd: projectDir, stdio: 'inherit' });
+
     const pathBackendIntegration = path.resolve(reportsPath, 'backend-integration');
     const pathCoverageIntegration = path.resolve(reportsPath, 'coverage-reports', 'backend-integration');
     console.log('Backend Integration', fs.readdirSync(pathBackendIntegration));
