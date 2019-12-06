@@ -19,8 +19,8 @@
 
 ### General project setup
 general:
-#  productiveBranch: 'master'
-#  projectName: '{{ projectName }}'
+  productiveBranch: 'master'
+  projectName: '{{ projectName }}'
 
 ### Step-specific configuration
 steps:
@@ -34,15 +34,6 @@ steps:
 
 ### Stage-specific configuration
 stages:
-#  backendIntegrationTests:
-#    credentials:
-#      - alias: 'mySystemAlias'
-#        credentialId: 'mySystemCredentialsId'
-
-#  s4SdkQualityChecks:
-#    nonErpDestinations:
-#      - 'myCustomDestination'
-
 #  productionDeployment:
 #    cfTargets:
 #      - space: 'myProductiveSpace'
