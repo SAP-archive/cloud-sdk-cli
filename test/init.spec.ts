@@ -56,6 +56,7 @@ describe('Init', () => {
 
     execa('npx', ['-v'], { stdio: 'inherit' });
     execa('npx', ['@nestjs/cli', '--version'], { stdio: 'inherit' });
+    console.log('👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻');
 
     await Init.run(['--projectName=testingApp', '--buildScaffold', `--projectDir=${projectDir}`]);
 
