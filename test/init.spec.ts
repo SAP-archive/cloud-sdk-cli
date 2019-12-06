@@ -65,20 +65,19 @@ describe('Init', () => {
     const argv = ['--projectName=testingApp', '--startCommand="npm start"', '--buildScaffold', `--projectDir=${projectDir}`];
     await Init.run(argv);
 
-    // execute the local tests
-    await execa('npm', ['test'], { cwd: projectDir });
+    const reportsPath = path.resolve(projectDir, 's4hana_pipeline', 'reports');
 
     // execute the ci scripts and check if the reports are written
     await execa('npm', ['run', 'ci-integration-test'], { cwd: projectDir });
-    const pathBackendIntegration = path.resolve(projectDir, 's4hana_pipeline', 'reports', 'backend-integration');
+    const pathBackendIntegration = path.resolve(reportsPath, 'backend-integration');
+    const pathCoverageIntegration = path.resolve(reportsPath, 'coverage-reports', 'backend-integration');
     expect(fs.readdirSync(pathBackendIntegration).length).toBeGreaterThan(1);
-    const pathCoverageIntegration = path.resolve(projectDir, 's4hana_pipeline', 'reports', 'coverage-reports', 'backend-integration');
     expect(fs.readdirSync(pathCoverageIntegration).length).toBeGreaterThan(1);
 
     await execa('npm', ['run', 'ci-backend-unit-test'], { cwd: projectDir });
-    const pathBackendUnit = path.resolve(projectDir, 's4hana_pipeline', 'reports', 'backend-unit');
+    const pathBackendUnit = path.resolve(reportsPath, 'backend-unit');
+    const pathCoverageUnit = path.resolve(reportsPath, 'coverage-reports', 'backend-integration');
     expect(fs.readdirSync(pathBackendUnit).length).toBeGreaterThan(1);
-    const pathCoverageUnit = path.resolve(projectDir, 's4hana_pipeline', 'reports', 'coverage-reports', 'backend-integration');
     expect(fs.readdirSync(pathCoverageUnit).length).toBeGreaterThan(1);
   }, 60000);
 
