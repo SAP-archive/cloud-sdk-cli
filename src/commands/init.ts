@@ -43,7 +43,7 @@ export default class Init extends Command {
     analytics: flags.boolean({
       hidden: true,
       allowNo: true,
-      description: 'Set analytics as enabled or disabled.'
+      description: 'Enable or disable collection of anonymous usage data.'
     }),
     force: flags.boolean({
       description: 'Do not fail if a file or npm script already exist and overwrite it.'
