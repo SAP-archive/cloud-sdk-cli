@@ -153,7 +153,13 @@ describe('Init', () => {
     const projectDir = getCleanProjectDir('add-to-gitignore');
     fs.copySync(nestAppDir, projectDir, { recursive: true });
 
-    await Init.run(['--projectName=testingApp', '--startCommand="npm start"', `--projectDir=${projectDir}`, '--analytics']);
+    await Init.run([
+      '--projectName=testingApp',
+      '--startCommand="npm start"',
+      `--projectDir=${projectDir}`,
+      '--analytics',
+      '--analyticsSalt=SAPCLOUDSDK4LIFE'
+    ]);
 
     expect(JSON.parse(fs.readFileSync(`${projectDir}/sap-cloud-sdk-analytics.json`, 'utf8'))).toEqual({ enabled: true });
   }, 60000);
