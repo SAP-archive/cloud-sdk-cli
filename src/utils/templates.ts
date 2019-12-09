@@ -103,7 +103,7 @@ export function ensureDirectoryExistence(filePath: string, isDir: boolean = fals
   const dirname = isDir ? filePath : path.dirname(filePath);
   if (fs.existsSync(dirname)) {
     return true;
+  } else {
+    fs.mkdirSync(dirname, { recursive: true });
   }
-  ensureDirectoryExistence(dirname);
-  fs.mkdirSync(dirname);
 }

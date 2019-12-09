@@ -26,7 +26,7 @@ describe('Add Approuter', () => {
 
   beforeAll(() => {
     if (!fs.existsSync(pathPrefix)) {
-      fs.mkdirSync(pathPrefix);
+      fs.mkdirSync(pathPrefix, { recursive: true });
     }
   });
 
