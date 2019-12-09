@@ -72,7 +72,7 @@ describe('Init', () => {
     await execa('npm', ['run', 'ci-integration-test'], { cwd: projectDir, stdio: 'inherit' });
     expect(fs.readdirSync(path.resolve(reportsPath, 'backend-integration')).length).toBeGreaterThan(1);
     expect(fs.readdirSync(path.resolve(reportsPath, 'coverage-reports', 'backend-integration')).length).toBeGreaterThan(1);
-  }, 180000);
+  }, 240000);
 
   it('should add necessary files to an existing project', async () => {
     const projectDir = getCleanProjectDir('add-to-existing');
@@ -153,8 +153,14 @@ describe('Init', () => {
     const projectDir = getCleanProjectDir('add-to-gitignore');
     fs.copySync(nestAppDir, projectDir, { recursive: true });
 
-    await Init.run(['--projectName=testingApp', '--startCommand="npm start"', `--projectDir=${projectDir}`, '--analytics']);
+    await Init.run([
+      '--projectName=testingApp',
+      '--startCommand="npm start"',
+      `--projectDir=${projectDir}`,
+      '--analytics',
+      '--analyticsSalt=SAPCLOUDSDK4LIFE'
+    ]);
 
-    expect(JSON.parse(fs.readFileSync(`${projectDir}/sap-cloud-sdk-analytics.json`, 'utf8'))).toEqual({ enabled: true });
+    expect(JSON.parse(fs.readFileSync(`${projectDir}/sap-cloud-sdk-analytics.json`, 'utf8'))).toEqual({ enabled: true, salt: 'SAPCLOUDSDK4LIFE' });
   }, 60000);
 });

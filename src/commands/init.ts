@@ -40,6 +40,10 @@ export default class Init extends Command {
       hidden: true,
       description: 'If the folder is empty, use nest-cli to create a project scaffold.'
     }),
+    analyticsSalt: flags.string({
+      hidden: true,
+      description: 'Set salt for analytics. This should only be used for CI builds.'
+    }),
     analytics: flags.boolean({
       hidden: true,
       allowNo: true,
@@ -92,6 +96,8 @@ export default class Init extends Command {
       }
       const options = await this.getOptions(projectDir, isScaffold ? 'npm run start:prod' : flags.startCommand, flags.projectName);
 
+      await usageAnalytics(projectDir, flags.analytics, flags.analyticsSalt);
+
       const tasks = new Listr([
         {
           title: 'Reading templates',
@@ -131,7 +137,6 @@ export default class Init extends Command {
 
       await tasks.run();
 
-      await usageAnalytics(projectDir, flags.analytics);
       this.printSuccessMessage(isScaffold);
     } catch (error) {
       this.error(error, { exit: 1 });
