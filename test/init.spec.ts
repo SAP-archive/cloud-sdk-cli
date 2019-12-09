@@ -43,7 +43,7 @@ describe('Init', () => {
 
   beforeAll(() => {
     if (!fs.existsSync(pathPrefix)) {
-      fs.mkdirSync(pathPrefix);
+      fs.mkdirSync(pathPrefix, { recursive: true });
     }
   });
 
@@ -72,7 +72,7 @@ describe('Init', () => {
     await execa('npm', ['run', 'ci-integration-test'], { cwd: projectDir, stdio: 'inherit' });
     expect(fs.readdirSync(path.resolve(reportsPath, 'backend-integration')).length).toBeGreaterThan(1);
     expect(fs.readdirSync(path.resolve(reportsPath, 'coverage-reports', 'backend-integration')).length).toBeGreaterThan(1);
-  }, 120000);
+  }, 180000);
 
   it('should add necessary files to an existing project', async () => {
     const projectDir = getCleanProjectDir('add-to-existing');
@@ -86,7 +86,7 @@ describe('Init', () => {
         expect(fs.existsSync(path)).toBe(true);
       });
     expect(fs.existsSync(path.resolve(projectDir, 'test'))).toBe(false);
-  }, 20000);
+  }, 60000);
 
   it('init should detect and fail if there are conflicts', async () => {
     const projectDir = getCleanProjectDir('detect-conflicts');
@@ -116,7 +116,7 @@ describe('Init', () => {
     expect(gitignoreEntries).toContain('/s4hana_pipeline');
     expect(gitignoreEntries).toContain('/deployment');
     expect(gitignoreEntries.length).toBeGreaterThan(29);
-  }, 50000);
+  }, 60000);
 
   it('should show a warning if the project is not using git', async () => {
     const projectDir = getCleanProjectDir('warn-on-no-git');
@@ -127,7 +127,7 @@ describe('Init', () => {
     await Init.run(['--projectName=testingApp', '--startCommand="npm start"', `--projectDir=${projectDir}`, '--no-analytics']);
 
     expect(warn).toHaveBeenCalledWith('No .gitignore file found!');
-  }, 30000);
+  }, 60000);
 
   it('should add our scripts and dependencies to the package.json', async () => {
     const projectDir = getCleanProjectDir('add-scripts-and-dependencies');
@@ -147,7 +147,7 @@ describe('Init', () => {
     ['ci-build', 'ci-package', 'ci-backend-unit-test', 'ci-frontend-unit-test', 'ci-integration-test', 'ci-e2e'].forEach(script =>
       expect(scripts).toContain(script)
     );
-  }, 20000);
+  }, 60000);
 
   it('should add the analytics file', async () => {
     const projectDir = getCleanProjectDir('add-to-gitignore');
@@ -156,5 +156,5 @@ describe('Init', () => {
     await Init.run(['--projectName=testingApp', '--startCommand="npm start"', `--projectDir=${projectDir}`, '--analytics']);
 
     expect(JSON.parse(fs.readFileSync(`${projectDir}/sap-cloud-sdk-analytics.json`, 'utf8'))).toEqual({ enabled: true });
-  }, 50000);
+  }, 60000);
 });

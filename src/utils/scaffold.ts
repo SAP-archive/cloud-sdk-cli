@@ -40,17 +40,12 @@ async function checkForEmptyDir(projectDir: string, force: boolean) {
 
 export async function buildScaffold(projectDir: string, verbose: boolean) {
   cli.action.start('Building application scaffold');
-  const cliPath = path.resolve('node_modules/.bin/nest');
   const options: execa.Options = {
     cwd: projectDir,
     stdio: verbose ? 'inherit' : 'ignore'
   };
 
-  if (fs.existsSync(cliPath)) {
-    await execa(cliPath, ['new', '.', '--skip-install', '--package-manager', 'npm'], options);
-  } else {
-    await execa('npx', ['@nestjs/cli', 'new', '.', '--skip-install', '--package-manager', 'npm'], options);
-  }
+  await execa('npx', ['-p', '@nestjs/cli', 'nest', 'new', '.', '--skip-install', '--package-manager', 'npm'], options);
 
   const pathToMainTs = path.resolve(projectDir, 'src', 'main.ts');
   const mainTs = fs.readFileSync(pathToMainTs, { encoding: 'utf8' });
