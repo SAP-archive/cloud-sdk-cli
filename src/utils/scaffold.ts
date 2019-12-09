@@ -45,7 +45,7 @@ export async function buildScaffold(projectDir: string, verbose: boolean) {
     stdio: verbose ? 'inherit' : 'ignore'
   };
 
-  await execa('npx', ['@nestjs/cli', 'new', '.', '--skip-install', '--package-manager', 'npm'], options);
+  await execa('npx', ['-p', '@nestjs/cli', 'nest', 'new', '.', '--skip-install', '--package-manager', 'npm'], options);
 
   const pathToMainTs = path.resolve(projectDir, 'src', 'main.ts');
   const mainTs = fs.readFileSync(pathToMainTs, { encoding: 'utf8' });
