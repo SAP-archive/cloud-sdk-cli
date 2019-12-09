@@ -161,6 +161,6 @@ describe('Init', () => {
       '--analyticsSalt=SAPCLOUDSDK4LIFE'
     ]);
 
-    expect(JSON.parse(fs.readFileSync(`${projectDir}/sap-cloud-sdk-analytics.json`, 'utf8'))).toEqual({ enabled: true });
+    expect(JSON.parse(fs.readFileSync(`${projectDir}/sap-cloud-sdk-analytics.json`, 'utf8'))).toEqual({ enabled: true, salt: 'SAPCLOUDSDK4LIFE' });
   }, 60000);
 });
