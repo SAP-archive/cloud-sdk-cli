@@ -92,6 +92,8 @@ export default class Init extends Command {
       }
       const options = await this.getOptions(projectDir, isScaffold ? 'npm run start:prod' : flags.startCommand, flags.projectName);
 
+      await usageAnalytics(projectDir, flags.analytics);
+
       const tasks = new Listr([
         {
           title: 'Reading templates',
@@ -131,7 +133,6 @@ export default class Init extends Command {
 
       await tasks.run();
 
-      await usageAnalytics(projectDir, flags.analytics);
       this.printSuccessMessage(isScaffold);
     } catch (error) {
       this.error(error, { exit: 1 });
