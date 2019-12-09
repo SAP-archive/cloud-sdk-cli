@@ -5,6 +5,7 @@ import cli from 'cli-ux';
 import * as execa from 'execa';
 import * as fs from 'fs';
 import * as path from 'path';
+import { getJestConfig } from './jest-config';
 
 const frontendScripts = {
   'ci-frontend-unit-test':
@@ -18,7 +19,7 @@ const scaffoldProjectPackageJson = {
     'ci-build': 'npm run build',
     'ci-package': 'sap-cloud-sdk package',
     'ci-integration-test': 'jest --ci --config ./test/jest-e2e.json',
-    'ci-backend-unit-test': 'jest --ci --coverage'
+    'ci-backend-unit-test': 'jest --ci'
   },
   devDependencies: ['jest', 'jest-junit', '@sap/cloud-sdk-test-util', '@sap-cloud-sdk/cli'],
   dependencies: ['@sap/cloud-sdk-core']
@@ -72,6 +73,11 @@ export async function modifyPackageJson(projectDir: string, isScaffold: boolean,
     dependencies: { ...(await addDependencies(packageJson.dependencies)), ...dependencies },
     devDependencies: { ...(await addDependencies(packageJson.devDependencies)), ...devDependencies }
   };
+
+  if (isScaffold) {
+    adjustedPackageJson.jest = { ...originalPackageJson.jest, ...getJestConfig(true) };
+  }
+
   fs.writeFileSync(path.resolve(projectDir, 'package.json'), JSON.stringify(adjustedPackageJson, null, 2));
 }
 

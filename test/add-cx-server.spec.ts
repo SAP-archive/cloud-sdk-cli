@@ -24,7 +24,7 @@ describe('Add CX Server', () => {
 
   beforeAll(() => {
     if (!fs.existsSync(pathPrefix)) {
-      fs.mkdirSync(pathPrefix);
+      fs.mkdirSync(pathPrefix, { recursive: true });
     }
   });
 
@@ -92,8 +92,7 @@ describe('Add CX Server', () => {
       fs.removeSync(projectDir);
     }
 
-    fs.mkdirSync(projectDir);
-    fs.mkdirSync(path.resolve(projectDir, 'cx-server'));
+    fs.mkdirSync(path.resolve(projectDir, 'cx-server'), { recursive: true });
     fs.createFileSync(path.resolve(projectDir, 'cx-server', 'cx-server'));
 
     const argv = [`--projectDir=${projectDir}`];

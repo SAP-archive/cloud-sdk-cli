@@ -6,10 +6,21 @@ import { Command, flags } from '@oclif/command';
 import cli from 'cli-ux';
 import * as Listr from 'listr';
 import * as path from 'path';
-import { modifyGitIgnore } from '../utils/git-ignore';
-import { installDependencies, modifyPackageJson, parsePackageJson } from '../utils/package-json';
-import { buildScaffold, shouldBuildScaffold } from '../utils/scaffold';
-import { copyFiles, ensureDirectoryExistence, findConflicts, readTemplates } from '../utils/templates';
+import {
+  buildScaffold,
+  copyFiles,
+  ensureDirectoryExistence,
+  findConflicts,
+  getJestConfig,
+  installDependencies,
+  modifyGitIgnore,
+  modifyJestConfig,
+  modifyPackageJson,
+  parsePackageJson,
+  readTemplates,
+  shouldBuildScaffold,
+  usageAnalytics
+} from '../utils/';
 
 export default class Init extends Command {
   static description = 'Initializes your project for the SAP Cloud SDK, SAP Cloud Platform Cloud Foundry and CI/CD using the SAP Cloud SDK toolkit';
@@ -28,6 +39,15 @@ export default class Init extends Command {
     buildScaffold: flags.boolean({
       hidden: true,
       description: 'If the folder is empty, use nest-cli to create a project scaffold.'
+    }),
+    analyticsSalt: flags.string({
+      hidden: true,
+      description: 'Set salt for analytics. This should only be used for CI builds.'
+    }),
+    analytics: flags.boolean({
+      hidden: true,
+      allowNo: true,
+      description: 'Enable or disable collection of anonymous usage data.'
     }),
     force: flags.boolean({
       description: 'Do not fail if a file or npm script already exist and overwrite it.'
@@ -70,11 +90,13 @@ export default class Init extends Command {
 
     try {
       ensureDirectoryExistence(projectDir, true);
-      const isScaffold = await shouldBuildScaffold(projectDir, flags);
+      const isScaffold = await shouldBuildScaffold(projectDir, flags.buildScaffold, flags.force);
       if (isScaffold) {
         await buildScaffold(projectDir, flags.verbose);
       }
       const options = await this.getOptions(projectDir, isScaffold ? 'npm run start:prod' : flags.startCommand, flags.projectName);
+
+      await usageAnalytics(projectDir, flags.analytics, flags.analyticsSalt);
 
       const tasks = new Listr([
         {
@@ -92,7 +114,12 @@ export default class Init extends Command {
         },
         {
           title: 'Creating files',
-          task: ctx => copyFiles(ctx.files, options).catch(e => this.error(e, { exit: 2 }))
+          task: ctx => copyFiles(ctx.files, options)
+        },
+        {
+          title: 'Modifying test config',
+          task: () => modifyJestConfig(path.resolve(projectDir, 'test', 'jest-e2e.json'), getJestConfig(false)),
+          enabled: () => isScaffold
         },
         {
           title: 'Adding dependencies to package.json',
@@ -100,7 +127,7 @@ export default class Init extends Command {
         },
         {
           title: 'Installing dependencies',
-          task: () => installDependencies(projectDir, verbose).catch(e => this.error(`Error during npm install: ${e.message}`, { exit: 2 }))
+          task: () => installDependencies(projectDir, verbose).catch(e => this.error(`Error during npm install: ${e.message}`, { exit: 13 }))
         },
         {
           title: 'Modifying `.gitignore`',
@@ -109,6 +136,7 @@ export default class Init extends Command {
       ]);
 
       await tasks.run();
+
       this.printSuccessMessage(isScaffold);
     } catch (error) {
       this.error(error, { exit: 1 });
