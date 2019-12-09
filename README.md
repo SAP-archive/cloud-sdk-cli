@@ -37,7 +37,7 @@ $ npm install -g @sap-cloud-sdk/cli
 $ sap-cloud-sdk COMMAND
 running command...
 $ sap-cloud-sdk (-v|--version|version)
-@sap-cloud-sdk/cli/0.0.8 darwin-x64 node-v11.12.0
+@sap-cloud-sdk/cli/0.0.9 darwin-x64 node-v11.12.0
 $ sap-cloud-sdk --help [COMMAND]
 USAGE
   $ sap-cloud-sdk COMMAND
@@ -97,7 +97,7 @@ EXAMPLE
   $ sap-cloud-sdk add-approuter
 ```
 
-_See code: [src/commands/add-approuter.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.8/src/commands/add-approuter.ts)_
+_See code: [src/commands/add-approuter.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.9/src/commands/add-approuter.ts)_
 
 ## `sap-cloud-sdk add-cx-server`
 
@@ -115,7 +115,7 @@ EXAMPLE
   $ sap-cloud-sdk add-cx-server
 ```
 
-_See code: [src/commands/add-cx-server.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.8/src/commands/add-cx-server.ts)_
+_See code: [src/commands/add-cx-server.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.9/src/commands/add-cx-server.ts)_
 
 ## `sap-cloud-sdk autocomplete [SHELL]`
 
@@ -138,7 +138,7 @@ EXAMPLES
   $ sap-cloud-sdk autocomplete --refresh-cache
 ```
 
-_See code: [@oclif/plugin-autocomplete](https://github.com/oclif/plugin-autocomplete/blob/v0.1.4/src/commands/autocomplete/index.ts)_
+_See code: [@oclif/plugin-autocomplete](https://github.com/oclif/plugin-autocomplete/blob/v0.1.5/src/commands/autocomplete/index.ts)_
 
 ## `sap-cloud-sdk help [COMMAND]`
 
@@ -155,7 +155,7 @@ OPTIONS
   --all  see all commands in CLI
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v2.2.1/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v2.2.2/src/commands/help.ts)_
 
 ## `sap-cloud-sdk help-page`
 
@@ -169,7 +169,7 @@ OPTIONS
   -h, --help  show CLI help
 ```
 
-_See code: [src/commands/help-page.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.8/src/commands/help-page.ts)_
+_See code: [src/commands/help-page.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.9/src/commands/help-page.ts)_
 
 ## `sap-cloud-sdk init [PROJECTDIR]`
 
@@ -194,7 +194,7 @@ EXAMPLES
   $ sap-cloud-sdk init --help
 ```
 
-_See code: [src/commands/init.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.8/src/commands/init.ts)_
+_See code: [src/commands/init.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.9/src/commands/init.ts)_
 
 ## `sap-cloud-sdk package`
 
@@ -223,7 +223,7 @@ EXAMPLES
   $ sap-cloud-sdk package --include="package.json,package-lock.json,index.js,dist/**/*" --exclude="**/*.java"
 ```
 
-_See code: [src/commands/package.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.8/src/commands/package.ts)_
+_See code: [src/commands/package.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.9/src/commands/package.ts)_
 <!-- commandsstop -->
 
 ## Contribute
