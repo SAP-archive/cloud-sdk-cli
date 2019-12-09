@@ -72,7 +72,7 @@ describe('Init', () => {
     await execa('npm', ['run', 'ci-integration-test'], { cwd: projectDir, stdio: 'inherit' });
     expect(fs.readdirSync(path.resolve(reportsPath, 'backend-integration')).length).toBeGreaterThan(1);
     expect(fs.readdirSync(path.resolve(reportsPath, 'coverage-reports', 'backend-integration')).length).toBeGreaterThan(1);
-  }, 180000);
+  }, 240000);
 
   it('should add necessary files to an existing project', async () => {
     const projectDir = getCleanProjectDir('add-to-existing');
