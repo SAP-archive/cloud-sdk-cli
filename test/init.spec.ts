@@ -163,4 +163,13 @@ describe('Init', () => {
 
     expect(JSON.parse(fs.readFileSync(`${projectDir}/sap-cloud-sdk-analytics.json`, 'utf8'))).toEqual({ enabled: true, salt: 'SAPCLOUDSDK4LIFE' });
   }, 60000);
+
+  it('should add a disabled analytics file', async () => {
+    const projectDir = getCleanProjectDir('add-to-gitignore');
+    fs.copySync(expressAppDir, projectDir, { recursive: true });
+
+    await Init.run(['--projectName=testingApp', '--startCommand="npm start"', `--projectDir=${projectDir}`, '--no-analytics']);
+
+    expect(JSON.parse(fs.readFileSync(`${projectDir}/sap-cloud-sdk-analytics.json`, 'utf8'))).toEqual({ enabled: false });
+  }, 60000);
 });
