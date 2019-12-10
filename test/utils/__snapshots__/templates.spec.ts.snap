@@ -1,0 +1,104 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Templates Utils should copy files locally 1`] = `
+Array [
+  ".npmrc",
+  "Jenkinsfile",
+  "credentials.json",
+  "deployment",
+  "manifest.yml",
+  "pipeline_config.yml",
+  "s4hana_pipeline",
+  "systems.json",
+]
+`;
+
+exports[`Templates Utils should return information which files to copy where 1`] = `
+Array [
+  Object {
+    "fileName": "/Users/d065362/dev/cloud-sdk-cli/abcdef/.npmrc",
+    "sourcePath": "/Users/d065362/dev/cloud-sdk-cli/src/templates/init/.npmrc",
+    "targetFolder": "/Users/d065362/dev/cloud-sdk-cli/abcdef",
+  },
+  Object {
+    "fileName": "/Users/d065362/dev/cloud-sdk-cli/abcdef/Jenkinsfile",
+    "sourcePath": "/Users/d065362/dev/cloud-sdk-cli/src/templates/init/Jenkinsfile",
+    "targetFolder": "/Users/d065362/dev/cloud-sdk-cli/abcdef",
+  },
+  Object {
+    "fileName": "/Users/d065362/dev/cloud-sdk-cli/abcdef/credentials.json",
+    "sourcePath": "/Users/d065362/dev/cloud-sdk-cli/src/templates/init/credentials.json",
+    "targetFolder": "/Users/d065362/dev/cloud-sdk-cli/abcdef",
+  },
+  Object {
+    "fileName": "/Users/d065362/dev/cloud-sdk-cli/abcdef/deployment/.gitkeep",
+    "sourcePath": "/Users/d065362/dev/cloud-sdk-cli/src/templates/init/deployment/.gitkeep",
+    "targetFolder": "/Users/d065362/dev/cloud-sdk-cli/abcdef/deployment",
+  },
+  Object {
+    "fileName": "/Users/d065362/dev/cloud-sdk-cli/abcdef/manifest.yml",
+    "sourcePath": "/Users/d065362/dev/cloud-sdk-cli/src/templates/init/manifest.yml.mu",
+    "targetFolder": "/Users/d065362/dev/cloud-sdk-cli/abcdef",
+  },
+  Object {
+    "fileName": "/Users/d065362/dev/cloud-sdk-cli/abcdef/pipeline_config.yml",
+    "sourcePath": "/Users/d065362/dev/cloud-sdk-cli/src/templates/init/pipeline_config.yml.mu",
+    "targetFolder": "/Users/d065362/dev/cloud-sdk-cli/abcdef",
+  },
+  Object {
+    "fileName": "/Users/d065362/dev/cloud-sdk-cli/abcdef/s4hana_pipeline/reports/backend-integration/.gitkeep",
+    "sourcePath": "/Users/d065362/dev/cloud-sdk-cli/src/templates/init/s4hana_pipeline/reports/backend-integration/.gitkeep",
+    "targetFolder": "/Users/d065362/dev/cloud-sdk-cli/abcdef/s4hana_pipeline/reports/backend-integration",
+  },
+  Object {
+    "fileName": "/Users/d065362/dev/cloud-sdk-cli/abcdef/s4hana_pipeline/reports/backend-unit/.gitkeep",
+    "sourcePath": "/Users/d065362/dev/cloud-sdk-cli/src/templates/init/s4hana_pipeline/reports/backend-unit/.gitkeep",
+    "targetFolder": "/Users/d065362/dev/cloud-sdk-cli/abcdef/s4hana_pipeline/reports/backend-unit",
+  },
+  Object {
+    "fileName": "/Users/d065362/dev/cloud-sdk-cli/abcdef/s4hana_pipeline/reports/coverage-reports/backend-integration/.gitkeep",
+    "sourcePath": "/Users/d065362/dev/cloud-sdk-cli/src/templates/init/s4hana_pipeline/reports/coverage-reports/backend-integration/.gitkeep",
+    "targetFolder": "/Users/d065362/dev/cloud-sdk-cli/abcdef/s4hana_pipeline/reports/coverage-reports/backend-integration",
+  },
+  Object {
+    "fileName": "/Users/d065362/dev/cloud-sdk-cli/abcdef/s4hana_pipeline/reports/coverage-reports/backend-unit/.gitkeep",
+    "sourcePath": "/Users/d065362/dev/cloud-sdk-cli/src/templates/init/s4hana_pipeline/reports/coverage-reports/backend-unit/.gitkeep",
+    "targetFolder": "/Users/d065362/dev/cloud-sdk-cli/abcdef/s4hana_pipeline/reports/coverage-reports/backend-unit",
+  },
+  Object {
+    "fileName": "/Users/d065362/dev/cloud-sdk-cli/abcdef/systems.json",
+    "sourcePath": "/Users/d065362/dev/cloud-sdk-cli/src/templates/init/systems.json",
+    "targetFolder": "/Users/d065362/dev/cloud-sdk-cli/abcdef",
+  },
+]
+`;
+
+exports[`Templates Utils should return information which files to copy where 2`] = `
+Array [
+  Object {
+    "fileName": "/Users/d065362/dev/cloud-sdk-cli/blablabla/approuter/.npmrc",
+    "sourcePath": "/Users/d065362/dev/cloud-sdk-cli/src/templates/add-approuter/approuter/.npmrc",
+    "targetFolder": "/Users/d065362/dev/cloud-sdk-cli/blablabla/approuter",
+  },
+  Object {
+    "fileName": "/Users/d065362/dev/cloud-sdk-cli/blablabla/approuter/manifest.yml",
+    "sourcePath": "/Users/d065362/dev/cloud-sdk-cli/src/templates/add-approuter/approuter/manifest.yml.mu",
+    "targetFolder": "/Users/d065362/dev/cloud-sdk-cli/blablabla/approuter",
+  },
+  Object {
+    "fileName": "/Users/d065362/dev/cloud-sdk-cli/blablabla/approuter/package.json",
+    "sourcePath": "/Users/d065362/dev/cloud-sdk-cli/src/templates/add-approuter/approuter/package.json",
+    "targetFolder": "/Users/d065362/dev/cloud-sdk-cli/blablabla/approuter",
+  },
+  Object {
+    "fileName": "/Users/d065362/dev/cloud-sdk-cli/blablabla/approuter/xs-app.json",
+    "sourcePath": "/Users/d065362/dev/cloud-sdk-cli/src/templates/add-approuter/approuter/xs-app.json.mu",
+    "targetFolder": "/Users/d065362/dev/cloud-sdk-cli/blablabla/approuter",
+  },
+  Object {
+    "fileName": "/Users/d065362/dev/cloud-sdk-cli/blablabla/approuter/xs-security.json",
+    "sourcePath": "/Users/d065362/dev/cloud-sdk-cli/src/templates/add-approuter/approuter/xs-security.json.mu",
+    "targetFolder": "/Users/d065362/dev/cloud-sdk-cli/blablabla/approuter",
+  },
+]
+`;
