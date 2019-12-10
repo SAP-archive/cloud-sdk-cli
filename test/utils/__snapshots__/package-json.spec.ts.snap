@@ -159,14 +159,14 @@ Object {
 
 exports[`Package Json Utils should parse the package.json 1`] = `
 Array [
-  "name",
-  "version",
-  "description",
   "author",
-  "license",
-  "scripts",
   "dependencies",
+  "description",
   "devDependencies",
   "jest",
+  "license",
+  "name",
+  "scripts",
+  "version",
 ]
 `;

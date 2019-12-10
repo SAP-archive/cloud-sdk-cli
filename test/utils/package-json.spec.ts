@@ -35,7 +35,7 @@ describe('Package Json Utils', () => {
     const packageJsonPath = path.resolve(projectDir, 'package.json');
     fs.copyFileSync(path.resolve('test', 'nest', 'package.json'), packageJsonPath);
 
-    expect(Object.keys(parsePackageJson(projectDir))).toMatchSnapshot();
+    expect(Object.keys(parsePackageJson(projectDir)).sort()).toMatchSnapshot();
   });
 
   it('add scripts, dependencies and test config for existing project', async () => {

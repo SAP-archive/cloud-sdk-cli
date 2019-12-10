@@ -54,6 +54,6 @@ describe('Scaffold Utils', () => {
 
     await buildScaffold(projectDir, false);
 
-    expect(fs.readdirSync(projectDir)).toMatchSnapshot();
+    expect(fs.readdirSync(projectDir).sort()).toMatchSnapshot();
   }, 60000);
 });

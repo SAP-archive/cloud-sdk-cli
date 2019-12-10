@@ -15,16 +15,16 @@ Array [
 
 exports[`Templates Utils should return information which files to copy where 1`] = `
 Array [
+  ".gitkeep",
+  ".gitkeep",
+  ".gitkeep",
+  ".gitkeep",
+  ".gitkeep",
   ".npmrc",
   "Jenkinsfile",
   "credentials.json",
-  ".gitkeep",
   "manifest.yml",
   "pipeline_config.yml",
-  ".gitkeep",
-  ".gitkeep",
-  ".gitkeep",
-  ".gitkeep",
   "systems.json",
 ]
 `;

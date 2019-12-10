@@ -55,13 +55,13 @@ describe('Templates Utils', () => {
       from: [path.resolve(__dirname, '..', '..', 'src', 'templates', 'init')],
       to: 'abcdef'
     });
-    expect(initCopyInfo.map(copyInfo => path.basename(copyInfo.fileName))).toMatchSnapshot();
+    expect(initCopyInfo.map(copyInfo => path.basename(copyInfo.fileName)).sort()).toMatchSnapshot();
 
     const appRouterCopyInfo = readTemplates({
       from: [path.resolve(__dirname, '..', '..', 'src', 'templates', 'add-approuter')],
       to: 'blablabla'
     });
-    expect(appRouterCopyInfo.map(copyInfo => path.basename(copyInfo.fileName))).toMatchSnapshot();
+    expect(appRouterCopyInfo.map(copyInfo => path.basename(copyInfo.fileName)).sort()).toMatchSnapshot();
   });
 
   it('should find conflicts', async () => {
@@ -86,7 +86,7 @@ describe('Templates Utils', () => {
       }),
       {}
     );
-    expect(fs.readdirSync(projectDir)).toMatchSnapshot();
+    expect(fs.readdirSync(projectDir).sort()).toMatchSnapshot();
   });
 
   // it('should copy files remotely', async () => {
