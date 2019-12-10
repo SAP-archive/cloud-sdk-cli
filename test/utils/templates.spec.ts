@@ -1,22 +1,6 @@
 /*!
  * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
-const warn = jest.fn();
-const confirm = jest.fn().mockResolvedValue(true);
-
-jest.mock('cli-ux', () => {
-  // Mocking needs to happen before the command is imported
-  const cli = jest.requireActual('cli-ux');
-  return {
-    ...cli,
-    default: {
-      ...cli.default,
-      confirm,
-      warn
-    }
-  };
-});
-
 import * as fs from 'fs';
 import * as path from 'path';
 import * as rm from 'rimraf';
