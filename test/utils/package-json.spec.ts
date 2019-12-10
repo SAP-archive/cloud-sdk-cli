@@ -20,7 +20,7 @@ function getCleanProjectDir(name: string) {
   return projectDir;
 }
 
-describe('Git Ignore Utils', () => {
+describe('Package Json Utils', () => {
   afterAll(() => {
     rm.sync(pathPrefix);
   });

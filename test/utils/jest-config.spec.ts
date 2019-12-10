@@ -17,7 +17,7 @@ function getCleanProjectDir(name: string) {
   return projectDir;
 }
 
-describe('Git Ignore Utils', () => {
+describe('Jest Config Utils', () => {
   afterAll(() => {
     rm.sync(pathPrefix);
   });
