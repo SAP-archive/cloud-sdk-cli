@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Git Ignore Utils returns jest config object for tests 1`] = `
+exports[`Jest Config Utils returns jest config object for tests 1`] = `
 Object {
   "collectCoverage": true,
   "coverageDirectory": "../s4hana_pipeline/reports/coverage-reports/backend-unit",
@@ -21,7 +21,7 @@ Object {
 }
 `;
 
-exports[`Git Ignore Utils returns jest config object for tests 2`] = `
+exports[`Jest Config Utils returns jest config object for tests 2`] = `
 Object {
   "collectCoverage": true,
   "coverageDirectory": "../s4hana_pipeline/reports/coverage-reports/backend-integration",
