@@ -51,19 +51,17 @@ describe('Templates Utils', () => {
   });
 
   it('should return information which files to copy where', () => {
-    expect(
-      readTemplates({
-        from: [path.resolve(__dirname, '..', '..', 'src', 'templates', 'init')],
-        to: 'abcdef'
-      })
-    ).toMatchSnapshot();
+    const initCopyInfo = readTemplates({
+      from: [path.resolve(__dirname, '..', '..', 'src', 'templates', 'init')],
+      to: 'abcdef'
+    });
+    expect(initCopyInfo.map(copyInfo => path.basename(copyInfo.fileName))).toMatchSnapshot();
 
-    expect(
-      readTemplates({
-        from: [path.resolve(__dirname, '..', '..', 'src', 'templates', 'add-approuter')],
-        to: 'blablabla'
-      })
-    ).toMatchSnapshot();
+    const appRouterCopyInfo = readTemplates({
+      from: [path.resolve(__dirname, '..', '..', 'src', 'templates', 'add-approuter')],
+      to: 'blablabla'
+    });
+    expect(appRouterCopyInfo.map(copyInfo => path.basename(copyInfo.fileName))).toMatchSnapshot();
   });
 
   it('should find conflicts', async () => {
