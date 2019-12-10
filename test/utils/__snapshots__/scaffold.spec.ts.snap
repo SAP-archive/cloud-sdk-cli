@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Git Ignore Utils should build the scaffold 1`] = `
+Array [
+  ".git",
+  ".gitignore",
+  ".prettierrc",
+  "README.md",
+  "nest-cli.json",
+  "package.json",
+  "src",
+  "test",
+  "tsconfig.build.json",
+  "tsconfig.json",
+  "tslint.json",
+]
+`;
