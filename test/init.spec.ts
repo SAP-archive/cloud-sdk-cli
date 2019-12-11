@@ -51,7 +51,7 @@ describe('Init', () => {
     fs.removeSync(pathPrefix);
   });
 
-  xit('should create a new project with the necessary files', async () => {
+  it('should create a new project with the necessary files', async () => {
     const projectDir = getCleanProjectDir('full-init');
 
     await Init.run(['--projectName=testingApp', '--buildScaffold', '--no-analytics', `--projectDir=${projectDir}`]);
