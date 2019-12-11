@@ -75,9 +75,9 @@ export default class GenerateVdm extends Command {
   };
 
   async run() {
-    // const { flags } = this.parse(GenerateVdm);
+    const { flags } = this.parse(GenerateVdm);
 
-    // await generate(toGeneratorSDK(flags));
+    await generate(toGeneratorSDK(flags));
 
   }
 }
