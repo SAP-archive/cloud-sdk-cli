@@ -9,15 +9,16 @@ import * as path from 'path';
 import {
   buildScaffold,
   copyFiles,
-  ensureDirectoryExistence,
+  ensureDirectiryExists,
   findConflicts,
+  getCopyDescriptorsForTemplates,
   getJestConfig,
+  getTemplatePaths,
   installDependencies,
   modifyGitIgnore,
   modifyJestConfig,
   modifyPackageJson,
   parsePackageJson,
-  readTemplates,
   shouldBuildScaffold,
   usageAnalytics
 } from '../utils/';
@@ -28,6 +29,9 @@ export default class Init extends Command {
   static examples = ['$ sap-cloud-sdk init', '$ sap-cloud-sdk init --help'];
 
   static flags = {
+    projectDir: flags.string({
+      description: 'Path to the folder in which the project should be created.'
+    }),
     projectName: flags.string({
       hidden: true,
       description: 'Give project name which is used for the Cloud Foundry mainfest.yml'
@@ -55,8 +59,8 @@ export default class Init extends Command {
     frontendScripts: flags.boolean({
       description: 'Add frontend-related npm scripts which are executed by our CI/CD toolkit.'
     }),
-    projectDir: flags.string({
-      description: 'Path to the folder in which the project should be created.'
+    useCds: flags.boolean({
+      description: 'Add a cds configuration and example data to follor the SAP Cloud Application Promgramming model.'
     }),
     help: flags.help({
       char: 'h',
@@ -89,7 +93,7 @@ export default class Init extends Command {
     const projectDir: string = flags.projectDir || args.projectDir || '.';
 
     try {
-      ensureDirectoryExistence(projectDir, true);
+      ensureDirectiryExists(projectDir, true);
       const isScaffold = await shouldBuildScaffold(projectDir, flags.buildScaffold, flags.force);
       if (isScaffold) {
         await buildScaffold(projectDir, flags.verbose);
@@ -100,21 +104,18 @@ export default class Init extends Command {
 
       const tasks = new Listr([
         {
-          title: 'Reading templates',
-          task: async ctx => {
-            ctx.files = readTemplates({
-              from: [path.resolve(__dirname, '..', 'templates', 'init')],
-              to: projectDir
-            });
+          title: 'Reading templates A',
+          task: ctx => {
+            ctx.copyDescriptors = getCopyDescriptorsForTemplates(projectDir, getTemplatePaths(['init']));
           }
         },
         {
           title: 'Finding potential conflicts',
-          task: ctx => findConflicts(ctx.files, flags.force)
+          task: ctx => findConflicts(ctx.copyDescriptors, flags.force)
         },
         {
           title: 'Creating files',
-          task: ctx => copyFiles(ctx.files, options)
+          task: ctx => copyFiles(ctx.copyDescriptors, options)
         },
         {
           title: 'Modifying test config',

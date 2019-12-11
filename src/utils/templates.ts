@@ -9,31 +9,45 @@ import * as https from 'https';
 import * as path from 'path';
 import { CopyDescriptor } from './copy-list';
 
-interface TemplateParam {
-  from: string[];
-  to: string;
-  exclude?: string[];
+const templatesDir = path.resolve(__dirname, '../templates');
+
+function getTemplatePathsForDir(inputDir: string[], excludes: string[]): string[] {
+  const directoryEntries = fs.readdirSync(path.resolve(templatesDir, ...inputDir), { withFileTypes: true });
+  return directoryEntries.reduce((templates: string[], directoryEntry) => {
+    if (directoryEntry.isDirectory() && !excludes.includes(directoryEntry.name)) {
+      return [...templates, ...getTemplatePathsForDir([...inputDir, directoryEntry.name], excludes)];
+    }
+    if (directoryEntry.isFile() && !excludes.includes(directoryEntry.name)) {
+      return [...templates, path.resolve(templatesDir, ...inputDir, directoryEntry.name)];
+    }
+    return templates;
+  }, []);
 }
 
-export function readTemplates({ from, to, exclude = [] }: TemplateParam): CopyDescriptor[] {
-  const files = fs.readdirSync(path.resolve(...from), { withFileTypes: true });
-  const results: CopyDescriptor[] = [];
-  return files.reduce((prev, curr) => {
-    if (curr.isDirectory() && !exclude.includes(curr.name)) {
-      prev = prev.concat(readTemplates({ from: from.concat(curr.name), to, exclude }));
-    }
-    if (curr.isFile() && !exclude.includes(curr.name)) {
-      prev.push({
-        sourcePath: path.resolve(...from, curr.name),
-        targetFolder: path.resolve(to, ...from.slice(1)),
-        fileName: path.resolve(to, ...from.slice(1), path.basename(curr.name, '.mu'))
-      });
-    }
-    return prev;
-  }, results);
+export function getTemplatePaths(inputDirs: string[], excludes: string[] = []): string[] {
+  return inputDirs.reduce((templatePaths: string[], inputDir) => [...templatePaths, ...getTemplatePathsForDir([inputDir], excludes)], []);
 }
 
-export async function findConflicts(files: CopyDescriptor[], force: boolean = false) {
+function getRelativeSourcePath(templatePath: string): string {
+  return path
+    .relative(templatesDir, path.dirname(templatePath))
+    .split(path.sep)
+    .slice(1)
+    .join(path.sep);
+}
+
+export function getCopyDescriptorsForTemplates(targetDir: string, templatePaths: string[]): CopyDescriptor[] {
+  return templatePaths.map(templatePath => {
+    const relativeSourcePath = getRelativeSourcePath(templatePath);
+    const targetTemplateDir = path.resolve(targetDir, relativeSourcePath);
+    return {
+      sourcePath: templatePath,
+      fileName: path.resolve(targetTemplateDir, path.basename(templatePath, '.mu'))
+    };
+  });
+}
+
+export async function findConflicts(files: CopyDescriptor[], force = false) {
   const conflicts = files.filter(file => fs.existsSync(file.fileName));
 
   if (conflicts.length) {
@@ -54,18 +68,17 @@ export async function findConflicts(files: CopyDescriptor[], force: boolean = fa
 export async function copyFiles(files: CopyDescriptor[], options: { [key: string]: any }) {
   return Promise.all(
     files.map(file => {
-      const { sourcePath, targetFolder, fileName } = file;
+      const { sourcePath, fileName } = file;
 
       if (sourcePath instanceof URL) {
-        return copyRemote(sourcePath, targetFolder, fileName);
-      } else {
-        return copyLocal(sourcePath, targetFolder, fileName, options);
+        return copyRemote(sourcePath, fileName);
       }
+      return copyLocal(sourcePath, fileName, options);
     })
   );
 }
 
-function copyRemote(sourcePath: URL, targetFolder: string, fileName: string) {
+async function copyRemote(sourcePath: URL, fileName: string) {
   return new Promise((resolve, reject) => {
     https
       .get(sourcePath, response => {
@@ -74,7 +87,7 @@ function copyRemote(sourcePath: URL, targetFolder: string, fileName: string) {
         }
 
         response.on('data', content => {
-          fs.mkdirSync(targetFolder, { recursive: true });
+          fs.mkdirSync(path.dirname(fileName), { recursive: true });
           fs.writeFileSync(fileName, content);
           resolve();
         });
@@ -85,21 +98,18 @@ function copyRemote(sourcePath: URL, targetFolder: string, fileName: string) {
   });
 }
 
-async function copyLocal(sourcePath: string, targetFolder: string, fileName: string, options: { [key: string]: any }) {
-  let content: string;
+async function copyLocal(sourcePath: string, fileName: string, options: { [key: string]: any }) {
+  fs.mkdirSync(path.dirname(fileName), { recursive: true });
 
   if (path.extname(sourcePath) === '.mu') {
     const template = compile(fs.readFileSync(sourcePath, { encoding: 'utf8' }));
-    content = template(options);
+    fs.writeFileSync(fileName, template(options));
   } else {
-    content = fs.readFileSync(sourcePath, { encoding: 'utf8' });
+    fs.copyFileSync(sourcePath, fileName);
   }
-
-  fs.mkdirSync(targetFolder, { recursive: true });
-  fs.writeFileSync(fileName, content);
 }
 
-export function ensureDirectoryExistence(filePath: string, isDir: boolean = false) {
+export function ensureDirectiryExists(filePath: string, isDir: boolean = false) {
   const dirname = isDir ? filePath : path.dirname(filePath);
   if (fs.existsSync(dirname)) {
     return true;

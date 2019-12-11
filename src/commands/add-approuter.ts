@@ -7,8 +7,7 @@ import cli from 'cli-ux';
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
 import * as Listr from 'listr';
-import * as path from 'path';
-import { copyFiles, findConflicts, readTemplates } from '../utils/templates';
+import { copyFiles, findConflicts, getCopyDescriptorsForTemplates, getTemplatePaths } from '../utils/templates';
 
 export default class AddApprouter extends Command {
   static description = 'Setup your Cloud Foundry app to authenticate through the app router';
@@ -35,16 +34,16 @@ export default class AddApprouter extends Command {
         {
           title: 'Reading templates',
           task: ctx => {
-            ctx.files = readTemplates({ from: [path.resolve(__dirname, '..', 'templates', 'add-approuter')], to: flags.projectDir });
+            ctx.copyDescriptors = getCopyDescriptorsForTemplates(flags.projectDir, getTemplatePaths(['add-approuter']));
           }
         },
         {
           title: 'Finding potential conflicts',
-          task: ctx => findConflicts(ctx.files, flags.force)
+          task: ctx => findConflicts(ctx.copyDescriptors, flags.force)
         },
         {
           title: 'Creating files',
-          task: ctx => copyFiles(ctx.files, options)
+          task: ctx => copyFiles(ctx.copyDescriptors, options)
         }
       ]);
 
