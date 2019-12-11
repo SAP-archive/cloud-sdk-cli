@@ -9,4 +9,4 @@ node_modules
 .idea
 test/*spec/*
 oclif.manifest.json
-*.edmx
+

@@ -120,7 +120,7 @@ describe('generate-vdm', () => {
         }
       }
     }
-  }, 60000);
+  }, 10000);
 
   function getInputAllFalse(): string[] {
     const allFalse = getAllFalse();
