@@ -7,7 +7,6 @@ import { AlphabetLowercase, AlphabetUppercase } from '@oclif/parser/lib/alphabet
 import { IBooleanFlag, IOptionFlag } from '@oclif/parser/lib/flags';
 import { GeneratorOptions } from '@sap/cloud-sdk-generator';
 import * as path from 'path';
-// import * as execa from 'execa';
 import { Options } from 'yargs';
 import { AllKeysTest, FlagsParsed, generatorOptionCLI } from '../commands/generate-vdm';
 
@@ -29,33 +28,33 @@ export function toGeneratorSDK(flags: FlagsParsed): GeneratorOptions {
   return result as GeneratorOptions;
 }
 
-export function toBoolean(yarnBool: Options | undefined): IBooleanFlag<boolean> {
-  if (!yarnBool) {
+export function toBoolean(yargsBool: Options | undefined): IBooleanFlag<boolean> {
+  if (!yargsBool) {
     return flags.boolean();
   }
-  const extendedDescription = `${yarnBool.describe} [default: ${yarnBool.default}].`;
+  const extendedDescription = `${yargsBool.describe} [default: ${yargsBool.default}].`;
   return flags.boolean({
-    char: yarnBool.alias as AlphabetLowercase | AlphabetUppercase,
+    char: yargsBool.alias as AlphabetLowercase | AlphabetUppercase,
     description: extendedDescription,
-    required: yarnBool.requiresArg,
-    default: yarnBool.default,
-    allowNo: yarnBool.default
+    required: yargsBool.requiresArg,
+    default: yargsBool.default,
+    allowNo: yargsBool.default
   });
 }
 
-export function toOptionFlag(yarnBool: Options | undefined): IOptionFlag<string | undefined> {
-  if (!yarnBool) {
+export function toOptionFlag(yargsString: Options | undefined): IOptionFlag<string | undefined> {
+  if (!yargsString) {
     return flags.string({});
   }
 
   const options: Partial<IOptionFlag<string>> = {
-    char: yarnBool.alias as AlphabetLowercase | AlphabetUppercase,
-    description: yarnBool.describe,
-    required: yarnBool.requiresArg,
-    default: yarnBool.default
+    char: yargsString.alias as AlphabetLowercase | AlphabetUppercase,
+    description: yargsString.describe,
+    required: yargsString.requiresArg,
+    default: yargsString.default
   };
 
-  if (yarnBool.coerce && yarnBool.coerce.name === 'resolve') {
+  if (yargsString.coerce && yargsString.coerce.name === 'resolve') {
     options.parse = (input: string, context: any): string => {
       let projectDir = '.';
       if (context.argv.includes('--projectDir')) {

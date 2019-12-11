@@ -47,7 +47,7 @@ export type FlagsParsed = {
 
 export default class GenerateVdm extends Command {
   static description =
-    'Generates a virtual data model (VDM) from a edmx service file definition. For SAP solution you can find these definitions on https://api.sap.com/';
+    'Generates a virtual data model (VDM) from a edmx service file definition. For SAP solutions, you can find these definitions at https://api.sap.com/.';
 
   static examples = ['$ sap-cloud-sdk generate-vdm', '$ sap-cloud-sdk generate-vdm --help'];
 
@@ -75,8 +75,9 @@ export default class GenerateVdm extends Command {
   };
 
   async run() {
-    const { flags } = this.parse(GenerateVdm);
+    // const { flags } = this.parse(GenerateVdm);
 
-    await generate(toGeneratorSDK(flags));
+    // await generate(toGeneratorSDK(flags));
+
   }
 }
