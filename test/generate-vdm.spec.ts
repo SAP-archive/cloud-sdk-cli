@@ -28,8 +28,6 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import GenerateVdm, { FlagsParsed } from '../src/commands/generate-vdm';
 import * as foo from '../src/utils/generate-vdm-util';
-import { DummyCommand } from '../src/commands/dummy-command';
-
 
 const spyToGeneratorSDK = jest.spyOn(foo, 'toGeneratorSDK');
 
@@ -104,31 +102,23 @@ describe('generate-vdm', () => {
         args.push(`--no-${key}`);
         (expected[casted] as any) = false;
       }
-      // return {,args: args}
+      return {args: args,expected:expected}
     }
     return undefined;
   }
 
   it('should pass each boolean flags correctly', async () => {
-    let loopCount = 0;
     for (let key of Object.keys(generatorOptionsSDK) ) {
-      // const argsExpected =  getInputAndExpeted(key as keyof GeneratorOptionsSDK);
-      console.log(key,loopCount)
-      // if (argsExpected) {
-        // const spyToGeneratorSDK1 = jest.spyOn(foo, 'toGeneratorSDK');
+      const argsExpected = getInputAndExpeted(key as keyof GeneratorOptionsSDK);
+      const spyToGeneratorSDK1 = jest.spyOn(foo, 'toGeneratorSDK');
+      if (argsExpected) {
         try {
-          // await GenerateVdm.run(argsExpected.args);
-          await DummyCommand.run();
-        } catch (e){
-          console.log('in catch')
-          // expect(e.message).toContain("ENOENT: no such file or directory, lstat '/somePrefix/input'")
-          // expect(spyToGeneratorSDK1).toHaveReturnedWith(argsExpected.expected);
-        }finally {
-          // spyToGeneratorSDK1.mockClear();
-          // spyToGeneratorSDK1.mockReset()
+          await GenerateVdm.run(argsExpected.args);
+        } catch (e) {
+          expect(e.message).toContain("ENOENT: no such file or directory, lstat '/somePrefix/input'")
+          expect(spyToGeneratorSDK1).toHaveReturnedWith(argsExpected.expected);
         }
-      // }
-      loopCount++;
+      }
     }
   }, 60000);
 

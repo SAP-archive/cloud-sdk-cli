@@ -10,10 +10,4 @@ describe('Test sigmentation error oclif',()=>{
     }
   },50000)
 
-  it('test loop command 2',async ()=>{
-    for (let i=0 ;i<7;i++){
-      // console.log('In loog '+ i)
-      // await DummyCommand.run()
-    }
-  })
 })
