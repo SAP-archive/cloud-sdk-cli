@@ -4,7 +4,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as rm from 'rimraf';
-import { copyFiles, ensureDirectoryExistence, findConflicts, readTemplates } from '../../src/utils';
+import { copyFiles, ensureDirectoryExists, findConflicts, getCopyDescriptors, getTemplatePaths } from '../../src/utils';
 
 const pathPrefix = path.resolve(__dirname, __filename.replace(/\./g, '-')).replace('-ts', '');
 
@@ -27,49 +27,31 @@ describe('Templates Utils', () => {
     const dir = path.resolve(projectDir, 'foo', 'bar');
     const file = path.resolve(dir, 'abc', 'package.json');
 
-    ensureDirectoryExistence(dir, true);
+    ensureDirectoryExists(dir, true);
     expect(fs.existsSync(dir)).toBe(true);
 
-    ensureDirectoryExistence(file);
+    ensureDirectoryExists(file);
     expect(fs.existsSync(path.resolve(dir, 'abc'))).toBe(true);
   });
 
   it('should return information which files to copy where', () => {
-    const initCopyInfo = readTemplates({
-      from: [path.resolve(__dirname, '..', '..', 'src', 'templates', 'init')],
-      to: 'abcdef'
-    });
+    const initCopyInfo = getCopyDescriptors('targetDir', getTemplatePaths(['init']));
     expect(initCopyInfo.map(copyInfo => path.basename(copyInfo.fileName)).sort()).toMatchSnapshot();
 
-    const appRouterCopyInfo = readTemplates({
-      from: [path.resolve(__dirname, '..', '..', 'src', 'templates', 'add-approuter')],
-      to: 'blablabla'
-    });
+    const appRouterCopyInfo = getCopyDescriptors('targetDir', getTemplatePaths(['add-approuter']));
     expect(appRouterCopyInfo.map(copyInfo => path.basename(copyInfo.fileName)).sort()).toMatchSnapshot();
   });
 
   it('should find conflicts', async () => {
     const projectDir = getCleanProjectDir('find-conflicts');
     fs.writeFileSync(path.resolve(projectDir, '.npmrc'), 'foobar');
-    findConflicts(
-      readTemplates({
-        from: [path.resolve(__dirname, '..', '..', 'src', 'templates', 'init')],
-        to: projectDir
-      }),
-      true
-    );
+    findConflicts(getCopyDescriptors(projectDir, getTemplatePaths(['init'])), true);
     expect(fs.existsSync(path.resolve(projectDir, '.npmrc'))).toBe(false);
   });
 
   it('should copy files locally', async () => {
     const projectDir = getCleanProjectDir('copy-files-locally');
-    copyFiles(
-      readTemplates({
-        from: [path.resolve(__dirname, '..', '..', 'src', 'templates', 'init')],
-        to: projectDir
-      }),
-      {}
-    );
+    copyFiles(getCopyDescriptors(projectDir, getTemplatePaths(['init'])), {});
     expect(fs.readdirSync(projectDir).sort()).toMatchSnapshot();
   });
 

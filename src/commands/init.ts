@@ -9,9 +9,9 @@ import * as path from 'path';
 import {
   buildScaffold,
   copyFiles,
-  ensureDirectiryExists,
+  ensureDirectoryExists,
   findConflicts,
-  getCopyDescriptorsForTemplates,
+  getCopyDescriptors,
   getJestConfig,
   getTemplatePaths,
   installDependencies,
@@ -59,9 +59,6 @@ export default class Init extends Command {
     frontendScripts: flags.boolean({
       description: 'Add frontend-related npm scripts which are executed by our CI/CD toolkit.'
     }),
-    useCds: flags.boolean({
-      description: 'Add a cds configuration and example data to follor the SAP Cloud Application Promgramming model.'
-    }),
     help: flags.help({
       char: 'h',
       description: 'Show help for the new command.'
@@ -93,7 +90,7 @@ export default class Init extends Command {
     const projectDir: string = flags.projectDir || args.projectDir || '.';
 
     try {
-      ensureDirectiryExists(projectDir, true);
+      ensureDirectoryExists(projectDir, true);
       const isScaffold = await shouldBuildScaffold(projectDir, flags.buildScaffold, flags.force);
       if (isScaffold) {
         await buildScaffold(projectDir, flags.verbose);
@@ -104,9 +101,9 @@ export default class Init extends Command {
 
       const tasks = new Listr([
         {
-          title: 'Reading templates A',
+          title: 'Reading templates',
           task: ctx => {
-            ctx.copyDescriptors = getCopyDescriptorsForTemplates(projectDir, getTemplatePaths(['init']));
+            ctx.copyDescriptors = getCopyDescriptors(projectDir, getTemplatePaths(['init']));
           }
         },
         {

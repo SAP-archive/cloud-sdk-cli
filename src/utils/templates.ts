@@ -36,7 +36,7 @@ function getRelativeSourcePath(templatePath: string): string {
     .join(path.sep);
 }
 
-export function getCopyDescriptorsForTemplates(targetDir: string, templatePaths: string[]): CopyDescriptor[] {
+export function getCopyDescriptors(targetDir: string, templatePaths: string[]): CopyDescriptor[] {
   return templatePaths.map(templatePath => {
     const relativeSourcePath = getRelativeSourcePath(templatePath);
     const targetTemplateDir = path.resolve(targetDir, relativeSourcePath);
@@ -109,7 +109,7 @@ async function copyLocal(sourcePath: string, fileName: string, options: { [key: 
   }
 }
 
-export function ensureDirectiryExists(filePath: string, isDir: boolean = false) {
+export function ensureDirectoryExists(filePath: string, isDir: boolean = false) {
   const dirname = isDir ? filePath : path.dirname(filePath);
   if (fs.existsSync(dirname)) {
     return true;
