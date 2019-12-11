@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Templates Utils should copy files locally 1`] = `
+Array [
+  ".npmrc",
+  "Jenkinsfile",
+  "credentials.json",
+  "deployment",
+  "manifest.yml",
+  "pipeline_config.yml",
+  "s4hana_pipeline",
+  "systems.json",
+]
+`;
+
+exports[`Templates Utils should return information which files to copy where 1`] = `
+Array [
+  ".gitkeep",
+  ".gitkeep",
+  ".gitkeep",
+  ".gitkeep",
+  ".gitkeep",
+  ".npmrc",
+  "Jenkinsfile",
+  "credentials.json",
+  "manifest.yml",
+  "pipeline_config.yml",
+  "systems.json",
+]
+`;
+
+exports[`Templates Utils should return information which files to copy where 2`] = `
+Array [
+  ".npmrc",
+  "manifest.yml",
+  "package.json",
+  "xs-app.json",
+  "xs-security.json",
+]
+`;

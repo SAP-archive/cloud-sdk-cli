@@ -24,5 +24,6 @@ export function modifyGitIgnore(projectDir: string) {
   } else {
     cli.warn('No .gitignore file found!');
     cli.log('If your project is using a different version control system, please make sure the following paths are not tracked:');
+    pathsToIgnore.forEach(path => cli.log('  ' + path));
   }
 }
