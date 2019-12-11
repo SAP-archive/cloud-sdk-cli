@@ -3,6 +3,7 @@
  */
 
 export * from './copy-list';
+export * from './flags';
 export * from './git-ignore';
 export * from './jest-config';
 export * from './package-json';

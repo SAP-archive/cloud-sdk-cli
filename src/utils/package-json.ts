@@ -5,6 +5,8 @@ import cli from 'cli-ux';
 import * as execa from 'execa';
 import * as fs from 'fs';
 import * as path from 'path';
+import Init from '../commands/init';
+import { FlagsParam } from '../utils';
 import { getJestConfig } from './jest-config';
 
 const frontendScripts = {
@@ -50,15 +52,15 @@ export function parsePackageJson(projectDir: string) {
   }
 }
 
-export async function modifyPackageJson(projectDir: string, isScaffold: boolean, addFrontendScripts: boolean, force: boolean = false) {
+export async function modifyPackageJson(projectDir: string, isScaffold: boolean, flags: FlagsParam<typeof Init, 'frontendScripts', 'force'>) {
   const packageJson = isScaffold ? scaffoldProjectPackageJson : existingProjectPackageJson;
   const originalPackageJson = parsePackageJson(projectDir);
   const { scripts, dependencies, devDependencies } = originalPackageJson;
-  const scriptsToBeAdded = addFrontendScripts ? { ...packageJson.scripts, ...frontendScripts } : packageJson.scripts;
+  const scriptsToBeAdded = flags.frontendScripts ? { ...packageJson.scripts, ...frontendScripts } : packageJson.scripts;
 
   const conflicts = scripts ? Object.keys(scriptsToBeAdded).filter(name => Object.keys(scripts).includes(name)) : [];
 
-  if (conflicts.length && !force) {
+  if (conflicts.length && !flags.force) {
     return cli.error(
       conflicts.length > 1
         ? `Scripts with the names "${conflicts.join('", "')}" already exist. If you want to overwrite them, rerun the command with \`--force\`.`
