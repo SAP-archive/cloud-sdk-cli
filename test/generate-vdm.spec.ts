@@ -2,7 +2,6 @@
  * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
-
 const confirm = jest.fn().mockResolvedValue(true);
 jest.mock('cli-ux', () => {
   // Mocking needs to happen before the command is imported
@@ -87,8 +86,7 @@ describe('generate-vdm', () => {
     }
   });
 
-
-  function getInputAndExpeted(key:keyof GeneratorOptionsSDK):{expected:GeneratorOptionsSDK,args:string[]}|undefined {
+  function getInputAndExpeted(key: keyof GeneratorOptionsSDK): { expected: GeneratorOptionsSDK; args: string[] } | undefined {
     const args = ['-i', 'input', '-o', 'output', '--projectDir', '/somePrefix'];
     const expected = getDefault('/somePrefix');
 
@@ -102,20 +100,20 @@ describe('generate-vdm', () => {
         args.push(`--no-${key}`);
         (expected[casted] as any) = false;
       }
-      return {args: args,expected:expected}
+      return { args, expected };
     }
     return undefined;
   }
 
   it('should pass each boolean flags correctly', async () => {
-    for (let key of Object.keys(generatorOptionsSDK) ) {
+    for (const key of Object.keys(generatorOptionsSDK)) {
       const argsExpected = getInputAndExpeted(key as keyof GeneratorOptionsSDK);
       const spyToGeneratorSDK1 = jest.spyOn(foo, 'toGeneratorSDK');
       if (argsExpected) {
         try {
           await GenerateVdm.run(argsExpected.args);
         } catch (e) {
-          expect(e.message).toContain("ENOENT: no such file or directory, lstat '/somePrefix/input'")
+          expect(e.message).toContain("ENOENT: no such file or directory, lstat '/somePrefix/input'");
           expect(spyToGeneratorSDK1).toHaveReturnedWith(argsExpected.expected);
         }
       }
