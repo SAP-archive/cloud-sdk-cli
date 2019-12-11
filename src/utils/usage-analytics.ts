@@ -6,7 +6,7 @@ import cli from 'cli-ux';
 import * as fs from 'fs';
 import * as path from 'path';
 
-export async function usageAnalytics(projectDir: string, agreeToAnalytics: boolean, salt?: string) {
+export async function usageAnalytics(projectDir: string, agreeToAnalytics: boolean | undefined, salt?: string) {
   const analyticsFilePath = path.resolve(projectDir, 'sap-cloud-sdk-analytics.json');
   if (agreeToAnalytics === false) {
     return fs.writeFileSync(analyticsFilePath, JSON.stringify({ enabled: false }));

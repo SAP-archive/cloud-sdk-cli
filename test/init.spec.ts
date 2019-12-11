@@ -38,8 +38,8 @@ function getCleanProjectDir(name: string) {
 }
 
 describe('Init', () => {
-  const expressAppDir = 'test/express/';
-  const nestAppDir = 'test/nest/';
+  const expressAppDir = path.resolve('test', 'express');
+  const nestAppDir = path.resolve('test', 'nest');
 
   beforeAll(() => {
     if (!fs.existsSync(pathPrefix)) {
