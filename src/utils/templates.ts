@@ -68,7 +68,7 @@ export async function copyFiles(files: CopyDescriptor[], options: { [key: string
 function copyRemote(sourcePath: URL, targetFolder: string, fileName: string) {
   return new Promise((resolve, reject) => {
     https
-      .get(sourcePath, response => {
+      .get(sourcePath.toString(), response => {
         if (response.statusCode && (response.statusCode < 200 || response.statusCode > 299)) {
           reject(new Error('Failed to load page, status code: ' + response.statusCode));
         }
