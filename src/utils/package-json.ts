@@ -1,11 +1,12 @@
 /*!
  * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
+import { OutputFlags } from '@oclif/parser';
 import cli from 'cli-ux';
 import * as execa from 'execa';
 import * as fs from 'fs';
 import * as path from 'path';
-import { InitFlags } from '../commands/init-flags';
+import Init from '../commands/init';
 import { getJestConfig } from './jest-config';
 
 interface PackageJsonChange {
@@ -108,7 +109,7 @@ function mergePackageJson(originalPackageJson: any, changes: any) {
 export async function modifyPackageJson(
   projectDir: string,
   isScaffold: boolean,
-  { frontendScripts, force }: Pick<InitFlags, 'frontendScripts' | 'force'>
+  { frontendScripts, force }: Pick<OutputFlags<typeof Init.flags>, 'frontendScripts' | 'force'>
 ) {
   const originalPackageJson = parsePackageJson(projectDir);
   const changes = await getPackageJsonChanges(isScaffold, frontendScripts);

@@ -24,27 +24,33 @@ function getTemplatePathsForDir(inputDir: string[], excludes: string[]): string[
   }, []);
 }
 
-export function getTemplatePaths(inputDirs: string[], excludes: string[] = []): string[] {
-  return inputDirs.reduce((templatePaths: string[], inputDir) => [...templatePaths, ...getTemplatePathsForDir([inputDir], excludes)], []);
+export function getTemplatePaths(inputDirs: string[], excludes: string[] = []): { [inputDir: string]: string[] } {
+  return inputDirs.reduce(
+    (templatePaths, inputDir) => ({
+      ...templatePaths,
+      [inputDir]: getTemplatePathsForDir([inputDir], excludes)
+    }),
+    {}
+  );
 }
 
-function getRelativeSourcePath(templatePath: string): string {
-  return path
-    .relative(templatesDir, path.dirname(templatePath))
-    .split(path.sep)
-    .slice(1)
-    .join(path.sep);
+function getCopyDescriptorForPath(targetDir: string, templateSubDir: string, templatePath: string): CopyDescriptor {
+  const relativeSourcePath = path.relative(path.resolve(templatesDir, templateSubDir), path.dirname(templatePath));
+  const targetTemplateDir = path.resolve(targetDir, relativeSourcePath);
+  return {
+    sourcePath: templatePath,
+    fileName: path.resolve(targetTemplateDir, path.basename(templatePath, '.mu'))
+  };
 }
 
-export function getCopyDescriptors(targetDir: string, templatePaths: string[]): CopyDescriptor[] {
-  return templatePaths.map(templatePath => {
-    const relativeSourcePath = getRelativeSourcePath(templatePath);
-    const targetTemplateDir = path.resolve(targetDir, relativeSourcePath);
-    return {
-      sourcePath: templatePath,
-      fileName: path.resolve(targetTemplateDir, path.basename(templatePath, '.mu'))
-    };
-  });
+export function getCopyDescriptors(targetDir: string, templatePaths: { [templateSubDir: string]: string[] }): CopyDescriptor[] {
+  return Object.entries(templatePaths).reduce(
+    (allCopyDescriptors: CopyDescriptor[], [templateSubDir, paths]) => [
+      ...allCopyDescriptors,
+      ...paths.map(path => getCopyDescriptorForPath(targetDir, templateSubDir, path))
+    ],
+    []
+  );
 }
 
 export async function findConflicts(files: CopyDescriptor[], force = false) {

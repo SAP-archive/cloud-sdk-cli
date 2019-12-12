@@ -16,6 +16,7 @@ jest.mock('cli-ux', () => {
     }
   };
 });
+
 import HelpPage from '../src/commands/help-page';
 
 describe('Help Page', () => {
@@ -25,5 +26,5 @@ describe('Help Page', () => {
     const helpPageUrl = 'https://developers.sap.com/topics/cloud-sdk.html';
     expect(url).toHaveBeenCalledWith(helpPageUrl, helpPageUrl);
     expect(openSpy).toHaveBeenCalledWith(helpPageUrl);
-  }, 60000);
+  });
 });
