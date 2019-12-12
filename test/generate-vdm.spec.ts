@@ -71,7 +71,7 @@ describe('generate-vdm', () => {
     try {
       await GenerateVdm.run([...getInputAllFalse()]);
     } catch (e) {
-      expect(e.message).toContain("ENOENT: no such file or directory");
+      expect(e.message).toContain('ENOENT: no such file or directory');
       expect(spyToGeneratorSDK).toHaveReturnedWith(expected);
     }
   });
@@ -82,13 +82,13 @@ describe('generate-vdm', () => {
     try {
       await GenerateVdm.run(['-i', 'input', '-o', 'output', '--projectDir', getProjectDir()]);
     } catch (e) {
-      expect(e.message).toContain("ENOENT: no such file or directory");
+      expect(e.message).toContain('ENOENT: no such file or directory');
       expect(spyToGeneratorSDK).toHaveReturnedWith(expected);
     }
   });
 
   function getProjectDir() {
-    return path.resolve(__dirname,'myProjectFolder')
+    return path.resolve(__dirname, 'myProjectFolder');
   }
 
   function getInputAndExpected(key: keyof GeneratorOptionsSDK): { expected: GeneratorOptionsSDK; args: string[] } | undefined {
@@ -118,7 +118,7 @@ describe('generate-vdm', () => {
         try {
           await GenerateVdm.run(argsExpected.args);
         } catch (e) {
-          expect(e.message).toContain("ENOENT: no such file or directory");
+          expect(e.message).toContain('ENOENT: no such file or directory');
           expect(spyToGeneratorSDK1).toHaveReturnedWith(argsExpected.expected);
         }
       }
