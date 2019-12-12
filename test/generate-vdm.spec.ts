@@ -76,7 +76,7 @@ describe('generate-vdm', () => {
   });
 
   it('should resolve the projectdir', async () => {
-    const projectDir = '/root';
+    const projectDir = `${path.sep}root`;
     const expected = getDefault(projectDir);
 
     try {
@@ -86,9 +86,9 @@ describe('generate-vdm', () => {
     }
   });
 
-  function getInputAndExpeted(key: keyof GeneratorOptionsSDK): { expected: GeneratorOptionsSDK; args: string[] } | undefined {
-    const args = ['-i', 'input', '-o', 'output', '--projectDir', '/somePrefix'];
-    const expected = getDefault('/somePrefix');
+  function getInputAndExpected(key: keyof GeneratorOptionsSDK): { expected: GeneratorOptionsSDK; args: string[] } | undefined {
+    const args = ['-i', 'input', '-o', 'output', '--projectDir', `${path.sep}somePrefix`];
+    const expected = getDefault(`${path.sep}somePrefix`);
 
     const option = generatorOptionsSDK[key];
     if (option && option.type === 'boolean') {
@@ -107,7 +107,7 @@ describe('generate-vdm', () => {
 
   it('should pass each boolean flags correctly', async () => {
     for (const key of Object.keys(generatorOptionsSDK)) {
-      const argsExpected = getInputAndExpeted(key as keyof GeneratorOptionsSDK);
+      const argsExpected = getInputAndExpected(key as keyof GeneratorOptionsSDK);
       const spyToGeneratorSDK1 = jest.spyOn(foo, 'toGeneratorSDK');
       if (argsExpected) {
         try {
@@ -138,17 +138,18 @@ describe('generate-vdm', () => {
   }
 
   function getDefault(root: string): GeneratorOptionsSDK {
-    const options = Object.keys(generatorOptionsSDK).reduce((prev, current) => {
-      const value = generatorOptionsSDK[current as keyof GeneratorOptionsSDK];
-      if (value) {
-        prev[current as keyof GeneratorOptionsSDK] = value.default;
-      }
-      return prev;
-    }, {} as any) as GeneratorOptionsSDK;
-    options.inputDir = path.resolve(root, 'input');
-    options.outputDir = path.resolve(root, 'output');
-    options.serviceMapping = path.resolve(root, 'input', 'service-mapping.json');
-    return options;
+    return {
+      ...(Object.keys(generatorOptionsSDK).reduce((prev, current) => {
+        const value = generatorOptionsSDK[current as keyof GeneratorOptionsSDK];
+        if (value) {
+          prev[current as keyof GeneratorOptionsSDK] = value.default;
+        }
+        return prev;
+      }, {} as any) as GeneratorOptionsSDK),
+      inputDir: path.resolve(root, 'input'),
+      outputDir: path.resolve(root, 'output'),
+      serviceMapping: path.resolve(root, 'input', 'service-mapping.json')
+    };
   }
 
   function getAllFalse(): FlagsParsed {
@@ -157,17 +158,17 @@ describe('generate-vdm', () => {
       clearOutputDir: false,
       s4hanaCloud: false,
       sdkAfterVersionScript: false,
-      serviceMapping: '/ServiceMapping',
+      serviceMapping: `${path.sep}ServiceMapping`,
       writeReadme: false,
       useSwagger: false,
-      outputDir: '/Outdir',
-      inputDir: '/InputDir',
-      projectDir: '/',
+      outputDir: `${path.sep}Outdir`,
+      inputDir: `${path.sep}InputDir`,
+      projectDir: `${path.sep}somePrefix`,
       aggregatorNpmPackageName: 'aggregatorNpm',
       aggregatorDirectoryName: 'aggregationDirectory',
       generatePackageJson: false,
       generateTypedocJson: false,
-      changelogFile: '/ChangeLogFile',
+      changelogFile: `${path.sep}ChangeLogFile`,
       generateJs: false,
       generateCSN: false,
       forceOverwrite: false
