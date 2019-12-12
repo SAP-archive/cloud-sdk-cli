@@ -69,7 +69,7 @@ describe('generate-vdm', () => {
     const expected = getAllFalse();
     delete expected.projectDir;
     try {
-      await GenerateVdm.run([...getInputAllFalse()]);
+      await GenerateVdm.run([...getInputAllFalse(), '--projectDir', getProjectDir()]);
     } catch (e) {
       expect(e.message).toContain('ENOENT: no such file or directory');
       expect(spyToGeneratorSDK).toHaveReturnedWith(expected);
@@ -88,7 +88,7 @@ describe('generate-vdm', () => {
   });
 
   function getProjectDir() {
-    return path.resolve(__dirname, 'myProjectFolder');
+    return path.resolve(__dirname, 'generate-vdm-spec');
   }
 
   function getInputAndExpected(key: keyof GeneratorOptionsSDK): { expected: GeneratorOptionsSDK; args: string[] } | undefined {
@@ -139,7 +139,7 @@ describe('generate-vdm', () => {
       }
       return collected;
     }, []);
-    return stringArguments;
+    return [...stringArguments];
   }
 
   function getDefault(projectDir: string): GeneratorOptionsSDK {
@@ -163,17 +163,17 @@ describe('generate-vdm', () => {
       clearOutputDir: false,
       s4hanaCloud: false,
       sdkAfterVersionScript: false,
-      serviceMapping: `${path.sep}ServiceMapping`,
+      serviceMapping: path.resolve(getProjectDir(), 'ServiceMapping'),
       writeReadme: false,
       useSwagger: false,
-      outputDir: `${path.sep}Outdir`,
-      inputDir: `${path.sep}InputDir`,
+      outputDir: path.resolve(getProjectDir(), 'Outdir'),
+      inputDir: path.resolve(getProjectDir(), 'InputDir'),
       projectDir: getProjectDir(),
       aggregatorNpmPackageName: 'aggregatorNpm',
       aggregatorDirectoryName: 'aggregationDirectory',
       generatePackageJson: false,
       generateTypedocJson: false,
-      changelogFile: `${path.sep}ChangeLogFile`,
+      changelogFile: path.resolve(getProjectDir(), 'ChangeLogFile'),
       generateJs: false,
       generateCSN: false,
       forceOverwrite: false
