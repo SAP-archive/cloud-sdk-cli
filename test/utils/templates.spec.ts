@@ -4,7 +4,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as rm from 'rimraf';
-import { copyFiles, ensureDirectoryExists, findConflicts, getCopyDescriptors, getTemplatePaths } from '../../src/utils';
+import { copyFiles, findConflicts, getCopyDescriptors, getTemplatePaths } from '../../src/utils';
 
 const pathPrefix = path.resolve(__dirname, __filename.replace(/\./g, '-')).replace('-ts', '');
 
@@ -20,18 +20,6 @@ function getCleanProjectDir(name: string) {
 describe('Templates Utils', () => {
   afterAll(() => {
     rm.sync(pathPrefix);
-  });
-
-  it('ensure directory existence', () => {
-    const projectDir = getCleanProjectDir('ensure-dir-existence');
-    const dir = path.resolve(projectDir, 'foo', 'bar');
-    const file = path.resolve(dir, 'abc', 'package.json');
-
-    ensureDirectoryExists(dir, true);
-    expect(fs.existsSync(dir)).toBe(true);
-
-    ensureDirectoryExists(file);
-    expect(fs.existsSync(path.resolve(dir, 'abc'))).toBe(true);
   });
 
   it('should return information which files to copy where', () => {

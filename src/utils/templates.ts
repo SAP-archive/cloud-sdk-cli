@@ -110,10 +110,3 @@ async function copyLocal(sourcePath: string, fileName: string, options: { [key: 
     fs.copyFileSync(sourcePath, fileName);
   }
 }
-
-export function ensureDirectoryExists(filePath: string, isDir = false) {
-  const dirname = isDir ? filePath : path.dirname(filePath);
-  if (!fs.existsSync(dirname)) {
-    fs.mkdirSync(dirname, { recursive: true });
-  }
-}

@@ -4,12 +4,12 @@
 
 import { Command, flags } from '@oclif/command';
 import cli from 'cli-ux';
+import * as fs from 'fs';
 import * as Listr from 'listr';
 import * as path from 'path';
 import {
   buildScaffold,
   copyFiles,
-  ensureDirectoryExists,
   findConflicts,
   getCopyDescriptors,
   getJestConfig,
@@ -92,7 +92,7 @@ export default class Init extends Command {
     const projectDir: string = flags.projectDir || args.projectDir || '.';
 
     try {
-      ensureDirectoryExists(projectDir, true);
+      fs.mkdirSync(projectDir, { recursive: true });
       const isScaffold = await shouldBuildScaffold(projectDir, flags.buildScaffold, flags.force);
       if (isScaffold) {
         await buildScaffold(projectDir, flags.verbose);
