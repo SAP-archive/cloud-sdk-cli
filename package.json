@@ -24,7 +24,7 @@
     "rimraf": "^3.0.0",
     "tslib": "^1.10.0",
     "yargs": "14.0.0",
-    "@sap/cloud-sdk-generator": "1.14.0"
+    "@sap/cloud-sdk-generator": ">=1.14.0"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1.22.2",
