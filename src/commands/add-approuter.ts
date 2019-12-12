@@ -32,18 +32,12 @@ export default class AddApprouter extends Command {
       const options = await this.getOptions();
       const tasks = new Listr([
         {
-          title: 'Reading templates',
-          task: ctx => {
-            ctx.copyDescriptors = getCopyDescriptors(flags.projectDir, getTemplatePaths(['add-approuter']));
-          }
-        },
-        {
-          title: 'Finding potential conflicts',
-          task: ctx => findConflicts(ctx.copyDescriptors, flags.force)
-        },
-        {
           title: 'Creating files',
-          task: ctx => copyFiles(ctx.copyDescriptors, options)
+          task: () => {
+            const copyDescriptors = getCopyDescriptors(flags.projectDir, getTemplatePaths(['add-approuter']));
+            findConflicts(copyDescriptors, flags.force);
+            copyFiles(copyDescriptors, options);
+          }
         }
       ]);
 

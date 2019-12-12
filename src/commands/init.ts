@@ -103,18 +103,12 @@ export default class Init extends Command {
 
       const tasks = new Listr([
         {
-          title: 'Reading templates',
-          task: ctx => {
-            ctx.copyDescriptors = getCopyDescriptors(projectDir, getTemplatePaths(['init']));
-          }
-        },
-        {
-          title: 'Finding potential conflicts',
-          task: ctx => findConflicts(ctx.copyDescriptors, flags.force)
-        },
-        {
           title: 'Creating files',
-          task: ctx => copyFiles(ctx.copyDescriptors, options)
+          task: () => {
+            const copyDescriptors = getCopyDescriptors(projectDir, getTemplatePaths(['init']));
+            findConflicts(copyDescriptors, flags.force);
+            copyFiles(copyDescriptors, options);
+          }
         },
         {
           title: 'Modifying test config',

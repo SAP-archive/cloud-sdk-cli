@@ -37,6 +37,7 @@ export function getTemplatePaths(inputDirs: string[], excludes: string[] = []): 
 function getCopyDescriptorForPath(targetDir: string, templateSubDir: string, templatePath: string): CopyDescriptor {
   const relativeSourcePath = path.relative(path.resolve(templatesDir, templateSubDir), path.dirname(templatePath));
   const targetTemplateDir = path.resolve(targetDir, relativeSourcePath);
+
   return {
     sourcePath: templatePath,
     fileName: path.resolve(targetTemplateDir, path.basename(templatePath, '.mu'))
@@ -53,12 +54,12 @@ export function getCopyDescriptors(targetDir: string, templatePaths: { [template
   );
 }
 
-export async function findConflicts(files: CopyDescriptor[], force = false) {
-  const conflicts = files.filter(file => fs.existsSync(file.fileName));
+export async function findConflicts(copyDescriptors: CopyDescriptor[], force = false) {
+  const conflicts = copyDescriptors.filter(copyDescriptor => fs.existsSync(copyDescriptor.fileName));
 
   if (conflicts.length) {
     if (force) {
-      conflicts.forEach(file => fs.unlinkSync(file.fileName));
+      conflicts.forEach(copyDescriptor => fs.unlinkSync(copyDescriptor.fileName));
     } else {
       const listOfFiles = conflicts.map(f => path.basename(f.fileName)).join('", "');
       cli.error(
@@ -71,16 +72,11 @@ export async function findConflicts(files: CopyDescriptor[], force = false) {
   }
 }
 
-export async function copyFiles(files: CopyDescriptor[], options: { [key: string]: any }) {
+export async function copyFiles(copyDescriptors: CopyDescriptor[], options: { [key: string]: any }) {
   return Promise.all(
-    files.map(file => {
-      const { sourcePath, fileName } = file;
-
-      if (sourcePath instanceof URL) {
-        return copyRemote(sourcePath, fileName);
-      }
-      return copyLocal(sourcePath, fileName, options);
-    })
+    copyDescriptors.map(({ sourcePath, fileName }) =>
+      sourcePath instanceof URL ? copyRemote(sourcePath, fileName) : copyLocal(sourcePath, fileName, options)
+    )
   );
 }
 
@@ -115,11 +111,9 @@ async function copyLocal(sourcePath: string, fileName: string, options: { [key: 
   }
 }
 
-export function ensureDirectoryExists(filePath: string, isDir: boolean = false) {
+export function ensureDirectoryExists(filePath: string, isDir = false) {
   const dirname = isDir ? filePath : path.dirname(filePath);
-  if (fs.existsSync(dirname)) {
-    return true;
-  } else {
+  if (!fs.existsSync(dirname)) {
     fs.mkdirSync(dirname, { recursive: true });
   }
 }
