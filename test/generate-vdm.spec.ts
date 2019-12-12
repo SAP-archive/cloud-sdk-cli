@@ -71,24 +71,29 @@ describe('generate-vdm', () => {
     try {
       await GenerateVdm.run([...getInputAllFalse()]);
     } catch (e) {
+      expect(e.message).toContain("ENOENT: no such file or directory");
       expect(spyToGeneratorSDK).toHaveReturnedWith(expected);
     }
   });
 
   it('should resolve the projectdir', async () => {
-    const projectDir = `${path.sep}root`;
-    const expected = getDefault(projectDir);
+    const expected = getDefault(getProjectDir());
 
     try {
-      await GenerateVdm.run(['-i', 'input', '-o', 'output', '--projectDir', projectDir]);
+      await GenerateVdm.run(['-i', 'input', '-o', 'output', '--projectDir', getProjectDir()]);
     } catch (e) {
+      expect(e.message).toContain("ENOENT: no such file or directory");
       expect(spyToGeneratorSDK).toHaveReturnedWith(expected);
     }
   });
 
+  function getProjectDir() {
+    return path.resolve(__dirname,'myProjectFolder')
+  }
+
   function getInputAndExpected(key: keyof GeneratorOptionsSDK): { expected: GeneratorOptionsSDK; args: string[] } | undefined {
-    const args = ['-i', 'input', '-o', 'output', '--projectDir', `${path.sep}somePrefix`];
-    const expected = getDefault(`${path.sep}somePrefix`);
+    const args = ['-i', 'input', '-o', 'output', '--projectDir', getProjectDir()];
+    const expected = getDefault(getProjectDir());
 
     const option = generatorOptionsSDK[key];
     if (option && option.type === 'boolean') {
@@ -113,7 +118,7 @@ describe('generate-vdm', () => {
         try {
           await GenerateVdm.run(argsExpected.args);
         } catch (e) {
-          expect(e.message).toContain("ENOENT: no such file or directory, lstat '/somePrefix/input'");
+          expect(e.message).toContain("ENOENT: no such file or directory");
           expect(spyToGeneratorSDK1).toHaveReturnedWith(argsExpected.expected);
         }
       }
@@ -137,7 +142,7 @@ describe('generate-vdm', () => {
     return stringArguments;
   }
 
-  function getDefault(root: string): GeneratorOptionsSDK {
+  function getDefault(projectDir: string): GeneratorOptionsSDK {
     return {
       ...(Object.keys(generatorOptionsSDK).reduce((prev, current) => {
         const value = generatorOptionsSDK[current as keyof GeneratorOptionsSDK];
@@ -146,9 +151,9 @@ describe('generate-vdm', () => {
         }
         return prev;
       }, {} as any) as GeneratorOptionsSDK),
-      inputDir: path.resolve(root, 'input'),
-      outputDir: path.resolve(root, 'output'),
-      serviceMapping: path.resolve(root, 'input', 'service-mapping.json')
+      inputDir: path.resolve(projectDir, 'input'),
+      outputDir: path.resolve(projectDir, 'output'),
+      serviceMapping: path.resolve(projectDir, 'input', 'service-mapping.json')
     };
   }
 
@@ -163,7 +168,7 @@ describe('generate-vdm', () => {
       useSwagger: false,
       outputDir: `${path.sep}Outdir`,
       inputDir: `${path.sep}InputDir`,
-      projectDir: `${path.sep}somePrefix`,
+      projectDir: getProjectDir(),
       aggregatorNpmPackageName: 'aggregatorNpm',
       aggregatorDirectoryName: 'aggregationDirectory',
       generatePackageJson: false,
