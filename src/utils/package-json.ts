@@ -5,6 +5,7 @@ import cli from 'cli-ux';
 import * as execa from 'execa';
 import * as fs from 'fs';
 import * as path from 'path';
+import { InitFlags } from './init-flags';
 import { getJestConfig } from './jest-config';
 
 interface PackageJsonChange {
@@ -20,6 +21,16 @@ const frontendTestScripts: PackageJsonChange = {
       'echo "Test your application and write results in a JUnit format to `s4hana_pipeline/reports/frontend-unit/` and coverage in a cobertura format to `s4hana_pipeline/reports/coverage/frontend-unit/`"',
     'ci-e2e': 'echo "Test your application and write results in a JUnit format to `s4hana_pipeline/reports/e2e/`"'
   }
+};
+
+const cdsChanges = {
+  scripts: {
+    'cds-build': 'cds build/all',
+    'cds-deploy': 'cds deploy',
+    'ci-build': 'npm run cds-deploy && npm run cds-build && npm run build',
+  },
+  devDpendencies: ['sqlite3'],
+  dependencies: ['@sap/cds-dk']
 };
 
 const scaffoldProjectPackageJson: PackageJsonChange = {
@@ -64,10 +75,14 @@ function findScriptConflicts(originalScripts: any, scriptsToBeAdded: any) {
   return originalScripts ? Object.keys(scriptsToBeAdded).filter(name => Object.keys(originalScripts).includes(name)) : [];
 }
 
-async function getPackageJsonChanges(isScaffold: boolean, frontendScripts: boolean) {
+async function getPackageJsonChanges(isScaffold: boolean, frontendScripts: boolean, addCds: boolean) {
   const changes: PackageJsonChange[] = [isScaffold ? scaffoldProjectPackageJson : existingProjectPackageJson];
   if (frontendScripts) {
     changes.push(frontendTestScripts);
+  }
+
+  if (addCds) {
+    changes.push(cdsChanges);
   }
 
   const merged = changes.reduce((mergedChanges, change) => {
@@ -101,12 +116,12 @@ function mergePackageJson(originalPackageJson: any, changes: any) {
   return adjustedPackageJson;
 }
 
-export async function modifyPackageJson(projectDir: string, isScaffold: boolean, frontendScripts: boolean, force: boolean) {
+export async function modifyPackageJson(projectDir: string, isScaffold: boolean, flags: Pick<InitFlags, 'frontendScripts' | 'force' | 'addCds'>) {
   const originalPackageJson = parsePackageJson(projectDir);
-  const changes = await getPackageJsonChanges(isScaffold, frontendScripts);
+  const changes = await getPackageJsonChanges(isScaffold, flags.frontendScripts, flags.addCds);
   const conflicts = findScriptConflicts(originalPackageJson.scripts, changes.scripts);
 
-  if (conflicts.length && !force) {
+  if (conflicts.length && !flags.force) {
     return cli.error(
       conflicts.length > 1
         ? `Scripts with the names "${conflicts.join('", "')}" already exist. If you want to overwrite them, rerun the command with \`--force\`.`

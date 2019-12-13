@@ -43,7 +43,11 @@ describe('Package Json Utils', () => {
     const packageJsonPath = path.resolve(projectDir, 'package.json');
     fs.copyFileSync(path.resolve('test', 'nest', 'package.json'), packageJsonPath);
 
-    await modifyPackageJson(projectDir, false, false, false);
+    await modifyPackageJson(projectDir, false, {
+      frontendScripts: false,
+      force: false,
+      addCds: false
+    });
     expect(parsePackageJson(projectDir)).toMatchSnapshot();
   });
 
@@ -52,7 +56,11 @@ describe('Package Json Utils', () => {
     const packageJsonPath = path.resolve(projectDir, 'package.json');
     fs.copyFileSync(path.resolve('test', 'nest', 'package.json'), packageJsonPath);
 
-    await modifyPackageJson(projectDir, true, true, false);
+    await modifyPackageJson(projectDir, true, {
+      frontendScripts: true,
+      force: false,
+      addCds: false
+    });
     expect(parsePackageJson(projectDir)).toMatchSnapshot();
   });
 });

@@ -2,78 +2,20 @@
  * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
-import { Command, flags } from '@oclif/command';
+import { Command } from '@oclif/command';
 import cli from 'cli-ux';
 import * as fs from 'fs';
 import * as Listr from 'listr';
 import * as path from 'path';
-import {
-  buildScaffold,
-  copyFiles,
-  findConflicts,
-  getCopyDescriptors,
-  getJestConfig,
-  getTemplatePaths,
-  installDependencies,
-  modifyGitIgnore,
-  modifyJestConfig,
-  modifyPackageJson,
-  parsePackageJson,
-  shouldBuildScaffold,
-  usageAnalytics
-} from '../utils/';
+import { buildScaffold, copyFiles, findConflicts, getCopyDescriptors, getJestConfig, getTemplatePaths, installDependencies, modifyGitIgnore, modifyJestConfig, modifyPackageJson, parsePackageJson, shouldBuildScaffold, usageAnalytics } from '../utils/';
+import { initFlags } from '../utils/init-flags';
 
 export default class Init extends Command {
   static description = 'Initializes your project for the SAP Cloud SDK, SAP Cloud Platform Cloud Foundry and CI/CD using the SAP Cloud SDK toolkit';
 
   static examples = ['$ sap-cloud-sdk init', '$ sap-cloud-sdk init --help'];
 
-  static flags = {
-    // visible
-    projectDir: flags.string({
-      description: 'Path to the folder in which the project should be created.'
-    }),
-    force: flags.boolean({
-      description: 'Do not fail if a file or npm script already exist and overwrite it.'
-    }),
-    frontendScripts: flags.boolean({
-      description: 'Add frontend-related npm scripts which are executed by our CI/CD toolkit.'
-    }),
-    help: flags.help({
-      char: 'h',
-      description: 'Show help for the new command.'
-    }),
-    verbose: flags.boolean({
-      char: 'v',
-      description: 'Show more detailed output.'
-    }),
-    // hidden
-    projectName: flags.string({
-      hidden: true,
-      description: 'Give project name which is used for the Cloud Foundry mainfest.yml'
-    }),
-    startCommand: flags.string({
-      hidden: true,
-      description: 'Give a command which is used to start the application productively.'
-    }),
-    buildScaffold: flags.boolean({
-      hidden: true,
-      description: 'If the folder is empty, use nest-cli to create a project scaffold.'
-    }),
-    analytics: flags.boolean({
-      hidden: true,
-      allowNo: true,
-      description: 'Enable or disable collection of anonymous usage data.'
-    }),
-    analyticsSalt: flags.string({
-      hidden: true,
-      description: 'Set salt for analytics. This should only be used for CI builds.'
-    }),
-    skipInstall: flags.boolean({
-      hidden: true,
-      description: 'Skip installing npm dependencies. If you use this, make sure to install manually afterwards.'
-    })
-  };
+  static flags = initFlags;
 
   static args = [
     {
@@ -99,7 +41,7 @@ export default class Init extends Command {
       fs.mkdirSync(projectDir, { recursive: true });
       const isScaffold = await shouldBuildScaffold(projectDir, flags.buildScaffold, flags.force);
       if (isScaffold) {
-        await buildScaffold(projectDir, flags.verbose);
+        await buildScaffold(projectDir, flags.verbose, flags.addCds);
       }
       const options = await this.getOptions(projectDir, isScaffold ? 'npm run start:prod' : flags.startCommand, flags.projectName);
 
@@ -109,7 +51,8 @@ export default class Init extends Command {
         {
           title: 'Creating files',
           task: () => {
-            const copyDescriptors = getCopyDescriptors(projectDir, getTemplatePaths(['init']));
+            const templates = flags.addCds ? ['init', 'add-cds'] : ['init'];
+            const copyDescriptors = getCopyDescriptors(projectDir, getTemplatePaths(templates));
             findConflicts(copyDescriptors, flags.force);
             copyFiles(copyDescriptors, options);
           }
@@ -121,7 +64,7 @@ export default class Init extends Command {
         },
         {
           title: 'Adding dependencies to package.json',
-          task: () => modifyPackageJson(projectDir, isScaffold, flags.frontendScripts, flags.force)
+          task: () => modifyPackageJson(projectDir, isScaffold, flags)
         },
         {
           title: 'Installing dependencies',
