@@ -1,12 +1,10 @@
 /*!
  * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
-import { OutputFlags } from '@oclif/parser';
 import cli from 'cli-ux';
 import * as execa from 'execa';
 import * as fs from 'fs';
 import * as path from 'path';
-import Init from '../commands/init';
 import { getJestConfig } from './jest-config';
 
 interface PackageJsonChange {
@@ -24,9 +22,6 @@ const frontendTestScripts: PackageJsonChange = {
   }
 };
 
-const sdkDependencies = ['@sap/cloud-sdk-core'];
-const sdkDevDependencies = ['@sap/cloud-sdk-test-util', '@sap-cloud-sdk/cli'];
-
 const scaffoldProjectPackageJson: PackageJsonChange = {
   scripts: {
     'deploy': 'npm run ci-build && npm run ci-package && cf push',
@@ -35,8 +30,8 @@ const scaffoldProjectPackageJson: PackageJsonChange = {
     'ci-integration-test': 'jest --ci --config ./test/jest-e2e.json',
     'ci-backend-unit-test': 'jest --ci'
   },
-  devDependencies: ['jest', 'jest-junit', ...sdkDevDependencies],
-  dependencies: sdkDependencies,
+  devDependencies: ['jest-junit', '@sap/cloud-sdk-test-util', '@sap-cloud-sdk/cli'],
+  dependencies: ['@sap/cloud-sdk-core'],
   jest: getJestConfig(true)
 };
 
@@ -49,8 +44,8 @@ const existingProjectPackageJson: PackageJsonChange = {
     'ci-backend-unit-test':
       'echo "Test your application and write results in a JUnit format to `s4hana_pipeline/reports/backend-unit/` and coverage in a cobertura format to `s4hana_pipeline/reports/coverage/backend-unit/`"'
   },
-  devDependencies: sdkDevDependencies,
-  dependencies: sdkDependencies
+  devDependencies: ['@sap/cloud-sdk-test-util', '@sap-cloud-sdk/cli'],
+  dependencies: ['@sap/cloud-sdk-core']
 };
 
 export function parsePackageJson(projectDir: string) {
@@ -106,11 +101,7 @@ function mergePackageJson(originalPackageJson: any, changes: any) {
   return adjustedPackageJson;
 }
 
-export async function modifyPackageJson(
-  projectDir: string,
-  isScaffold: boolean,
-  { frontendScripts, force }: Pick<OutputFlags<typeof Init.flags>, 'frontendScripts' | 'force'>
-) {
+export async function modifyPackageJson(projectDir: string, isScaffold: boolean, frontendScripts: boolean, force: boolean) {
   const originalPackageJson = parsePackageJson(projectDir);
   const changes = await getPackageJsonChanges(isScaffold, frontendScripts);
   const conflicts = findScriptConflicts(originalPackageJson.scripts, changes.scripts);

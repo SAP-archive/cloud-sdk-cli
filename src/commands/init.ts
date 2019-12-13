@@ -117,7 +117,7 @@ export default class Init extends Command {
         },
         {
           title: 'Adding dependencies to package.json',
-          task: () => modifyPackageJson(projectDir, isScaffold, flags)
+          task: () => modifyPackageJson(projectDir, isScaffold, flags.frontendScripts, flags.force)
         },
         {
           title: 'Installing dependencies',
