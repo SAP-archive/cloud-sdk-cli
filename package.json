@@ -87,7 +87,7 @@
   "scripts": {
     "postpack": "rm -f oclif.manifest.json",
     "pretest": "tslint -p . -t stylish && tslint -p test -t stylish && prettier -c \"**/*.ts\"",
-    "prettier": "tslint -p . -t stylish --fix && tslint -p test -t stylish --fix && prettier --write \"**/*.ts\"",
+    "fix:formatting": "tslint -p . -t stylish --fix && tslint -p test -t stylish --fix && prettier --write \"**/*.ts\"",
     "prepack": "rm -rf lib && tsc -b && cp -R src/templates lib/ && oclif-dev manifest && oclif-dev readme",
     "test": "jest",
     "test:watch-debug": "node --inspect-brk node_modules/.bin/jest --watch --runInBand",

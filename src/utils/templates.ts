@@ -68,6 +68,8 @@ export async function copyFiles(files: CopyDescriptor[], options: { [key: string
 function copyRemote(sourcePath: URL, targetFolder: string, fileName: string) {
   return new Promise((resolve, reject) => {
     https
+    //TODO The toString() cast was necessary due to a faulty overloading of the https.get method from agent-base package
+    //Once the SDK version and as a consequence agent-base is updated the toString() can be removed.
       .get(sourcePath.toString(), response => {
         if (response.statusCode && (response.statusCode < 200 || response.statusCode > 299)) {
           reject(new Error('Failed to load page, status code: ' + response.statusCode));

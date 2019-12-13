@@ -28,10 +28,7 @@ export function toGeneratorSDK(flags: FlagsParsed): GeneratorOptions {
   return result as GeneratorOptions;
 }
 
-export function toBoolean(yargsBool: Options | undefined): IBooleanFlag<boolean> {
-  if (!yargsBool) {
-    return flags.boolean();
-  }
+export function toBooleanFlag(yargsBool: Options ): IBooleanFlag<boolean> {
   const extendedDescription = `${yargsBool.describe} [default: ${yargsBool.default}].`;
   return flags.boolean({
     char: yargsBool.alias as AlphabetLowercase | AlphabetUppercase,
@@ -42,11 +39,7 @@ export function toBoolean(yargsBool: Options | undefined): IBooleanFlag<boolean>
   });
 }
 
-export function toOptionFlag(yargsString: Options | undefined): IOptionFlag<string | undefined> {
-  if (!yargsString) {
-    return flags.string({});
-  }
-
+export function toStringFlag(yargsString: Options ): IOptionFlag<string | undefined> {
   const options: Partial<IOptionFlag<string>> = {
     char: yargsString.alias as AlphabetLowercase | AlphabetUppercase,
     description: yargsString.describe,
@@ -60,8 +53,7 @@ export function toOptionFlag(yargsString: Options | undefined): IOptionFlag<stri
       if (context.argv.includes('--projectDir')) {
         projectDir = context.argv[context.argv.indexOf('--projectDir') + 1];
       }
-      const resolved = path.resolve(projectDir, input);
-      return resolved;
+      return path.resolve(projectDir, input);
     };
   }
   return flags.string(options);

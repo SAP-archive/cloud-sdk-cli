@@ -92,7 +92,7 @@ async function getVersionOfDependency(dependency: string): Promise<string> {
     const version = dependency.includes('@sap') ? execa('npm', [...args, '--registry', 'https://npm.sap.com']) : execa('npm', args);
 
     return `^${(await version).stdout}`;
-  } catch (err) {
+  } catch (e) {
     cli.warn(`Error in finding version for dependency ${dependency} - use LATEST as fallback.`);
     return 'latest';
   }

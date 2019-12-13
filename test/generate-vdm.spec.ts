@@ -26,9 +26,9 @@ import { GeneratorOptions as GeneratorOptionsSDK, generatorOptionsCli as generat
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import GenerateVdm, { FlagsParsed } from '../src/commands/generate-vdm';
-import * as foo from '../src/utils/generate-vdm-util';
+import  * as generateVdmUtil from '../src/utils/generate-vdm-util';
 
-const spyToGeneratorSDK = jest.spyOn(foo, 'toGeneratorSDK');
+const spyToGeneratorSDK = jest.spyOn(generateVdmUtil, 'toGeneratorSDK');
 
 describe('generate-vdm', () => {
   const pathForTests = path.resolve(__dirname, __filename.replace(/\./g, '-')).replace('-ts', '');
@@ -42,14 +42,6 @@ describe('generate-vdm', () => {
     fs.removeSync(pathForTests);
   });
 
-  afterEach(() => {
-    spyToGeneratorSDK.mockClear();
-  });
-
-  beforeEach(() => {
-    spyToGeneratorSDK.mockClear();
-  });
-
   it('should generate a vdm.', async () => {
     await GenerateVdm.run(['-i', 'edmxSource', '-o', 'generatedVdm', '--forceOverwrite', '--projectDir', pathForTests]);
     const files = fs.readdirSync(path.join(pathForTests, 'generatedVdm', 'yy-1-socialnetworkaccount-cds-service'));
@@ -59,9 +51,8 @@ describe('generate-vdm', () => {
   it('should fail if the mandatory parameters are not there', async () => {
     try {
       await GenerateVdm.run([]);
-    } catch (err) {
-      const messageNoFormatting = err.message as string;
-      expect(messageNoFormatting).toContain('-i, --inputDir INPUTDIR');
+    } catch (e) {
+      expect(e.message).toContain('-i, --inputDir INPUTDIR');
     }
   });
 
@@ -98,28 +89,21 @@ describe('generate-vdm', () => {
     const option = generatorOptionsSDK[key];
     if (option && option.type === 'boolean') {
       const casted = key as keyof GeneratorOptionsSDK;
-      if (!option.default) {
-        args.push(`--${key}`);
-        (expected[casted] as any) = true;
-      } else {
-        args.push(`--no-${key}`);
-        (expected[casted] as any) = false;
-      }
+      args.push(`--${option.default ? 'no-' : ''}${key}`);
+      (expected[casted] as boolean) = !option.default
       return { args, expected };
     }
-    return undefined;
   }
 
   it('should pass each boolean flags correctly', async () => {
     for (const key of Object.keys(generatorOptionsSDK)) {
       const argsExpected = getInputAndExpected(key as keyof GeneratorOptionsSDK);
-      const spyToGeneratorSDK1 = jest.spyOn(foo, 'toGeneratorSDK');
       if (argsExpected) {
         try {
           await GenerateVdm.run(argsExpected.args);
         } catch (e) {
           expect(e.message).toContain('ENOENT: no such file or directory');
-          expect(spyToGeneratorSDK1).toHaveReturnedWith(argsExpected.expected);
+          expect(spyToGeneratorSDK).toHaveReturnedWith(argsExpected.expected);
         }
       }
     }
@@ -133,7 +117,7 @@ describe('generate-vdm', () => {
       }
       if (typeof allFalse[current as keyof FlagsParsed] === 'boolean') {
         const option = generatorOptionsSDK[current as keyof GeneratorOptionsSDK];
-        if (option !== undefined && option.default === true) {
+        if (option && option.default === true) {
           collected.push(`--no-${current}`);
         }
       }
