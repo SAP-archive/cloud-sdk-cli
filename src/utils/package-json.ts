@@ -7,13 +7,22 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { getJestConfig } from './jest-config';
 
-const frontendScripts = {
-  'ci-frontend-unit-test':
-    'echo "Test your application and write results in a JUnit format to `s4hana_pipeline/reports/frontend-unit/` and coverage in a cobertura format to `s4hana_pipeline/reports/coverage/frontend-unit/`"',
-  'ci-e2e': 'echo "Test your application and write results in a JUnit format to `s4hana_pipeline/reports/e2e/`"'
+interface PackageJsonChange {
+  scripts?: { [key: string]: string };
+  dependencies?: string[];
+  devDependencies?: string[];
+  jest?: { [key: string]: any };
+}
+
+const frontendTestScripts: PackageJsonChange = {
+  scripts: {
+    'ci-frontend-unit-test':
+      'echo "Test your application and write results in a JUnit format to `s4hana_pipeline/reports/frontend-unit/` and coverage in a cobertura format to `s4hana_pipeline/reports/coverage/frontend-unit/`"',
+    'ci-e2e': 'echo "Test your application and write results in a JUnit format to `s4hana_pipeline/reports/e2e/`"'
+  }
 };
 
-const scaffoldProjectPackageJson = {
+const scaffoldProjectPackageJson: PackageJsonChange = {
   scripts: {
     'deploy': 'npm run ci-build && npm run ci-package && cf push',
     'ci-build': 'npm run build',
@@ -21,11 +30,12 @@ const scaffoldProjectPackageJson = {
     'ci-integration-test': 'jest --ci --config ./test/jest-e2e.json',
     'ci-backend-unit-test': 'jest --ci'
   },
-  devDependencies: ['jest', 'jest-junit', '@sap/cloud-sdk-test-util', '@sap-cloud-sdk/cli'],
-  dependencies: ['@sap/cloud-sdk-core']
+  devDependencies: ['jest-junit', '@sap/cloud-sdk-test-util', '@sap-cloud-sdk/cli'],
+  dependencies: ['@sap/cloud-sdk-core'],
+  jest: getJestConfig(true)
 };
 
-const existingProjectPackageJson = {
+const existingProjectPackageJson: PackageJsonChange = {
   scripts: {
     'ci-build': 'echo "Use this to compile or minify your application"',
     'ci-package': 'sap-cloud-sdk package --include="package.json,package-lock.json,index.js,dist/**/*"',
@@ -50,13 +60,51 @@ export function parsePackageJson(projectDir: string) {
   }
 }
 
-export async function modifyPackageJson(projectDir: string, isScaffold: boolean, addFrontendScripts: boolean, force: boolean = false) {
-  const packageJson = isScaffold ? scaffoldProjectPackageJson : existingProjectPackageJson;
-  const originalPackageJson = parsePackageJson(projectDir);
-  const { scripts, dependencies, devDependencies } = originalPackageJson;
-  const scriptsToBeAdded = addFrontendScripts ? { ...packageJson.scripts, ...frontendScripts } : packageJson.scripts;
+function findScriptConflicts(originalScripts: any, scriptsToBeAdded: any) {
+  return originalScripts ? Object.keys(scriptsToBeAdded).filter(name => Object.keys(originalScripts).includes(name)) : [];
+}
 
-  const conflicts = scripts ? Object.keys(scriptsToBeAdded).filter(name => Object.keys(scripts).includes(name)) : [];
+async function getPackageJsonChanges(isScaffold: boolean, frontendScripts: boolean) {
+  const changes: PackageJsonChange[] = [isScaffold ? scaffoldProjectPackageJson : existingProjectPackageJson];
+  if (frontendScripts) {
+    changes.push(frontendTestScripts);
+  }
+
+  const merged = changes.reduce((mergedChanges, change) => {
+    (Object.entries(change) as Array<[keyof PackageJsonChange, any]>).forEach(([key, value]) => {
+      const newValue = { ...mergedChanges[key], ...value };
+      mergedChanges[key] = Array.isArray(value) ? Object.values(newValue) : newValue;
+    });
+
+    return mergedChanges;
+  }, {});
+
+  return {
+    ...merged,
+    dependencies: await addDependencyVersions(merged.dependencies),
+    devDependencies: await addDependencyVersions(merged.devDependencies)
+  };
+}
+
+function mergePackageJson(originalPackageJson: any, changes: any) {
+  const adjustedPackageJson = {
+    ...originalPackageJson,
+    scripts: { ...originalPackageJson.scripts, ...changes.scripts },
+    dependencies: { ...changes.dependencies, ...originalPackageJson.dependencies },
+    devDependencies: { ...changes.devDependencies, ...originalPackageJson.devDependencies }
+  };
+
+  if (changes.jest) {
+    adjustedPackageJson.jest = { ...originalPackageJson.jest, ...changes.jest };
+  }
+
+  return adjustedPackageJson;
+}
+
+export async function modifyPackageJson(projectDir: string, isScaffold: boolean, frontendScripts: boolean, force: boolean) {
+  const originalPackageJson = parsePackageJson(projectDir);
+  const changes = await getPackageJsonChanges(isScaffold, frontendScripts);
+  const conflicts = findScriptConflicts(originalPackageJson.scripts, changes.scripts);
 
   if (conflicts.length && !force) {
     return cli.error(
@@ -67,21 +115,10 @@ export async function modifyPackageJson(projectDir: string, isScaffold: boolean,
     );
   }
 
-  const adjustedPackageJson = {
-    ...originalPackageJson,
-    scripts: { ...scripts, ...scriptsToBeAdded },
-    dependencies: { ...(await addDependencies(packageJson.dependencies)), ...dependencies },
-    devDependencies: { ...(await addDependencies(packageJson.devDependencies)), ...devDependencies }
-  };
-
-  if (isScaffold) {
-    adjustedPackageJson.jest = { ...originalPackageJson.jest, ...getJestConfig(true) };
-  }
-
-  fs.writeFileSync(path.resolve(projectDir, 'package.json'), JSON.stringify(adjustedPackageJson, null, 2));
+  fs.writeFileSync(path.resolve(projectDir, 'package.json'), JSON.stringify(mergePackageJson(originalPackageJson, changes), null, 2));
 }
 
-async function addDependencies(dependencies: string[]): Promise<{ [key: string]: string }> {
+async function addDependencyVersions(dependencies: string[] = []): Promise<{ [key: string]: string }> {
   const versions = await Promise.all(dependencies.map(dependency => getVersionOfDependency(dependency)));
   return dependencies.reduce((result, dependency, index) => ({ ...result, [dependency]: versions[index] }), {} as any);
 }

@@ -16,6 +16,7 @@ jest.mock('cli-ux', () => {
     }
   };
 });
+
 import HelpPage from '../src/commands/help-page';
 
 describe('Help Page', () => {

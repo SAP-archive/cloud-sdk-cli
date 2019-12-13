@@ -4,20 +4,21 @@
 
 import { Command, flags } from '@oclif/command';
 import cli from 'cli-ux';
+import * as fs from 'fs';
 import * as Listr from 'listr';
 import * as path from 'path';
 import {
   buildScaffold,
   copyFiles,
-  ensureDirectoryExistence,
   findConflicts,
+  getCopyDescriptors,
   getJestConfig,
+  getTemplatePaths,
   installDependencies,
   modifyGitIgnore,
   modifyJestConfig,
   modifyPackageJson,
   parsePackageJson,
-  readTemplates,
   shouldBuildScaffold,
   usageAnalytics
 } from '../utils/';
@@ -28,6 +29,25 @@ export default class Init extends Command {
   static examples = ['$ sap-cloud-sdk init', '$ sap-cloud-sdk init --help'];
 
   static flags = {
+    // visible
+    projectDir: flags.string({
+      description: 'Path to the folder in which the project should be created.'
+    }),
+    force: flags.boolean({
+      description: 'Do not fail if a file or npm script already exist and overwrite it.'
+    }),
+    frontendScripts: flags.boolean({
+      description: 'Add frontend-related npm scripts which are executed by our CI/CD toolkit.'
+    }),
+    help: flags.help({
+      char: 'h',
+      description: 'Show help for the new command.'
+    }),
+    verbose: flags.boolean({
+      char: 'v',
+      description: 'Show more detailed output.'
+    }),
+    // hidden
     projectName: flags.string({
       hidden: true,
       description: 'Give project name which is used for the Cloud Foundry mainfest.yml'
@@ -40,31 +60,14 @@ export default class Init extends Command {
       hidden: true,
       description: 'If the folder is empty, use nest-cli to create a project scaffold.'
     }),
-    analyticsSalt: flags.string({
-      hidden: true,
-      description: 'Set salt for analytics. This should only be used for CI builds.'
-    }),
     analytics: flags.boolean({
       hidden: true,
       allowNo: true,
       description: 'Enable or disable collection of anonymous usage data.'
     }),
-    force: flags.boolean({
-      description: 'Do not fail if a file or npm script already exist and overwrite it.'
-    }),
-    frontendScripts: flags.boolean({
-      description: 'Add frontend-related npm scripts which are executed by our CI/CD toolkit.'
-    }),
-    projectDir: flags.string({
-      description: 'Path to the folder in which the project should be created.'
-    }),
-    help: flags.help({
-      char: 'h',
-      description: 'Show help for the new command.'
-    }),
-    verbose: flags.boolean({
-      char: 'v',
-      description: 'Show more detailed output.'
+    analyticsSalt: flags.string({
+      hidden: true,
+      description: 'Set salt for analytics. This should only be used for CI builds.'
     })
   };
 
@@ -89,7 +92,7 @@ export default class Init extends Command {
     const projectDir: string = flags.projectDir || args.projectDir || '.';
 
     try {
-      ensureDirectoryExistence(projectDir, true);
+      fs.mkdirSync(projectDir, { recursive: true });
       const isScaffold = await shouldBuildScaffold(projectDir, flags.buildScaffold, flags.force);
       if (isScaffold) {
         await buildScaffold(projectDir, flags.verbose);
@@ -100,21 +103,12 @@ export default class Init extends Command {
 
       const tasks = new Listr([
         {
-          title: 'Reading templates',
-          task: async ctx => {
-            ctx.files = readTemplates({
-              from: [path.resolve(__dirname, '..', 'templates', 'init')],
-              to: projectDir
-            });
-          }
-        },
-        {
-          title: 'Finding potential conflicts',
-          task: ctx => findConflicts(ctx.files, flags.force)
-        },
-        {
           title: 'Creating files',
-          task: ctx => copyFiles(ctx.files, options)
+          task: () => {
+            const copyDescriptors = getCopyDescriptors(projectDir, getTemplatePaths(['init']));
+            findConflicts(copyDescriptors, flags.force);
+            copyFiles(copyDescriptors, options);
+          }
         },
         {
           title: 'Modifying test config',

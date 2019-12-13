@@ -9,7 +9,6 @@ import * as fs from 'fs';
 import * as Listr from 'listr';
 import * as path from 'path';
 import * as rm from 'rimraf';
-import { ensureDirectoryExistence } from '../utils/templates';
 
 export default class Package extends Command {
   static description = 'Copies the specified files to the deployment folder';
@@ -88,8 +87,9 @@ export default class Package extends Command {
           const filtered = include.filter(filepath => !exclude.includes(filepath)).map(filepath => path.relative(flags.projectDir, filepath));
 
           filtered.forEach(filepath => {
-            ensureDirectoryExistence(path.resolve(outputDir, filepath));
-            fs.copyFileSync(filepath, path.resolve(outputDir, filepath));
+            const outputFilePath = path.resolve(outputDir, filepath);
+            fs.mkdirSync(path.dirname(outputFilePath), { recursive: true });
+            fs.copyFileSync(filepath, outputFilePath);
           });
         }
       },

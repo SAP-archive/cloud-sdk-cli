@@ -4,6 +4,5 @@
 
 export interface CopyDescriptor {
   sourcePath: string | URL;
-  targetFolder: string;
   fileName: string;
 }
