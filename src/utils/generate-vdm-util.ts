@@ -28,7 +28,7 @@ export function toGeneratorSDK(flags: FlagsParsed): GeneratorOptions {
   return result as GeneratorOptions;
 }
 
-export function toBooleanFlag(yargsBool: Options ): IBooleanFlag<boolean> {
+export function toBooleanFlag(yargsBool: Options): IBooleanFlag<boolean> {
   const extendedDescription = `${yargsBool.describe} [default: ${yargsBool.default}].`;
   return flags.boolean({
     char: yargsBool.alias as AlphabetLowercase | AlphabetUppercase,
@@ -39,7 +39,7 @@ export function toBooleanFlag(yargsBool: Options ): IBooleanFlag<boolean> {
   });
 }
 
-export function toStringFlag(yargsString: Options ): IOptionFlag<string | undefined> {
+export function toStringFlag(yargsString: Options): IOptionFlag<string | undefined> {
   const options: Partial<IOptionFlag<string>> = {
     char: yargsString.alias as AlphabetLowercase | AlphabetUppercase,
     description: yargsString.describe,
