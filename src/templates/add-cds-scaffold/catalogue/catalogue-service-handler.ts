@@ -3,12 +3,12 @@
  */
 import cds = require('@sap/cds');
 
-export const serviceHandler = (srv) => {
+export const serviceHandler = srv => {
   // Use reflection to get the csn definition of Books
-  const {Books} = cds.entities;
+  const { Books } = cds.entities;
 
   // Add some discount for overstocked books
-  srv.after ('READ', 'Books', (books) => {
+  srv.after('READ', 'Books', books => {
     books.forEach(book => {
       if (book.stock > 111) {
         book.title += ' -- 11% discount!';

@@ -27,7 +27,7 @@ const cdsChanges = {
   scripts: {
     'cds-build': 'cds build/all',
     'cds-deploy': 'cds deploy',
-    'ci-build': 'npm run cds-deploy && npm run cds-build && npm run build',
+    'ci-build': 'npm run cds-deploy && npm run cds-build && npm run build'
   },
   devDpendencies: ['sqlite3'],
   dependencies: ['@sap/cds-dk']

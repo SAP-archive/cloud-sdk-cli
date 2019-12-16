@@ -7,7 +7,21 @@ import cli from 'cli-ux';
 import * as fs from 'fs';
 import * as Listr from 'listr';
 import * as path from 'path';
-import { buildScaffold, copyFiles, findConflicts, getCopyDescriptors, getJestConfig, getTemplatePaths, installDependencies, modifyGitIgnore, modifyJestConfig, modifyPackageJson, parsePackageJson, shouldBuildScaffold, usageAnalytics } from '../utils/';
+import {
+  buildScaffold,
+  copyFiles,
+  findConflicts,
+  getCopyDescriptors,
+  getJestConfig,
+  getTemplatePaths,
+  installDependencies,
+  modifyGitIgnore,
+  modifyJestConfig,
+  modifyPackageJson,
+  parsePackageJson,
+  shouldBuildScaffold,
+  usageAnalytics
+} from '../utils/';
 import { initFlags } from '../utils/init-flags';
 
 export default class Init extends Command {
@@ -51,7 +65,13 @@ export default class Init extends Command {
         {
           title: 'Creating files',
           task: () => {
-            const templates = flags.addCds ? ['init', 'add-cds'] : ['init'];
+            const templates = ['init'];
+            if (flags.addCds) {
+              templates.push('add-cds');
+              if (isScaffold) {
+                templates.push('add-cds-scaffold');
+              }
+            }
             const copyDescriptors = getCopyDescriptors(projectDir, getTemplatePaths(templates));
             findConflicts(copyDescriptors, flags.force);
             copyFiles(copyDescriptors, options);
@@ -104,13 +124,24 @@ export default class Init extends Command {
     return options;
   }
 
-  private printSuccessMessage(isScaffold: boolean) {
+  private printSuccessMessage(isScaffold: boolean, addCds: boolean) {
     this.log('+---------------------------------------------------------------+');
     this.log('| ✅ Init finished successfully.                                |');
     this.log('|                                                               |');
     this.log('| 🚀 Next steps:                                                |');
 
-    isScaffold ? this.printNextStepsScaffold() : this.printNextStepsBase();
+    if (isScaffold) {
+      if (addCds) {
+        this.printNextStepsCdsScaffold();
+      }
+      this.printNextStepsScaffold();
+    } else {
+      if (addCds) {
+        this.printNextStepsCdsNoScaffold();
+      }
+      this.printNextStepsBase();
+    }
+    // isScaffold ? this.printNextStepsScaffold() : this.printNextStepsBase();
 
     this.log('|                                                               |');
     this.log('| 🔨 Consider setting up Jenkins to continuously build your app |');
@@ -128,5 +159,21 @@ export default class Init extends Command {
   private printNextStepsScaffold() {
     this.log('| - Run the application locally (`npm run start:dev`)           |');
     this.log('| - Deploy your application (`npm run deploy`)                  |');
+  }
+
+  private printNextStepsCdsNoScaffold() {
+    // add code
+    //     Generated service needs to be exposed.
+    // For express apps you can do this by adding the following snippet to your code:
+    //   cds
+    //     .connect()
+    //     .serve('CatalogService')
+    //     .in(<your-express-app>)
+    // For other frameworks please refer to the documentation.
+    this.printNextStepsCdsScaffold();
+  }
+
+  private printNextStepsCdsScaffold() {
+    // run cds-build + cds-deploy
   }
 }

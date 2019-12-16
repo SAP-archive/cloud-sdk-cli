@@ -49,7 +49,7 @@ export async function buildScaffold(projectDir: string, verbose: boolean, addCds
 
   modifyMainTs(path.resolve(projectDir, 'src', 'main.ts'));
   if (addCds) {
-    addCatalogueModule(path.resolve(projectDir, 'src', 'app.module.ts'))
+    addCatalogueModule(path.resolve(projectDir, 'src', 'app.module.ts'));
   }
   cli.action.stop();
 }
@@ -66,7 +66,7 @@ function modifyMainTs(pathToMainTs: string) {
   }
 }
 
-function addCatalogueModule(pathToAppModuleTs: string) {
+export function addCatalogueModule(pathToAppModuleTs: string) {
   const appModuleTs = fs.readFileSync(pathToAppModuleTs, { encoding: 'utf8' });
   const moduleName = 'CatalogueModule';
   const importToAdd = `import { ${moduleName} } from './catalogue/catalogue.module'`;

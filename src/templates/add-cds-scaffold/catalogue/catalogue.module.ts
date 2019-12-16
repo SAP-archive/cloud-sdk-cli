@@ -10,8 +10,6 @@ export class CatalogueModule implements NestModule {
       .serve('CatalogService')
       .with(serviceHandler);
 
-    consumer
-        .apply(service)
-        .forRoutes('catalog');
+    consumer.apply(service).forRoutes('catalog');
   }
 }
