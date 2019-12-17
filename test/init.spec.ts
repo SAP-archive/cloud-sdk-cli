@@ -93,7 +93,7 @@ describe('Init', () => {
         expect(fs.existsSync(path)).toBe(true);
       });
     expect(fs.existsSync(path.resolve(projectDir, 'test'))).toBe(false);
-  }, 60000);
+  }, 10000);
 
   it('init should detect and fail if there are conflicts', async () => {
     const projectDir = getCleanProjectDir('detect-conflicts');
@@ -106,7 +106,7 @@ describe('Init', () => {
       'A file with the name ".npmrc" already exists. If you want to overwrite it, rerun the command with `--force`.',
       { exit: 1 }
     );
-  }, 60000);
+  }, 10000);
 
   it('should add to .gitignore if there is one', async () => {
     const projectDir = getCleanProjectDir('add-to-gitignore');
@@ -123,7 +123,7 @@ describe('Init', () => {
     expect(gitignoreEntries).toContain('/s4hana_pipeline');
     expect(gitignoreEntries).toContain('/deployment');
     expect(gitignoreEntries.length).toBeGreaterThan(29);
-  }, 60000);
+  }, 10000);
 
   it('should show a warning if the project is not using git', async () => {
     const projectDir = getCleanProjectDir('warn-on-no-git');
@@ -134,7 +134,7 @@ describe('Init', () => {
     await Init.run(['--projectName=testingApp', '--startCommand="npm start"', `--projectDir=${projectDir}`, '--skipInstall', '--no-analytics']);
 
     expect(warn).toHaveBeenCalledWith('No .gitignore file found!');
-  }, 60000);
+  }, 10000);
 
   it('should add our scripts and dependencies to the package.json', async () => {
     const projectDir = getCleanProjectDir('add-scripts-and-dependencies');
@@ -161,7 +161,7 @@ describe('Init', () => {
     ['ci-build', 'ci-package', 'ci-backend-unit-test', 'ci-frontend-unit-test', 'ci-integration-test', 'ci-e2e'].forEach(script =>
       expect(scripts).toContain(script)
     );
-  }, 60000);
+  }, 10000);
 
   it('should add the analytics file', async () => {
     const projectDir = getCleanProjectDir('add-to-gitignore');
@@ -177,7 +177,7 @@ describe('Init', () => {
     ]);
 
     expect(JSON.parse(fs.readFileSync(`${projectDir}/sap-cloud-sdk-analytics.json`, 'utf8'))).toEqual({ enabled: true, salt: 'SAPCLOUDSDK4LIFE' });
-  }, 60000);
+  }, 10000);
 
   it('should add a disabled analytics file', async () => {
     const projectDir = getCleanProjectDir('add-to-gitignore');
@@ -186,5 +186,5 @@ describe('Init', () => {
     await Init.run(['--projectName=testingApp', '--startCommand="npm start"', `--projectDir=${projectDir}`, '--skipInstall', '--no-analytics']);
 
     expect(JSON.parse(fs.readFileSync(`${projectDir}/sap-cloud-sdk-analytics.json`, 'utf8'))).toEqual({ enabled: false });
-  }, 60000);
+  }, 10000);
 });
