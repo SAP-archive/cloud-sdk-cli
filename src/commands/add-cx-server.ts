@@ -36,9 +36,9 @@ export default class AddCxServer extends Command {
     const options = await this.getOptions();
 
     try {
-      const files = [this.copyFromGithub('cx-server', flags), this.copyFromGithub('server.cfg', flags)];
+      const files = [this.copyDescriptorForGithub('cx-server', flags), this.copyDescriptorForGithub('server.cfg', flags)];
       if (flags.platform === 'win32') {
-        files.push(this.copyFromGithub('cx-server.bat', flags));
+        files.push(this.copyDescriptorForGithub('cx-server.bat', flags));
       }
 
       const tasks = new Listr([
@@ -58,12 +58,11 @@ export default class AddCxServer extends Command {
     }
   }
 
-  private copyFromGithub(fileName: string, flags: Flags): CopyDescriptor {
+  private copyDescriptorForGithub(fileName: string, flags: Flags): CopyDescriptor {
     const githubPrefix = 'https://raw.githubusercontent.com/SAP/devops-docker-cx-server/master/cx-server-companion/life-cycle-scripts/';
 
     return {
       sourcePath: new URL(fileName, githubPrefix),
-      targetFolder: path.resolve(flags.projectDir, 'cx-server'),
       fileName: path.resolve(flags.projectDir, 'cx-server', fileName)
     };
   }

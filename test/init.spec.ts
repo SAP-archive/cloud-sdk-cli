@@ -78,7 +78,14 @@ describe('Init', () => {
     const projectDir = getCleanProjectDir('add-to-existing');
     fs.copySync(expressAppDir, projectDir, { recursive: true });
 
-    await Init.run(['--projectName=testingApp', '--startCommand="npm start"', `--projectDir=${projectDir}`, '--no-analytics', '--force']);
+    await Init.run([
+      '--projectName=testingApp',
+      '--startCommand="npm start"',
+      `--projectDir=${projectDir}`,
+      '--no-analytics',
+      '--skipInstall',
+      '--force'
+    ]);
 
     ['.npmrc', 'credentials.json', 'systems.json', 'manifest.yml']
       .map(file => path.resolve(projectDir, file))
@@ -86,26 +93,26 @@ describe('Init', () => {
         expect(fs.existsSync(path)).toBe(true);
       });
     expect(fs.existsSync(path.resolve(projectDir, 'test'))).toBe(false);
-  }, 60000);
+  }, 10000);
 
   it('init should detect and fail if there are conflicts', async () => {
     const projectDir = getCleanProjectDir('detect-conflicts');
     fs.copySync(nestAppDir, projectDir, { recursive: true });
     fs.createFileSync(`${projectDir}/.npmrc`);
 
-    await Init.run(['--projectName=testingApp', '--startCommand="npm start"', `--projectDir=${projectDir}`, '--no-analytics']);
+    await Init.run(['--projectName=testingApp', '--startCommand="npm start"', `--projectDir=${projectDir}`, '--skipInstall', '--no-analytics']);
 
     expect(error).toHaveBeenCalledWith(
       'A file with the name ".npmrc" already exists. If you want to overwrite it, rerun the command with `--force`.',
       { exit: 1 }
     );
-  }, 60000);
+  }, 10000);
 
   it('should add to .gitignore if there is one', async () => {
     const projectDir = getCleanProjectDir('add-to-gitignore');
     fs.copySync(nestAppDir, projectDir, { recursive: true });
 
-    await Init.run(['--projectName=testingApp', '--startCommand="npm start"', `--projectDir=${projectDir}`, '--no-analytics']);
+    await Init.run(['--projectName=testingApp', '--startCommand="npm start"', `--projectDir=${projectDir}`, '--skipInstall', '--no-analytics']);
 
     const gitignoreEntries = fs
       .readFileSync(`${projectDir}/.gitignore`, 'utf8')
@@ -116,7 +123,7 @@ describe('Init', () => {
     expect(gitignoreEntries).toContain('/s4hana_pipeline');
     expect(gitignoreEntries).toContain('/deployment');
     expect(gitignoreEntries.length).toBeGreaterThan(29);
-  }, 60000);
+  }, 10000);
 
   it('should show a warning if the project is not using git', async () => {
     const projectDir = getCleanProjectDir('warn-on-no-git');
@@ -124,17 +131,24 @@ describe('Init', () => {
     fs.createFileSync(path.resolve(projectDir, 'package.json'));
     fs.writeFileSync(path.resolve(projectDir, 'package.json'), JSON.stringify({ name: 'project' }), 'utf8');
 
-    await Init.run(['--projectName=testingApp', '--startCommand="npm start"', `--projectDir=${projectDir}`, '--no-analytics']);
+    await Init.run(['--projectName=testingApp', '--startCommand="npm start"', `--projectDir=${projectDir}`, '--skipInstall', '--no-analytics']);
 
     expect(warn).toHaveBeenCalledWith('No .gitignore file found!');
-  }, 60000);
+  }, 10000);
 
   it('should add our scripts and dependencies to the package.json', async () => {
     const projectDir = getCleanProjectDir('add-scripts-and-dependencies');
     fs.createFileSync(path.resolve(projectDir, 'package.json'));
     fs.writeFileSync(path.resolve(projectDir, 'package.json'), JSON.stringify({ name: 'project' }), 'utf8');
 
-    await Init.run(['--projectName=testingApp', '--startCommand="npm start"', '--frontendScripts', `--projectDir=${projectDir}`, '--no-analytics']);
+    await Init.run([
+      '--projectName=testingApp',
+      '--startCommand="npm start"',
+      '--frontendScripts',
+      `--projectDir=${projectDir}`,
+      '--skipInstall',
+      '--no-analytics'
+    ]);
 
     const packageJson = JSON.parse(fs.readFileSync(path.resolve(projectDir, 'package.json'), 'utf8'));
 
@@ -147,7 +161,7 @@ describe('Init', () => {
     ['ci-build', 'ci-package', 'ci-backend-unit-test', 'ci-frontend-unit-test', 'ci-integration-test', 'ci-e2e'].forEach(script =>
       expect(scripts).toContain(script)
     );
-  }, 60000);
+  }, 10000);
 
   it('should add the analytics file', async () => {
     const projectDir = getCleanProjectDir('add-to-gitignore');
@@ -157,19 +171,20 @@ describe('Init', () => {
       '--projectName=testingApp',
       '--startCommand="npm start"',
       `--projectDir=${projectDir}`,
+      '--skipInstall',
       '--analytics',
       '--analyticsSalt=SAPCLOUDSDK4LIFE'
     ]);
 
     expect(JSON.parse(fs.readFileSync(`${projectDir}/sap-cloud-sdk-analytics.json`, 'utf8'))).toEqual({ enabled: true, salt: 'SAPCLOUDSDK4LIFE' });
-  }, 60000);
+  }, 10000);
 
   it('should add a disabled analytics file', async () => {
     const projectDir = getCleanProjectDir('add-to-gitignore');
     fs.copySync(expressAppDir, projectDir, { recursive: true });
 
-    await Init.run(['--projectName=testingApp', '--startCommand="npm start"', `--projectDir=${projectDir}`, '--no-analytics']);
+    await Init.run(['--projectName=testingApp', '--startCommand="npm start"', `--projectDir=${projectDir}`, '--skipInstall', '--no-analytics']);
 
     expect(JSON.parse(fs.readFileSync(`${projectDir}/sap-cloud-sdk-analytics.json`, 'utf8'))).toEqual({ enabled: false });
-  }, 60000);
+  }, 10000);
 });
