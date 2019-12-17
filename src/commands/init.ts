@@ -94,7 +94,7 @@ export default class Init extends Command {
         },
         {
           title: 'Modifying `.gitignore`',
-          task: () => modifyGitIgnore(projectDir)
+          task: () => modifyGitIgnore(projectDir, flags.addCds)
         }
       ]);
 
