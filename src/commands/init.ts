@@ -68,6 +68,10 @@ export default class Init extends Command {
     analyticsSalt: flags.string({
       hidden: true,
       description: 'Set salt for analytics. This should only be used for CI builds.'
+    }),
+    skipInstall: flags.boolean({
+      hidden: true,
+      description: 'Skip installing npm dependencies. If you use this, make sure to install manually afterwards.'
     })
   };
 
@@ -121,7 +125,8 @@ export default class Init extends Command {
         },
         {
           title: 'Installing dependencies',
-          task: () => installDependencies(projectDir, verbose).catch(e => this.error(`Error during npm install: ${e.message}`, { exit: 13 }))
+          task: () => installDependencies(projectDir, verbose).catch(e => this.error(`Error during npm install: ${e.message}`, { exit: 13 })),
+          enabled: () => !flags.skipInstall
         },
         {
           title: 'Modifying `.gitignore`',
