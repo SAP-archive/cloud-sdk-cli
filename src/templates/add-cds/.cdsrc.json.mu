@@ -24,7 +24,7 @@
                 "db"
             ],
             "credentials": {
-                "database": "cap-cli.db"
+                "database": "{{ projectName }}.db"
             }
         }
     }

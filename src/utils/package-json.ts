@@ -29,8 +29,8 @@ const cdsChanges = {
     'cds-deploy': 'cds deploy',
     'ci-build': 'npm run cds-deploy && npm run cds-build && npm run build'
   },
-  devDpendencies: ['sqlite3'],
-  dependencies: ['@sap/cds-dk']
+  devDependencies: ['sqlite3'],
+  dependencies: ['@sap/cds', '@sap/cds-dk']
 };
 
 const scaffoldProjectPackageJson: PackageJsonChange = {

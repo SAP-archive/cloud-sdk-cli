@@ -2,6 +2,7 @@
   "compilerOptions": {
     "declaration": true,
     "importHelpers": true,
+    "lib": ["ES2020"],
     "module": "commonjs",
     "outDir": "lib",
     "rootDir": "src",

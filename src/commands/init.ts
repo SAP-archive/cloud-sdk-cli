@@ -23,6 +23,7 @@ import {
   usageAnalytics
 } from '../utils/';
 import { initFlags } from '../utils/init-flags';
+import { formatMessage } from '../utils/message-formatter';
 
 export default class Init extends Command {
   static description = 'Initializes your project for the SAP Cloud SDK, SAP Cloud Platform Cloud Foundry and CI/CD using the SAP Cloud SDK toolkit';
@@ -99,7 +100,7 @@ export default class Init extends Command {
 
       await tasks.run();
 
-      this.printSuccessMessage(isScaffold);
+      this.printSuccessMessage(isScaffold, flags.addCds);
     } catch (error) {
       this.error(error, { exit: 1 });
     }
@@ -125,55 +126,54 @@ export default class Init extends Command {
   }
 
   private printSuccessMessage(isScaffold: boolean, addCds: boolean) {
-    this.log('+---------------------------------------------------------------+');
-    this.log('| ✅ Init finished successfully.                                |');
-    this.log('|                                                               |');
-    this.log('| 🚀 Next steps:                                                |');
+    const message = ['✅ Init finished successfully.', '', '🚀 Next steps:'];
+
+    if (addCds) {
+      message.push('- Deploy your database locally (`npm run cds-deploy`)');
+    }
 
     if (isScaffold) {
-      if (addCds) {
-        this.printNextStepsCdsScaffold();
-      }
-      this.printNextStepsScaffold();
+      message.push(...this.nextStepsScaffold());
     } else {
       if (addCds) {
-        this.printNextStepsCdsNoScaffold();
+        message.push(...this.nextStepsCdsNoScaffold());
       }
-      this.printNextStepsBase();
+      message.push(...this.nextStepsNoScaffold());
     }
-    // isScaffold ? this.printNextStepsScaffold() : this.printNextStepsBase();
 
-    this.log('|                                                               |');
-    this.log('| 🔨 Consider setting up Jenkins to continuously build your app |');
-    this.log('| Use `sap-cloud-sdk add-cx-server` to create the setup script  |');
-    this.log('+---------------------------------------------------------------+');
+    message.push(
+      '',
+      '🔨 Consider setting up Jenkins to continuously build your app.',
+      'Use `sap-cloud-sdk add-cx-server` to create the setup script.'
+    );
+
+    this.log(formatMessage(message));
   }
 
-  private printNextStepsBase() {
-    this.log('| 1. Make sure that your app listens to `process.env.PORT`      |');
-    this.log('| 2. Build your app if necessary                                |');
-    this.log('| 3. Run `sap-cloud-sdk package [--include INC][--exclude EXC]` |');
-    this.log('| 4. Push to Cloud Foundry (`cf push`)                          |');
+  private nextStepsNoScaffold() {
+    return [
+      '- Make sure that your app listens to `process.env.PORT`',
+      '- Build your app if necessary',
+      '- Run `sap-cloud-sdk package [--include INC][--exclude EXC]`',
+      '- Push to Cloud Foundry (`cf push`)'
+    ];
   }
 
-  private printNextStepsScaffold() {
-    this.log('| - Run the application locally (`npm run start:dev`)           |');
-    this.log('| - Deploy your application (`npm run deploy`)                  |');
+  private nextStepsScaffold() {
+    return ['- Run the application locally (`npm run start:dev`)', '- Deploy your application (`npm run deploy`)'];
   }
 
-  private printNextStepsCdsNoScaffold() {
-    // add code
-    //     Generated service needs to be exposed.
-    // For express apps you can do this by adding the following snippet to your code:
-    //   cds
-    //     .connect()
-    //     .serve('CatalogService')
-    //     .in(<your-express-app>)
-    // For other frameworks please refer to the documentation.
-    this.printNextStepsCdsScaffold();
-  }
-
-  private printNextStepsCdsScaffold() {
-    // run cds-build + cds-deploy
+  private nextStepsCdsNoScaffold() {
+    return [
+      'Expose your service:',
+      'For express apps add the following snippet to your code:',
+      '',
+      'cds',
+      '  .connect()',
+      "  .serve('CatalogService')",
+      '  .in(<your-express-app>);',
+      '',
+      'For other frameworks please refer to the documentation.'
+    ];
   }
 }

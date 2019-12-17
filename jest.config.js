@@ -9,5 +9,11 @@ module.exports = {
     '<rootDir>/test/express',
     '<rootDir>/test/[^/]*/[^/]*-spec'
   ],
-  roots: ['test']
+  setupFilesAfterEnv: ['jest-extended'],
+  roots: ['test'],
+  globals: {
+    'ts-jest': {
+      diagnostics: false,
+    }
+  }
 };

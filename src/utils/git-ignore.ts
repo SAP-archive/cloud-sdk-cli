@@ -5,9 +5,12 @@ import cli from 'cli-ux';
 import * as fs from 'fs';
 import * as path from 'path';
 
-export function modifyGitIgnore(projectDir: string) {
+export function modifyGitIgnore(projectDir: string, addCds: boolean) {
   const pathToGitignore = path.resolve(projectDir, '.gitignore');
   const pathsToIgnore = ['credentials.json', '/s4hana_pipeline', '/deployment'];
+  if (addCds) {
+    pathsToIgnore.push(...cdsPathsToIgnore());
+  }
 
   if (fs.existsSync(pathToGitignore)) {
     try {
@@ -26,4 +29,8 @@ export function modifyGitIgnore(projectDir: string) {
     cli.log('If your project is using a different version control system, please make sure the following paths are not tracked:');
     pathsToIgnore.forEach(path => cli.log('  ' + path));
   }
+}
+
+function cdsPathsToIgnore() {
+  return ['_out', '.cds_gen.log', '*.db', 'connection.properties', 'default-*.json', 'gen/', 'target/'];
 }
