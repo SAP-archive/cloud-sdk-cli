@@ -14,7 +14,13 @@ export function formatMessage(lines: string[]): string {
 }
 
 export function numberOfEmojis(line: string): number {
-  return [...line.matchAll(emojiRegex())].length;
+  let count = 0;
+  const regex = emojiRegex();
+  while (regex.exec(line)) {
+    count++;
+  }
+  return count;
+  // return [...line.matchAll(emojiRegex())].length;
 }
 
 export function formatLine(line: string): string {
