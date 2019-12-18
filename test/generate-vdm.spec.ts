@@ -2,19 +2,6 @@
  * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
-const confirm = jest.fn().mockResolvedValue(true);
-jest.mock('cli-ux', () => {
-  // Mocking needs to happen before the command is imported
-  const cli = jest.requireActual('cli-ux');
-  return {
-    ...cli,
-    default: {
-      ...cli.default,
-      confirm
-    }
-  };
-});
-
 const warn = jest.fn(message => console.log('MOCKED WARNING: ', message));
 jest.mock('@oclif/command', () => {
   const command = jest.requireActual('@oclif/command');
@@ -25,7 +12,7 @@ jest.mock('@oclif/command', () => {
 import { GeneratorOptions as GeneratorOptionsSDK, generatorOptionsCli as generatorOptionsSDK } from '@sap/cloud-sdk-generator';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import GenerateVdm, { FlagsParsed } from '../src/commands/generate-vdm';
+import GenerateVdm, { AllOptions, BoolArgKeys, FlagsParsed, StringArgKeys } from '../src/commands/generate-vdm';
 import * as generateVdmUtil from '../src/utils/generate-vdm-util';
 
 const spyToGeneratorSDK = jest.spyOn(generateVdmUtil, 'toGeneratorSDK');
@@ -47,6 +34,20 @@ describe('generate-vdm', () => {
     const files = fs.readdirSync(path.join(pathForTests, 'generatedVdm', 'yy-1-socialnetworkaccount-cds-service'));
     expect(files.length).toBeGreaterThan(0);
   }, 60000);
+
+  it('should not miss or add keys by the split in string and boolean arguments.', function() {
+    // These keys should be the same as AllKeys. We use this to check that no key got lost in the splitting of bool and string
+    type AllKeysTest = BoolArgKeys | StringArgKeys;
+    type AllKeysInitial =keyof AllOptions;
+
+
+    let key1:AllKeysTest='forceOverwrite';
+    let key2:AllKeysInitial='projectDir';
+
+    // This will lead to a static type error if the yow key types are not the same
+    key1 = key2;
+    key2 = key1;
+  });
 
   it('should fail if the mandatory parameters are not there', async () => {
     try {

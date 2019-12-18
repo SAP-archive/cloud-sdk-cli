@@ -8,11 +8,11 @@ import { generate, GeneratorOptions as GeneratorOptionsSDK, generatorOptionsCli 
 import { Options } from 'yargs';
 import { toBooleanFlag, toGeneratorSDK, toStringFlag } from '../utils/generate-vdm-util';
 
-export interface GeneratorOptionCLI {
+export interface GeneratorOptionCli {
   projectDir: Options;
 }
 
-export const generatorOptionCLI: GeneratorOptionCLI = {
+export const generatorOptionCli: GeneratorOptionCli = {
   projectDir: {
     default: '.',
     describe: 'Path to the folder in which the VDM should be created. The input and output dir are relative to this directory.',
@@ -20,38 +20,34 @@ export const generatorOptionCLI: GeneratorOptionCLI = {
   }
 };
 
-type AllOptions = GeneratorOptionsSDK & GeneratorOptionCLI;
-export type AllKeys = keyof AllOptions;
+export type AllOptions = GeneratorOptionsSDK & GeneratorOptionCli;
 
 // OClif distinguishes between boolean and string flags. Split the keys to get proper typing
 type FilterBooleanKeys<Base> = {
   [Key in keyof Base]: Base[Key] extends boolean ? Key : never;
 };
 
-type BoolArgKeys = NonNullable<FilterBooleanKeys<AllOptions>[keyof AllOptions]>;
+export type BoolArgKeys = NonNullable<FilterBooleanKeys<AllOptions>[keyof AllOptions]>;
 type BoolArgType = {
   [optionName in BoolArgKeys]: IBooleanFlag<boolean>;
 };
 
-type StringArgKeys = keyof Omit<AllOptions, BoolArgKeys>;
+export type StringArgKeys = keyof Omit<AllOptions, BoolArgKeys>;
 type StringArgType = {
   [optionName in StringArgKeys]: IOptionFlag<string | undefined>;
 };
-// These keys should be the same as AllKeys. We use this to check that no key got lost in the splitting of bool and string
-export type AllKeysTest = BoolArgKeys | StringArgKeys;
 
-type Flags = BoolArgType & StringArgType;
 export type FlagsParsed = {
-  [Key in AllKeys]: AllOptions[Key] extends boolean ? boolean : string | undefined;
+  [Key in keyof AllOptions]: AllOptions[Key] extends boolean ? boolean : string | undefined;
 };
 
 export default class GenerateVdm extends Command {
   static description =
     'Generates a virtual data model (VDM) from a edmx service file definition. For SAP solutions, you can find these definitions at https://api.sap.com/.';
 
-  static examples = ['$ sap-cloud-sdk generate-vdm', '$ sap-cloud-sdk generate-vdm --help'];
+  static examples = ['$ sap-cloud-sdk generate-vdm -i directoryWithEdmxFiles -o outputDirectory --forceOverwrite' , '$ sap-cloud-sdk generate-vdm --help'];
 
-  static flags: Flags = {
+  static flags: BoolArgType & StringArgType = {
     // Options which are 1:1 to the SDK CLI
     inputDir: toStringFlag(generatorOptionsSDK.inputDir),
     outputDir: toStringFlag(generatorOptionsSDK.outputDir),
@@ -71,7 +67,7 @@ export default class GenerateVdm extends Command {
     s4hanaCloud: toBooleanFlag(generatorOptionsSDK.s4hanaCloud),
     forceOverwrite: toBooleanFlag(generatorOptionsSDK.forceOverwrite),
     // Options related to the CLI some of them are mapped to SDK CLI attributes
-    projectDir: toStringFlag(generatorOptionCLI.projectDir)
+    projectDir: toStringFlag(generatorOptionCli.projectDir)
   };
 
   async run() {
