@@ -5,17 +5,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as rm from 'rimraf';
 import { getJestConfig, modifyJestConfig } from '../../src/utils';
+import { getCleanProjectDir, getPathPrefix } from '../test-utils';
 
-const pathPrefix = path.resolve(__dirname, __filename.replace(/\./g, '-')).replace('-ts', '');
-
-function getCleanProjectDir(name: string) {
-  const projectDir = path.resolve(pathPrefix, name);
-  if (fs.existsSync(projectDir)) {
-    rm.sync(projectDir);
-  }
-  fs.mkdirSync(projectDir, { recursive: true });
-  return projectDir;
-}
+const pathPrefix = getPathPrefix(__dirname, __filename);
 
 describe('Jest Config Utils', () => {
   afterAll(() => {
@@ -28,7 +20,7 @@ describe('Jest Config Utils', () => {
   });
 
   it('returns adds jest config to file', () => {
-    const projectDir = getCleanProjectDir('jest-config');
+    const projectDir = getCleanProjectDir(pathPrefix, 'jest-config');
     const jestConfigPath = path.resolve(projectDir, 'jest-e2e.json');
     fs.copyFileSync(path.resolve('test', 'nest', 'test', 'jest-e2e.json'), jestConfigPath);
 

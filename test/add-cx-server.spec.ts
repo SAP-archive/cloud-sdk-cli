@@ -18,9 +18,10 @@ jest.mock('cli-ux', () => {
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import AddCxServer from '../src/commands/add-cx-server';
+import { getPathPrefix } from './test-utils';
 
 describe('Add CX Server', () => {
-  const pathPrefix = path.resolve(__dirname, __filename.replace(/\./g, '-')).replace('-ts', '');
+  const pathPrefix = getPathPrefix(__dirname, __filename);
 
   beforeAll(() => {
     if (!fs.existsSync(pathPrefix)) {

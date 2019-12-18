@@ -18,17 +18,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as rm from 'rimraf';
 import { buildScaffold, shouldBuildScaffold } from '../../src/utils';
+import { getCleanProjectDir, getPathPrefix } from '../test-utils';
 
-const pathPrefix = path.resolve(__dirname, __filename.replace(/\./g, '-')).replace('-ts', '');
-
-function getCleanProjectDir(name: string) {
-  const projectDir = path.resolve(pathPrefix, name);
-  if (fs.existsSync(projectDir)) {
-    rm.sync(projectDir);
-  }
-  fs.mkdirSync(projectDir, { recursive: true });
-  return projectDir;
-}
+const pathPrefix = getPathPrefix(__dirname, __filename);
 
 describe('Scaffold Utils', () => {
   afterAll(() => {
@@ -36,7 +28,7 @@ describe('Scaffold Utils', () => {
   });
 
   it('should determine if scaffold is needed', async () => {
-    const projectDir = getCleanProjectDir('should-build-scaffold');
+    const projectDir = getCleanProjectDir(pathPrefix, 'should-build-scaffold');
 
     expect(await shouldBuildScaffold(projectDir, false)).toBe(true);
     expect(await shouldBuildScaffold(projectDir, true)).toBe(true);
@@ -47,9 +39,9 @@ describe('Scaffold Utils', () => {
   });
 
   it('should build the scaffold', async () => {
-    const projectDir = getCleanProjectDir('build-scaffold');
+    const projectDir = getCleanProjectDir(pathPrefix, 'build-scaffold');
 
-    await buildScaffold(projectDir, false);
+    await buildScaffold(projectDir, false, false);
 
     expect(fs.readdirSync(projectDir).sort()).toMatchSnapshot();
   }, 60000);
