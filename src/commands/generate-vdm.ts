@@ -3,49 +3,17 @@
  */
 
 import { Command } from '@oclif/command';
-import { IBooleanFlag, IOptionFlag } from '@oclif/parser/lib/flags';
-import { generate, GeneratorOptions as GeneratorOptionsSDK, generatorOptionsCli as generatorOptionsSDK } from '@sap/cloud-sdk-generator';
-import { Options } from 'yargs';
-import { toBooleanFlag, toGeneratorSDK, toStringFlag } from '../utils/generate-vdm-util';
-
-export interface GeneratorOptionCli {
-  projectDir: Options;
-}
-
-export const generatorOptionCli: GeneratorOptionCli = {
-  projectDir: {
-    default: '.',
-    describe: 'Path to the folder in which the VDM should be created. The input and output dir are relative to this directory.',
-    type: 'string'
-  }
-};
-
-export type AllOptions = GeneratorOptionsSDK & GeneratorOptionCli;
-
-// OClif distinguishes between boolean and string flags. Split the keys to get proper typing
-type FilterBooleanKeys<Base> = {
-  [Key in keyof Base]: Base[Key] extends boolean ? Key : never;
-};
-
-export type BoolArgKeys = NonNullable<FilterBooleanKeys<AllOptions>[keyof AllOptions]>;
-type BoolArgType = {
-  [optionName in BoolArgKeys]: IBooleanFlag<boolean>;
-};
-
-export type StringArgKeys = keyof Omit<AllOptions, BoolArgKeys>;
-type StringArgType = {
-  [optionName in StringArgKeys]: IOptionFlag<string | undefined>;
-};
-
-export type FlagsParsed = {
-  [Key in keyof AllOptions]: AllOptions[Key] extends boolean ? boolean : string | undefined;
-};
+import { generate, generatorOptionsCli as generatorOptionsSDK } from '@sap/cloud-sdk-generator';
+import { BoolArgType, generatorOptionCli, StringArgType, toBooleanFlag, toGeneratorSDK, toStringFlag } from '../utils/generate-vdm-util';
 
 export default class GenerateVdm extends Command {
   static description =
     'Generates a virtual data model (VDM) from a edmx service file definition. For SAP solutions, you can find these definitions at https://api.sap.com/.';
 
-  static examples = ['$ sap-cloud-sdk generate-vdm -i directoryWithEdmxFiles -o outputDirectory --forceOverwrite' , '$ sap-cloud-sdk generate-vdm --help'];
+  static examples = [
+    '$ sap-cloud-sdk generate-vdm -i directoryWithEdmxFiles -o outputDirectory --forceOverwrite',
+    '$ sap-cloud-sdk generate-vdm --help'
+  ];
 
   static flags: BoolArgType & StringArgType = {
     // Options which are 1:1 to the SDK CLI

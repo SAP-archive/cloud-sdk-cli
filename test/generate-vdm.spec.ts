@@ -12,7 +12,7 @@ jest.mock('@oclif/command', () => {
 import { GeneratorOptions as GeneratorOptionsSDK, generatorOptionsCli as generatorOptionsSDK } from '@sap/cloud-sdk-generator';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import GenerateVdm, { AllOptions, BoolArgKeys, FlagsParsed, StringArgKeys } from '../src/commands/generate-vdm';
+import GenerateVdm from '../src/commands/generate-vdm';
 import * as generateVdmUtil from '../src/utils/generate-vdm-util';
 
 const spyToGeneratorSDK = jest.spyOn(generateVdmUtil, 'toGeneratorSDK');
@@ -29,26 +29,6 @@ describe('generate-vdm', () => {
     fs.removeSync(pathForTests);
   });
 
-  it('should generate a vdm.', async () => {
-    await GenerateVdm.run(['-i', 'edmxSource', '-o', 'generatedVdm', '--forceOverwrite', '--projectDir', pathForTests]);
-    const files = fs.readdirSync(path.join(pathForTests, 'generatedVdm', 'yy-1-socialnetworkaccount-cds-service'));
-    expect(files.length).toBeGreaterThan(0);
-  }, 60000);
-
-  it('should not miss or add keys by the split in string and boolean arguments.', function() {
-    // These keys should be the same as AllKeys. We use this to check that no key got lost in the splitting of bool and string
-    type AllKeysTest = BoolArgKeys | StringArgKeys;
-    type AllKeysInitial =keyof AllOptions;
-
-
-    let key1:AllKeysTest='forceOverwrite';
-    let key2:AllKeysInitial='projectDir';
-
-    // This will lead to a static type error if the yow key types are not the same
-    key1 = key2;
-    key2 = key1;
-  });
-
   it('should fail if the mandatory parameters are not there', async () => {
     try {
       await GenerateVdm.run([]);
@@ -58,10 +38,10 @@ describe('generate-vdm', () => {
   });
 
   it('should parse strings and with --no- it should lead to all false.', async () => {
-    const expected = getAllFalse();
+    const expected = getParsedInputWithAllBooleanFlagsFalse();
     delete expected.projectDir;
     try {
-      await GenerateVdm.run([...getInputAllFalse(), '--projectDir', getProjectDir()]);
+      await GenerateVdm.run([...getCliInputWithAllBooleanFlagsFalse(), '--projectDir', getProjectDir()]);
     } catch (e) {
       expect(e.message).toContain('ENOENT: no such file or directory');
       expect(spyToGeneratorSDK).toHaveReturnedWith(expected);
@@ -116,23 +96,6 @@ describe('generate-vdm', () => {
     }
   }, 10000);
 
-  function getInputAllFalse(): string[] {
-    const allFalse = getAllFalse();
-    const stringArguments = Object.keys(allFalse).reduce((collected: string[], current: string) => {
-      if (typeof allFalse[current as keyof FlagsParsed] === 'string') {
-        collected.push(`--${current}`, allFalse[current as keyof FlagsParsed] as string);
-      }
-      if (typeof allFalse[current as keyof FlagsParsed] === 'boolean') {
-        const option = generatorOptionsSDK[current as keyof GeneratorOptionsSDK];
-        if (option && option.default === true) {
-          collected.push(`--no-${current}`);
-        }
-      }
-      return collected;
-    }, []);
-    return [...stringArguments];
-  }
-
   function getDefault(projectDir: string): GeneratorOptionsSDK {
     return {
       ...(Object.keys(generatorOptionsSDK).reduce((prev, current) => {
@@ -148,23 +111,39 @@ describe('generate-vdm', () => {
     };
   }
 
-  function getAllFalse(): FlagsParsed {
+  function getCliInputWithAllBooleanFlagsFalse(): string[] {
+    const allFalse = getParsedInputWithAllBooleanFlagsFalse();
+    const stringArguments = Object.entries(allFalse).reduce((collected: string[], [key, value]) => {
+      switch (typeof allFalse[key as keyof generateVdmUtil.FlagsParsed]) {
+        case 'string':
+          collected.push(`--${key}`, value!.toString());
+          break;
+        case 'boolean':
+          collected = generatorOptionsSDK[key as keyof GeneratorOptionsSDK]?.default ? [...collected, `--no-${key}`] : collected;
+          break;
+      }
+      return collected;
+    }, []);
+    return [...stringArguments];
+  }
+
+  function getParsedInputWithAllBooleanFlagsFalse(): generateVdmUtil.FlagsParsed {
     return {
+      aggregatorNpmPackageName: 'aggregatorNpm',
+      aggregatorDirectoryName: 'aggregationDirectory',
+      changelogFile: path.resolve(getProjectDir(), 'ChangeLogFile'),
+      inputDir: path.resolve(getProjectDir(), 'InputDir'),
+      outputDir: path.resolve(getProjectDir(), 'Outdir'),
+      projectDir: getProjectDir(),
+      serviceMapping: path.resolve(getProjectDir(), 'ServiceMapping'),
       generateNpmrc: false,
       clearOutputDir: false,
       s4hanaCloud: false,
       sdkAfterVersionScript: false,
-      serviceMapping: path.resolve(getProjectDir(), 'ServiceMapping'),
       writeReadme: false,
       useSwagger: false,
-      outputDir: path.resolve(getProjectDir(), 'Outdir'),
-      inputDir: path.resolve(getProjectDir(), 'InputDir'),
-      projectDir: getProjectDir(),
-      aggregatorNpmPackageName: 'aggregatorNpm',
-      aggregatorDirectoryName: 'aggregationDirectory',
       generatePackageJson: false,
       generateTypedocJson: false,
-      changelogFile: path.resolve(getProjectDir(), 'ChangeLogFile'),
       generateJs: false,
       generateCSN: false,
       forceOverwrite: false
