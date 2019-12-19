@@ -22,7 +22,9 @@
     "js-yaml": "^3.13.1",
     "listr": "^0.14.3",
     "rimraf": "^3.0.0",
-    "tslib": "^1.10.0"
+    "tslib": "^1.10.0",
+    "yargs": "14.0.0",
+    "@sap/cloud-sdk-generator": ">=1.14.0"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1.22.2",
@@ -85,7 +87,7 @@
   "scripts": {
     "postpack": "rm -f oclif.manifest.json",
     "pretest": "tslint -p . -t stylish && tslint -p test -t stylish && prettier -c \"**/*.ts\"",
-    "prettier": "prettier --write \"**/*.ts\"",
+    "fix:formatting": "tslint -p . -t stylish --fix && tslint -p test -t stylish --fix && prettier --write \"**/*.ts\"",
     "prepack": "rm -rf lib && tsc -b && cp -R src/templates lib/ && oclif-dev manifest && oclif-dev readme",
     "test": "jest",
     "test:watch-debug": "node --inspect-brk node_modules/.bin/jest --watch --runInBand",
