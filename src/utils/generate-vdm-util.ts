@@ -5,7 +5,7 @@
 import { flags } from '@oclif/command';
 import { AlphabetLowercase, AlphabetUppercase } from '@oclif/parser/lib/alphabet';
 import { IBooleanFlag, IOptionFlag } from '@oclif/parser/lib/flags';
-import { GeneratorOptions, GeneratorOptions as GeneratorOptionsSDK, generatorOptionsCli as generatorOptionsSDK } from '@sap/cloud-sdk-generator';
+import { GeneratorOptions as GeneratorOptionsSDK, generatorOptionsCli as generatorOptionsSDK } from '@sap/cloud-sdk-generator';
 import * as path from 'path';
 import { Options } from 'yargs';
 
@@ -42,10 +42,10 @@ export type FlagsParsed = {
   [Key in keyof AllOptions]: AllOptions[Key] extends boolean ? boolean : string | undefined;
 };
 
-export function toGeneratorSDK(cliFlags: FlagsParsed): GeneratorOptions {
+export function toGeneratorSDK(cliFlags: FlagsParsed): GeneratorOptionsSDK {
   return Object.entries(cliFlags)
     .filter(([key, value]) => typeof value !== 'undefined' && generatorOptionsSDK.hasOwnProperty(key))
-    .reduce((prev, [key, value]) => ({ ...prev, [key]: value }), {}) as GeneratorOptions;
+    .reduce((prev, [key, value]) => ({ ...prev, [key]: value }), {}) as GeneratorOptionsSDK;
 }
 
 export function toBooleanFlag(yargsBool: Options): IBooleanFlag<boolean> {

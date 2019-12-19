@@ -1,14 +1,6 @@
 /*!
  * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
-
-const warn = jest.fn(message => console.log('MOCKED WARNING: ', message));
-jest.mock('@oclif/command', () => {
-  const command = jest.requireActual('@oclif/command');
-  command.Command.prototype.warn = warn;
-  return command;
-});
-
 import { GeneratorOptions as GeneratorOptionsSDK, generatorOptionsCli as generatorOptionsSDK } from '@sap/cloud-sdk-generator';
 import * as fs from 'fs-extra';
 import * as path from 'path';
@@ -133,7 +125,7 @@ describe('generate-vdm', () => {
       aggregatorDirectoryName: 'aggregationDirectory',
       changelogFile: path.resolve(getProjectDir(), 'ChangeLogFile'),
       inputDir: path.resolve(getProjectDir(), 'InputDir'),
-      outputDir: path.resolve(getProjectDir(), 'Outdir'),
+      outputDir: path.resolve(getProjectDir(), 'OutputDir'),
       projectDir: getProjectDir(),
       serviceMapping: path.resolve(getProjectDir(), 'ServiceMapping'),
       generateNpmrc: false,

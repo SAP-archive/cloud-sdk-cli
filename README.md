@@ -37,7 +37,7 @@ $ npm install -g @sap-cloud-sdk/cli
 $ sap-cloud-sdk COMMAND
 running command...
 $ sap-cloud-sdk (-v|--version|version)
-@sap-cloud-sdk/cli/0.0.10 darwin-x64 node-v11.12.0
+@sap-cloud-sdk/cli/0.0.10 darwin-x64 node-v13.3.0
 $ sap-cloud-sdk --help [COMMAND]
 USAGE
   $ sap-cloud-sdk COMMAND
@@ -73,10 +73,10 @@ Start by running [`sap-cloud-sdk add-approuter`](#sap-cloud-sdk-add-approuter) a
 * [`sap-cloud-sdk add-approuter`](#sap-cloud-sdk-add-approuter)
 * [`sap-cloud-sdk add-cx-server`](#sap-cloud-sdk-add-cx-server)
 * [`sap-cloud-sdk autocomplete [SHELL]`](#sap-cloud-sdk-autocomplete-shell)
+* [`sap-cloud-sdk generate-vdm`](#sap-cloud-sdk-generate-vdm)
 * [`sap-cloud-sdk help [COMMAND]`](#sap-cloud-sdk-help-command)
 * [`sap-cloud-sdk help-page`](#sap-cloud-sdk-help-page)
 * [`sap-cloud-sdk init [PROJECTDIR]`](#sap-cloud-sdk-init-projectdir)
-* [`sap-cloud-sdk generate-vdm [OPTIONS]`](#sap-cloud-sdk-generate-vdm)
 * [`sap-cloud-sdk package`](#sap-cloud-sdk-package)
 
 ## `sap-cloud-sdk add-approuter`
@@ -141,6 +141,90 @@ EXAMPLES
 
 _See code: [@oclif/plugin-autocomplete](https://github.com/oclif/plugin-autocomplete/blob/v0.1.5/src/commands/autocomplete/index.ts)_
 
+## `sap-cloud-sdk generate-vdm`
+
+Generates a virtual data model (VDM) from a edmx service file definition. For SAP solutions, you can find these definitions at https://api.sap.com/.
+
+```
+USAGE
+  $ sap-cloud-sdk generate-vdm
+
+OPTIONS
+  -i, --inputDir=inputDir                              (required) This directory will be recursively searched for
+                                                       .edmx/.xml files.
+
+  -o, --outputDir=outputDir                            (required) Directory to save the generated code in.
+
+  -s, --serviceMapping=serviceMapping                  Configuration file to ensure consistent names between multiple
+                                                       generation runs with updated / changed metadata files. Will be
+                                                       generated if not existent. By default it will be saved to/read
+                                                       from the input directory as "service-mapping.json".
+
+  --aggregatorDirectoryName=aggregatorDirectoryName    Hack for cloud-sdk-vdm package
+
+  --aggregatorNpmPackageName=aggregatorNpmPackageName  When provided, the generator will generate an additional package
+                                                       with the provided name that has dependencies to all other
+                                                       generated packages.
+
+  --changelogFile=changelogFile                        Path to file that will be copied into the generated packages
+                                                       under the filename CHANGELOG.md.
+
+  --clearOutputDir                                     When set to true, the generator will delete EVERYTHING in the
+                                                       specified output directory before generating code. [default:
+                                                       false].
+
+  --forceOverwrite                                     By default, the generator will exit when encountering a file that
+                                                       already exists. When set to true, it will be overwritten instead.
+                                                       Please note that compared to the --clearOutputDir option, this
+                                                       will not delete outdated files. [default: false].
+
+  --generateCSN                                        When set to true a CSN file will be generated for each service
+                                                       definition in the output directory. [default: false].
+
+  --[no-]generateJs                                    By default, the generator will also generate transpiled .js,
+                                                       .js.map, .d.ts and .d.ts.map files. When set to false, the
+                                                       generator will only generate .ts files. [default: true].
+
+  --[no-]generateNpmrc                                 By default, the generator will generate a .npmrc file specifying
+                                                       a registry for @sap scoped dependencies. When set to false, the
+                                                       generator will skip the generation of .npmrc. [default: true].
+
+  --[no-]generatePackageJson                           By default, the generator will generate a package.json file,
+                                                       specifying dependencies and scripts for compiling and generating
+                                                       documentation. When set to false, the generator will skip the
+                                                       generation of the package.json. [default: true].
+
+  --[no-]generateTypedocJson                           By default, the generator will generate a typedoc.json file for
+                                                       each package, used for the corresponding "doc" npm script. When
+                                                       set to false, the generator will skip the generation of the
+                                                       typedoc.json. [default: true].
+
+  --projectDir=projectDir                              [default: .] Path to the folder in which the VDM should be
+                                                       created. The input and output dir are relative to this directory.
+
+  --s4hanaCloud                                        When set to true, the description of the generated packages will
+                                                       be specific to S/4HANA Cloud. [default: false].
+
+  --sdkAfterVersionScript                              When set to true, the package.json of generated services will
+                                                       have the after-version script to internally keep the versions in
+                                                       sync. [default: false].
+
+  --useSwagger                                         Augment parsed information with information from swagger
+                                                       definition files. Files are expected to have the same name as the
+                                                       edmx file, but with .json as suffix. [default: false].
+
+  --writeReadme                                        When set to true, the generator will write a README.md file into
+                                                       the root folder of every package. This option does not make that
+                                                       much sense without also set useSwagger to "true". [default:
+                                                       false].
+
+EXAMPLES
+  $ sap-cloud-sdk generate-vdm -i directoryWithEdmxFiles -o outputDirectory --forceOverwrite
+  $ sap-cloud-sdk generate-vdm --help
+```
+
+_See code: [src/commands/generate-vdm.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.10/src/commands/generate-vdm.ts)_
+
 ## `sap-cloud-sdk help [COMMAND]`
 
 display help for sap-cloud-sdk
@@ -196,42 +280,6 @@ EXAMPLES
 ```
 
 _See code: [src/commands/init.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.10/src/commands/init.ts)_
-
-
-## `sap-cloud-sdk generate-vdm [OPTIONS]`
-
-Generates an typescript OData client from .edmx/.xml service definition files.
-Uses sap-cloud-sdk generator under the hood. 
-
-```
-USAGE
-  $ sap-cloud-sdk generate-vdm
-
-OPTIONS
-  -i, --inputDir=inputDir                              (required) This directory will be recursively searched for .edmx/.xml files.
-  -o, --outputDir=outputDir                            (required) Directory to save the generated code in.
-  -s, --serviceMapping=serviceMapping                  Configuration file to ensure consistent names between multiple generation runs with updated / changed metadata files. Will be generated if not existent. By default it will be saved to/read from the input directory as "service-mapping.json".
-  --aggregatorDirectoryName=aggregatorDirectoryName    Hack for cloud-sdk-vdm package
-  --aggregatorNpmPackageName=aggregatorNpmPackageName  When provided, the generator will generate an additional package with the provided name that has dependencies to all other generated packages.
-  --changelogFile=changelogFile                        Path to file that will be copied into the generated packages under the filename CHANGELOG.md.
-  --clearOutputDir                                     When set to true, the generator will delete EVERYTHING in the specified output directory before generating code. [default: false].
-  --forceOverwrite                                     By default, the generator will exit when encountering a file that already exists. When set to true, it will be overwritten instead. Please note that compared to the --clearOutputDir option, this will not delete outdated files. [default: false].
-  --generateCSN                                        When set to true a CSN file will be generated for each service definition in the output directory. [default: false].
-  --[no-]generateJs                                    By default, the generator will also generate transpiled .js, .js.map, .d.ts and .d.ts.map files. When set to false, the generator will only generate .ts files. [default: true].
-  --[no-]generateNpmrc                                 By default, the generator will generate a .npmrc file specifying a registry for @sap scoped dependencies. When set to false, the generator will skip the generation of .npmrc. [default: true].
-  --[no-]generatePackageJson                           By default, the generator will generate a package.json file, specifying dependencies and scripts for compiling and generating documentation. When set to false, the generator will skip the generation of the package.json. [default: true].
-  --[no-]generateTypedocJson                           By default, the generator will generate a typedoc.json file for each package, used for the corresponding "doc" npm script. When set to false, the generator will skip the generation of the typedoc.json. [default: true].
-  --projectDir=projectDir                              [default: .] Path to the folder in which the VDM should be created. The input and output dir are relative to this directory.
-  --s4hanaCloud                                        When set to true, the description of the generated packages will be specific to S/4HANA Cloud. [default: false].
-  --sdkAfterVersionScript                              When set to true, the package.json of generated services will have the after-version script to internally keep the versions in sync. [default: false].
-  --useSwagger                                         Augment parsed information with information from swagger definition files. Files are expected to have the same name as the edmx file, but with .json as suffix. [default: false].
-  --writeReadme                                        When set to true, the generator will write a README.md file into the root folder of every package. This option does not make that much sense without also set useSwagger to "true". [default: false].
-
-EXAMPLES
-  $ sap-cloud-sdk generate-vdm -i directoryWithEdmxFiles -o outputDirectory --forceOverwrite
-  $ sap-cloud-sdk generate-vdm --help
-
-```
 
 ## `sap-cloud-sdk package`
 
