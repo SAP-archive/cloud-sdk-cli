@@ -5,7 +5,6 @@ import cli from 'cli-ux';
 import * as execa from 'execa';
 import * as fs from 'fs';
 import * as path from 'path';
-import { InitFlags } from './init-flags';
 import { getJestConfig } from './jest-config';
 
 interface PackageJsonChange {
@@ -116,12 +115,32 @@ function mergePackageJson(originalPackageJson: any, changes: any) {
   return adjustedPackageJson;
 }
 
-export async function modifyPackageJson(projectDir: string, isScaffold: boolean, flags: Pick<InitFlags, 'frontendScripts' | 'force' | 'addCds'>) {
+export interface ModifyPackageJsonParams {
+  projectDir: string;
+  isScaffold: boolean;
+  frontendScripts?: boolean;
+  force?: boolean;
+  addCds?: boolean;
+}
+
+export async function modifyPackageJson({
+  projectDir,
+  isScaffold = false,
+  frontendScripts = false,
+  force = false,
+  addCds = false
+}: {
+  projectDir: string;
+  isScaffold?: boolean;
+  frontendScripts?: boolean;
+  force?: boolean;
+  addCds?: boolean;
+}) {
   const originalPackageJson = parsePackageJson(projectDir);
-  const changes = await getPackageJsonChanges(isScaffold, flags.frontendScripts, flags.addCds);
+  const changes = await getPackageJsonChanges(isScaffold, frontendScripts, addCds);
   const conflicts = findScriptConflicts(originalPackageJson.scripts, changes.scripts);
 
-  if (conflicts.length && !flags.force) {
+  if (conflicts.length && !force) {
     return cli.error(
       conflicts.length > 1
         ? `Scripts with the names "${conflicts.join('", "')}" already exist. If you want to overwrite them, rerun the command with \`--force\`.`

@@ -66,57 +66,19 @@ describe('Init', () => {
     expect(fs.readdirSync(path.resolve(reportsPath, 'coverage-reports', 'backend-integration')).length).toBeGreaterThan(1);
   }, 240000);
 
-  // describe.skip('scaffold', () => {
-  //   let projectDir: string;
+  it('should create a new project with the necessary files when adding cds', async () => {
+    const projectDir = getCleanProjectDir(pathPrefix, 'full-init-cds');
+    await Init.run(['--projectName=testingApp', '--buildScaffold', '--no-analytics', `--projectDir=${projectDir}`, '--addCds']);
 
-  //   beforeAll(async () => {
-  //     projectDir = getCleanProjectDir(pathPrefix, 'full-init');
-  //     await Init.run(['--projectName=testingApp', '--buildScaffold', '--no-analytics', `--projectDir=${projectDir}`, '--verbose', '--skipInstall']);
-  //   }, 240000);
+    ['.cdsrc.json', 'srv/cat-service.cds', 'db/data-model.cds', 'src/catalogue/catalogue.module.ts']
+      .map(file => path.resolve(projectDir, file))
+      .forEach(path => {
+        expect(fs.existsSync(path)).toBe(true);
+      });
 
-  //   it('should create a new project with the necessary files', () => {
-  //     ['.npmrc', 'credentials.json', 'systems.json', 'manifest.yml']
-  //       .map(file => path.resolve(projectDir, file))
-  //       .forEach(path => {
-  //         expect(fs.existsSync(path)).toBe(true);
-  //       });
-  //   });
-
-  //   it('should write test reports correctly', async () => {
-  //     const reportsPath = path.resolve(projectDir, 's4hana_pipeline', 'reports');
-
-  //     // execute the ci scripts and check if the reports are written
-  //     await execa('npm', ['run', 'ci-backend-unit-test'], { cwd: projectDir, stdio: 'inherit' });
-  //     expect(fs.readdirSync(path.resolve(reportsPath, 'backend-unit')).length).toBeGreaterThan(1);
-  //     expect(fs.readdirSync(path.resolve(reportsPath, 'coverage-reports', 'backend-unit')).length).toBeGreaterThan(1);
-
-  //     await execa('npm', ['run', 'ci-integration-test'], { cwd: projectDir, stdio: 'inherit' });
-  //     expect(fs.readdirSync(path.resolve(reportsPath, 'backend-integration')).length).toBeGreaterThan(1);
-  //     expect(fs.readdirSync(path.resolve(reportsPath, 'coverage-reports', 'backend-integration')).length).toBeGreaterThan(1);
-  //   });
-  // });
-
-  // describe('scaffold with cds', () => {
-  //   let projectDir: string;
-
-  //   beforeAll(async () => {
-  //     projectDir = getCleanProjectDir(pathPrefix, 'full-init-cds');
-  //     await Init.run(['--projectName=testingApp', '--buildScaffold', '--no-analytics', `--projectDir=${projectDir}`, '--addCds']);
-  //   }, 240000);
-
-  //   it('should create a new project with the necessary files when adding cds', async () => {
-  //     ['.cdsrc.json', 'srv/cat-service.cds', 'db/data-model.cds', 'src/catalogue/catalogue.module.ts']
-  //       .map(file => path.resolve(projectDir, file))
-  //       .forEach(path => {
-  //         expect(fs.existsSync(path)).toBe(true);
-  //       });
-  //   });
-
-  //   it('should sucessfully deploy cds model and database', async () => {
-  //     await execa('npm', ['run', 'cds-deploy'], { cwd: projectDir, stdio: 'inherit' });
-  //     expect(fs.existsSync(path.resolve(projectDir, 'testingApp.db'))).toBeTrue();
-  //   });
-  // });
+    await execa('npm', ['run', 'cds-deploy'], { cwd: projectDir, stdio: 'inherit' });
+    expect(fs.existsSync(path.resolve(projectDir, 'testingApp.db'))).toBeTrue();
+  }, 240000);
 
   it('should add necessary files to an existing project', async () => {
     const projectDir = getCleanProjectDir(pathPrefix, 'add-to-existing');
@@ -137,6 +99,27 @@ describe('Init', () => {
         expect(fs.existsSync(path)).toBe(true);
       });
     expect(fs.existsSync(path.resolve(projectDir, 'test'))).toBe(false);
+  }, 10000);
+
+  it('should add necessary files to an existing project when adding cds', async () => {
+    const projectDir = getCleanProjectDir(pathPrefix, 'add-to-existing');
+    fs.copySync(expressAppDir, projectDir, { recursive: true });
+
+    await Init.run([
+      '--projectName=testingApp',
+      '--addCds',
+      '--startCommand="npm start"',
+      `--projectDir=${projectDir}`,
+      '--no-analytics',
+      '--skipInstall',
+      '--force'
+    ]);
+
+    ['.cdsrc.json', 'srv/cat-service.cds', 'db/data-model.cds']
+      .map(file => path.resolve(projectDir, file))
+      .forEach(path => {
+        expect(fs.existsSync(path)).toBe(true);
+      });
   }, 10000);
 
   it('init should detect and fail if there are conflicts', async () => {

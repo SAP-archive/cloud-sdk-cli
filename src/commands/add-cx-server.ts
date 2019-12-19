@@ -28,7 +28,10 @@ export default class AddCxServer extends Command {
       default: process.platform,
       description: 'The currently running OS.'
     }),
-    help: flags.help({ char: 'h' })
+    help: flags.help({
+      char: 'h',
+      description: 'Show help for the add-cx-server command.'
+    })
   };
 
   async run() {

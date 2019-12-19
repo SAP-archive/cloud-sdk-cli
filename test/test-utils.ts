@@ -9,11 +9,15 @@ export function getPathPrefix(dir: string, file: string): string {
   return path.resolve(dir, file.replace(/\./g, '-')).replace('-ts', '');
 }
 
-export function getCleanProjectDir(pathPrefix: string, name: string) {
-  const projectDir = path.resolve(pathPrefix, name);
-  if (fs.existsSync(projectDir)) {
-    rm.sync(projectDir);
+export function removeDir(dir: string): void {
+  if (fs.existsSync(dir)) {
+    rm.sync(dir);
   }
+}
+
+export function getCleanProjectDir(pathPrefix: string, name: string): string {
+  const projectDir = path.resolve(pathPrefix, name);
+  removeDir(projectDir);
   fs.mkdirSync(projectDir, { recursive: true });
   return projectDir;
 }

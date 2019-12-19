@@ -20,7 +20,10 @@ export default class Package extends Command {
   ];
 
   static flags = {
-    help: flags.help({ char: 'h' }),
+    help: flags.help({
+      char: 'h',
+      description: 'Show help for the package command.'
+    }),
     output: flags.string({
       char: 'o',
       default: 'deployment',

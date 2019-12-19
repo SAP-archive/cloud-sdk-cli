@@ -4,9 +4,9 @@
 
 import { Command, flags } from '@oclif/command';
 import cli from 'cli-ux';
-import * as fs from 'fs';
-import * as yaml from 'js-yaml';
 import * as Listr from 'listr';
+import { getProjectNameFromManifest } from '../utils/manifest-yaml';
+import { getProjectDir } from '../utils/project-dir';
 import { copyFiles, findConflicts, getCopyDescriptors, getTemplatePaths } from '../utils/templates';
 
 export default class AddApprouter extends Command {
@@ -17,8 +17,7 @@ export default class AddApprouter extends Command {
   static flags = {
     projectDir: flags.string({
       hidden: true,
-      default: '',
-      description: 'Path to the folder in which the project should be created.'
+      description: 'Path to the project directory to which the approuter should be added.'
     }),
     force: flags.boolean({
       description: 'Do not fail if a file already exist and overwrite it.'
@@ -26,15 +25,24 @@ export default class AddApprouter extends Command {
     help: flags.help({ char: 'h' })
   };
 
+  static args = [
+    {
+      name: 'projectDir',
+      description: 'Path to the project directory to which the approuter should be added.'
+    }
+  ];
+
   async run() {
-    const { flags } = this.parse(AddApprouter);
+    const { flags, args } = this.parse(AddApprouter);
+    const projectDir = getProjectDir(this, flags, args);
+
     try {
       const options = await this.getOptions();
       const tasks = new Listr([
         {
           title: 'Creating files',
           task: () => {
-            const copyDescriptors = getCopyDescriptors(flags.projectDir, getTemplatePaths(['add-approuter']));
+            const copyDescriptors = getCopyDescriptors(projectDir, getTemplatePaths(['add-approuter']));
             findConflicts(copyDescriptors, flags.force);
             copyFiles(copyDescriptors, options);
           }
@@ -50,21 +58,7 @@ export default class AddApprouter extends Command {
   }
 
   private async getOptions() {
-    const warn = () => this.warn('Could not read name from `manifest.yml`. Please ensure you ran `sap-cloud-sdk init` before adding the approuter.');
-    let projectName: string | null = null;
-    try {
-      const manifestStr = fs.readFileSync('manifest.yml', { encoding: 'utf8' });
-      const manifest = yaml.safeLoad(manifestStr, {
-        filename: 'manifest.yml',
-        onWarning: warn
-      });
-      if (manifest['applications'].length > 1) {
-        this.warn('There were multiple apps in the `manifest.yml`, this command only considers the first app.');
-      }
-      projectName = manifest['applications'].map((app: any) => app.name)[0];
-    } catch (error) {
-      this.log(`Unable to read "manifest.yml" (${error.message}).`);
-    }
+    const projectName = getProjectNameFromManifest(this);
 
     const options: { [key: string]: string } = {
       projectName: projectName || (await cli.prompt('Enter project name as maintained in Cloud Foundry'))

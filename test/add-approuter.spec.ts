@@ -20,7 +20,7 @@ jest.mock('cli-ux', () => {
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import AddApprouter from '../src/commands/add-approuter';
-import { getPathPrefix } from './test-utils';
+import { getPathPrefix, removeDir } from './test-utils';
 
 describe('Add Approuter', () => {
   const pathPrefix = getPathPrefix(__dirname, __filename);
@@ -37,9 +37,7 @@ describe('Add Approuter', () => {
 
   it('should add preconfigured files', async () => {
     const projectDir = path.resolve(pathPrefix, 'add-approuter');
-    if (fs.existsSync(projectDir)) {
-      fs.removeSync(projectDir);
-    }
+    removeDir(projectDir);
 
     const argv = [`--projectDir=${projectDir}`];
     await AddApprouter.run(argv);
@@ -57,9 +55,7 @@ describe('Add Approuter', () => {
 
   it('should add necessary files to an existing project', async () => {
     const projectDir = path.resolve(pathPrefix, 'add-approuter-to-existing-project');
-    if (fs.existsSync(projectDir)) {
-      fs.removeSync(projectDir);
-    }
+    removeDir(projectDir);
 
     fs.copySync(path.resolve(__dirname, 'express'), projectDir, { recursive: true });
 
@@ -78,10 +74,8 @@ describe('Add Approuter', () => {
   }, 30000);
 
   it('should detect and fail if there are conflicts', async () => {
-    const projectDir = path.resolve(pathPrefix, 'approuter-conflict');
-    if (fs.existsSync(projectDir)) {
-      fs.removeSync(projectDir);
-    }
+    const projectDir = path.resolve(pathPrefix, 'add-approuter-conflicts');
+    removeDir(projectDir);
 
     fs.copySync(path.resolve(__dirname, 'express'), projectDir, { recursive: true });
     fs.mkdirSync(path.resolve(projectDir, 'approuter'));

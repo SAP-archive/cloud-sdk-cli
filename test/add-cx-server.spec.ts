@@ -18,12 +18,13 @@ jest.mock('cli-ux', () => {
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import AddCxServer from '../src/commands/add-cx-server';
-import { getPathPrefix } from './test-utils';
+import { getPathPrefix, removeDir } from './test-utils';
 
 describe('Add CX Server', () => {
   const pathPrefix = getPathPrefix(__dirname, __filename);
 
   beforeAll(() => {
+    // TODO: remove
     if (!fs.existsSync(pathPrefix)) {
       fs.mkdirSync(pathPrefix, { recursive: true });
     }
@@ -35,9 +36,7 @@ describe('Add CX Server', () => {
 
   it('should add the necessary files', async () => {
     const projectDir = path.resolve(pathPrefix, 'add-cx-server');
-    if (fs.existsSync(projectDir)) {
-      fs.removeSync(projectDir);
-    }
+    removeDir(projectDir);
 
     const argv = [`--projectDir=${projectDir}`];
     await AddCxServer.run(argv);
@@ -52,9 +51,7 @@ describe('Add CX Server', () => {
 
   it('should add the necessary files on windows', async () => {
     const projectDir = path.resolve(pathPrefix, 'add-cx-server');
-    if (fs.existsSync(projectDir)) {
-      fs.removeSync(projectDir);
-    }
+    removeDir(projectDir);
 
     const argv = [`--projectDir=${projectDir}`, '--platform=win32'];
     await AddCxServer.run(argv);
@@ -70,9 +67,7 @@ describe('Add CX Server', () => {
 
   it('should add necessary files to an existing project', async () => {
     const projectDir = path.resolve(pathPrefix, 'add-cx-server-to-existing-project');
-    if (fs.existsSync(projectDir)) {
-      fs.removeSync(projectDir);
-    }
+    removeDir(projectDir);
 
     fs.copySync(path.resolve(__dirname, 'express'), projectDir, { recursive: true });
 
@@ -89,9 +84,7 @@ describe('Add CX Server', () => {
 
   it('should detect and fail if there are conflicts', async () => {
     const projectDir = path.resolve(pathPrefix, 'add-cx-server-conflicts');
-    if (fs.existsSync(projectDir)) {
-      fs.removeSync(projectDir);
-    }
+    removeDir(projectDir);
 
     fs.mkdirSync(path.resolve(projectDir, 'cx-server'), { recursive: true });
     fs.createFileSync(path.resolve(projectDir, 'cx-server', 'cx-server'));

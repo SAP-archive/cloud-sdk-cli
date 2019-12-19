@@ -2,7 +2,7 @@
  * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
-import { Command } from '@oclif/command';
+import { Command, flags } from '@oclif/command';
 import cli from 'cli-ux';
 import * as fs from 'fs';
 import * as Listr from 'listr';
@@ -22,35 +22,75 @@ import {
   shouldBuildScaffold,
   usageAnalytics
 } from '../utils/';
-import { initFlags } from '../utils/init-flags';
 import { formatMessage } from '../utils/message-formatter';
+import { getProjectDir } from '../utils/project-dir';
 
 export default class Init extends Command {
   static description = 'Initializes your project for the SAP Cloud SDK, SAP Cloud Platform Cloud Foundry and CI/CD using the SAP Cloud SDK toolkit';
 
   static examples = ['$ sap-cloud-sdk init', '$ sap-cloud-sdk init --help'];
 
-  static flags = initFlags;
+  static flags = {
+    // visible
+    projectDir: flags.string({
+      description: 'Path to the directory in which the project should be created.'
+    }),
+    force: flags.boolean({
+      description: 'Do not fail if a file or npm script already exist and overwrite it.'
+    }),
+    frontendScripts: flags.boolean({
+      description: 'Add frontend-related npm scripts which are executed by our CI/CD toolkit.'
+    }),
+    help: flags.help({
+      char: 'h',
+      description: 'Show help for the init command.'
+    }),
+    verbose: flags.boolean({
+      char: 'v',
+      description: 'Show more detailed output.'
+    }),
+    // hidden
+    projectName: flags.string({
+      hidden: true,
+      description: 'Give project name which is used for the Cloud Foundry mainfest.yml.'
+    }),
+    startCommand: flags.string({
+      hidden: true,
+      description: 'Give a command which is used to start the application productively.'
+    }),
+    buildScaffold: flags.boolean({
+      hidden: true,
+      description: 'If the folder is empty, use nest-cli to create a project scaffold.'
+    }),
+    analytics: flags.boolean({
+      hidden: true,
+      allowNo: true,
+      description: 'Enable or disable collection of anonymous usage data.'
+    }),
+    analyticsSalt: flags.string({
+      hidden: true,
+      description: 'Set salt for analytics. This should only be used for CI builds.'
+    }),
+    skipInstall: flags.boolean({
+      hidden: true,
+      description: 'Skip installing npm dependencies. If you use this, make sure to install manually afterwards.'
+    }),
+    addCds: flags.boolean({
+      hidden: true,
+      description: 'Add a cds configuration and example data to follow the SAP Cloud Application Promgramming model.'
+    })
+  };
 
   static args = [
     {
       name: 'projectDir',
-      description: 'Path to the folder in which the project should be created.'
+      description: 'Path to the directory in which the project should be created.'
     }
   ];
 
   async run() {
     const { flags, args } = this.parse(Init);
-    const { verbose } = flags;
-
-    if (typeof flags.projectDir !== 'undefined' && typeof args.projectDir !== 'undefined' && flags.projectDir !== args.projectDir) {
-      this.error(
-        `Project directory was given via argument (${args.projectDir}) and via the \`--projectDir\` flag (${flags.projectDir}). Please only provide one.`,
-        { exit: 1 }
-      );
-    }
-
-    const projectDir: string = flags.projectDir || args.projectDir || '.';
+    const projectDir = getProjectDir(this, flags, args);
 
     try {
       fs.mkdirSync(projectDir, { recursive: true });
@@ -85,11 +125,11 @@ export default class Init extends Command {
         },
         {
           title: 'Adding dependencies to package.json',
-          task: () => modifyPackageJson(projectDir, isScaffold, flags)
+          task: () => modifyPackageJson({ projectDir, isScaffold, frontendScripts: flags.frontendScripts, force: flags.force, addCds: flags.addCds })
         },
         {
           title: 'Installing dependencies',
-          task: () => installDependencies(projectDir, verbose).catch(e => this.error(`Error during npm install: ${e.message}`, { exit: 13 })),
+          task: () => installDependencies(projectDir, flags.verbose).catch(e => this.error(`Error during npm install: ${e.message}`, { exit: 13 })),
           enabled: () => !flags.skipInstall
         },
         {
