@@ -20,28 +20,21 @@ jest.mock('cli-ux', () => {
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import AddCds from '../src/commands/add-cds';
-import { getPathPrefix, removeDir } from './test-utils';
+import { getCleanProjectDir, getPathPrefix } from './test-utils';
 
 describe('Add CDS', () => {
   const pathPrefix = getPathPrefix(__dirname, __filename);
-
-  beforeAll(() => {
-    if (!fs.existsSync(pathPrefix)) {
-      fs.mkdirSync(pathPrefix, { recursive: true });
-    }
-  });
 
   afterAll(() => {
     fs.removeSync(pathPrefix);
   });
 
   it('should add necessary files to an existing project', async () => {
-    const projectDir = path.resolve(pathPrefix, 'add-cds-to-existing-project');
-    removeDir(projectDir);
+    const projectDir = getCleanProjectDir(pathPrefix, 'add-cds-to-existing-project');
 
     fs.copySync(path.resolve(__dirname, 'express'), projectDir, { recursive: true });
 
-    const argv = [`--projectDir=${projectDir}`];
+    const argv = [`--projectDir=${projectDir}`, '--skipInstall'];
     await AddCds.run(argv);
 
     const files = fs.readdirSync(projectDir);
@@ -52,18 +45,17 @@ describe('Add CDS', () => {
     expect(dbFiles).toContain('data-model.cds');
     const srvFiles = fs.readdirSync(path.resolve(projectDir, 'srv'));
     expect(srvFiles).toContain('cat-service.cds');
-  }, 40000);
+  });
 
   it('should detect and fail if there are conflicts', async () => {
-    const projectDir = path.resolve(pathPrefix, 'add-cds-conflicts');
-    removeDir(projectDir);
+    const projectDir = getCleanProjectDir(pathPrefix, 'add-cds-conflicts');
 
     fs.copySync(path.resolve(__dirname, 'express'), projectDir, { recursive: true });
     fs.mkdirSync(path.resolve(projectDir, 'db'));
     fs.createFileSync(path.resolve(projectDir, 'db', 'data-model.cds'));
     fs.writeFileSync(path.resolve(projectDir, 'db', 'data-model.cds'), 'some text', 'utf8');
 
-    const argv = [`--projectDir=${projectDir}`];
+    const argv = [`--projectDir=${projectDir}`, '--skipInstall'];
     await AddCds.run(argv);
 
     expect(error).toHaveBeenCalledWith(
@@ -72,5 +64,5 @@ describe('Add CDS', () => {
         exit: 1
       }
     );
-  }, 40000);
+  });
 });

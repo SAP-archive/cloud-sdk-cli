@@ -4,7 +4,7 @@
 
 import boxen = require('boxen');
 
-export function formatMessage(lines: string[]): string {
+export function boxMessage(lines: string[]): string {
   return boxen(lines.join('\n'), {
     borderStyle: {
       topLeft: '+',

@@ -22,7 +22,7 @@ import {
   shouldBuildScaffold,
   usageAnalytics
 } from '../utils/';
-import { formatMessage } from '../utils/message-formatter';
+import { boxMessage } from '../utils/message-formatter';
 import { getProjectDir } from '../utils/project-dir';
 
 export default class Init extends Command {
@@ -192,7 +192,7 @@ export default class Init extends Command {
       'Use `sap-cloud-sdk add-cx-server` to create the setup script.'
     );
 
-    this.log(formatMessage(message));
+    this.log(boxMessage(message));
   }
 
   private nextStepsNoScaffold() {

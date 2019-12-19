@@ -115,14 +115,6 @@ function mergePackageJson(originalPackageJson: any, changes: any) {
   return adjustedPackageJson;
 }
 
-export interface ModifyPackageJsonParams {
-  projectDir: string;
-  isScaffold: boolean;
-  frontendScripts?: boolean;
-  force?: boolean;
-  addCds?: boolean;
-}
-
 export async function modifyPackageJson({
   projectDir,
   isScaffold = false,

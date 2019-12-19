@@ -34,12 +34,6 @@ describe('Init', () => {
   const expressAppDir = path.resolve('test', 'express');
   const nestAppDir = path.resolve('test', 'nest');
 
-  beforeAll(() => {
-    if (!fs.existsSync(pathPrefix)) {
-      fs.mkdirSync(pathPrefix, { recursive: true });
-    }
-  });
-
   afterAll(() => {
     fs.removeSync(pathPrefix);
   });
