@@ -35,22 +35,6 @@ describe('Add CDS', () => {
     fs.removeSync(pathPrefix);
   });
 
-  it('should add preconfigured files', async () => {
-    const projectDir = path.resolve(pathPrefix, 'add-cds');
-    removeDir(projectDir);
-
-    const argv = [`--projectDir=${projectDir}`];
-    await AddCds.run(argv);
-
-    const files = fs.readdirSync(projectDir);
-    expect(files).toIncludeAllMembers(['.cdsrc.json', 'db', 'srv']);
-
-    const dbFiles = fs.readdirSync(path.resolve(projectDir, 'db'));
-    expect(dbFiles).toContain('data-model.cds');
-    const srvFiles = fs.readdirSync(path.resolve(projectDir, 'srv'));
-    expect(srvFiles).toContain('cat-service.cds');
-  }, 30000);
-
   it('should add necessary files to an existing project', async () => {
     const projectDir = path.resolve(pathPrefix, 'add-cds-to-existing-project');
     removeDir(projectDir);
@@ -68,7 +52,7 @@ describe('Add CDS', () => {
     expect(dbFiles).toContain('data-model.cds');
     const srvFiles = fs.readdirSync(path.resolve(projectDir, 'srv'));
     expect(srvFiles).toContain('cat-service.cds');
-  }, 30000);
+  }, 40000);
 
   it('should detect and fail if there are conflicts', async () => {
     const projectDir = path.resolve(pathPrefix, 'add-cds-conflicts');
@@ -88,5 +72,5 @@ describe('Add CDS', () => {
         exit: 1
       }
     );
-  }, 30000);
+  }, 40000);
 });

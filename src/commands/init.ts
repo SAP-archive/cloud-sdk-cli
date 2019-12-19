@@ -106,14 +106,7 @@ export default class Init extends Command {
         {
           title: 'Creating files',
           task: () => {
-            const templates = ['init'];
-            if (flags.addCds) {
-              templates.push('add-cds');
-              if (isScaffold) {
-                templates.push('add-cds-scaffold');
-              }
-            }
-            const copyDescriptors = getCopyDescriptors(projectDir, getTemplatePaths(templates));
+            const copyDescriptors = getCopyDescriptors(projectDir, getTemplatePaths(this.getTemplateNames(isScaffold, flags.addCds)));
             findConflicts(copyDescriptors, flags.force);
             copyFiles(copyDescriptors, options);
           }
@@ -144,6 +137,18 @@ export default class Init extends Command {
     } catch (error) {
       this.error(error, { exit: 1 });
     }
+  }
+
+  private getTemplateNames(isScaffold: boolean, addCds: boolean): string[] {
+    const templates = ['init'];
+    if (addCds) {
+      templates.push('add-cds');
+      if (isScaffold) {
+        templates.push('add-cds-scaffold');
+      }
+    }
+
+    return templates;
   }
 
   private async getOptions(projectDir: string, startCommand?: string, projectName?: string) {

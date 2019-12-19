@@ -35,7 +35,9 @@ describe('Package Json Utils', () => {
     const packageJsonPath = path.resolve(projectDir, 'package.json');
     fs.copyFileSync(path.resolve('test', 'nest', 'package.json'), packageJsonPath);
 
-    await modifyPackageJson(projectDir, false, {
+    await modifyPackageJson({
+      projectDir,
+      isScaffold: false,
       frontendScripts: false,
       force: false,
       addCds: false
@@ -48,7 +50,9 @@ describe('Package Json Utils', () => {
     const packageJsonPath = path.resolve(projectDir, 'package.json');
     fs.copyFileSync(path.resolve('test', 'nest', 'package.json'), packageJsonPath);
 
-    await modifyPackageJson(projectDir, true, {
+    await modifyPackageJson({
+      projectDir,
+      isScaffold: true,
       frontendScripts: true,
       force: false,
       addCds: false

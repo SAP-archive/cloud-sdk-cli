@@ -22,7 +22,10 @@ export default class AddApprouter extends Command {
     force: flags.boolean({
       description: 'Do not fail if a file already exist and overwrite it.'
     }),
-    help: flags.help({ char: 'h' })
+    help: flags.help({
+      char: 'h',
+      description: 'Show help for the add-approuter command.'
+    })
   };
 
   static args = [
