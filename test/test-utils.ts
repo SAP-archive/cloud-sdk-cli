@@ -10,7 +10,7 @@ export function getPathPrefix(dir: string, file: string): string {
 }
 
 export function getCleanProjectDir(pathPrefix: string, name: string): string {
-  const projectDir = getCleanProjectDir(pathPrefix, name);
+  const projectDir = path.resolve(pathPrefix, name);
   if (fs.existsSync(projectDir)) {
     rm.sync(projectDir);
   }

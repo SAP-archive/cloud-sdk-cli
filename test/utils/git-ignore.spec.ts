@@ -40,6 +40,17 @@ describe('Git Ignore Utils', () => {
     expect(gitIgnoreContent).toContain('credentials.json');
   });
 
+  it('should add cds paths to empty git ignore', () => {
+    const projectDir = getCleanProjectDir(pathPrefix, 'empty-git-ignore-cds');
+    fs.writeFileSync(`${projectDir}/.gitignore`, '');
+
+    modifyGitIgnore(projectDir, true);
+
+    const gitIgnoreContent = fs.readFileSync(`${projectDir}/.gitignore`, { encoding: 'utf8' }).split('\n');
+    expect(gitIgnoreContent).toContain('gen/');
+    expect(gitIgnoreContent).toContain('*.db');
+  });
+
   it('should add paths to existing git ignore', () => {
     const projectDir = getCleanProjectDir(pathPrefix, 'existing-git-ignore');
     fs.writeFileSync(
@@ -54,6 +65,7 @@ describe('Git Ignore Utils', () => {
 
     const gitIgnoreContent = fs.readFileSync(`${projectDir}/.gitignore`, { encoding: 'utf8' }).split('\n');
     expect(gitIgnoreContent).toContain('/s4hana_pipeline');
+    expect(gitIgnoreContent).toContain('myPath');
     expect(gitIgnoreContent).toContain('credentials.json');
   });
 
