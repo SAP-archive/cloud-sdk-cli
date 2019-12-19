@@ -26,7 +26,7 @@ To send usage data, you have to explicitly **opt-in**.
 
 Any data that is sent during the analytics process is anonymized.
 This means that neither your project's name nor other personally identifiable information is collected.
-Instead, we create a pseudonym _p_ for every project, by concatenating the project's name and a randomly generated salt value, and hashing this value using a cryptographic hash function (currently SAH-256).
+Instead, we create a pseudonym _p_ for every project, by concatenating the project's name and a randomly generated salt value, and hashing this value using a cryptographic hash function (currently SHA-256).
 Neither the project name nor the salt itself will be transmitted, only the resulting pseudonym.
 However, should you host your project publicly, e.g. on GitHub, and make both your project's name and your salt value publicly available, it would technically possible for us to recreate the corresponding pseudonym.
 
