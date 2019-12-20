@@ -45,7 +45,7 @@ describe('Add CDS', () => {
     expect(dbFiles).toContain('data-model.cds');
     const srvFiles = fs.readdirSync(path.resolve(projectDir, 'srv'));
     expect(srvFiles).toContain('cat-service.cds');
-  });
+  }, 10000);
 
   it('should detect and fail if there are conflicts', async () => {
     const projectDir = getCleanProjectDir(pathPrefix, 'add-cds-conflicts');
@@ -64,5 +64,5 @@ describe('Add CDS', () => {
         exit: 1
       }
     );
-  });
+  }, 10000);
 });
