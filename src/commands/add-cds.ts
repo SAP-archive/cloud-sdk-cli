@@ -95,16 +95,18 @@ export default class AddCds extends Command {
 
   private printSuccessMessage() {
     this.log(
-      `✅ Successfully added a cds service to your project.
-
-Generated service needs to be exposed.
-For express apps you can do this by adding the following snippet to your code:
-  cds
-    .connect()
-    .serve('CatalogService')
-    .in(<your-express-app>)
-For other frameworks please refer to the documentation.
-`
+      [
+        '✅ Successfully added a cds service to your project.',
+        '',
+        'Generated service needs to be exposed.',
+        'For express apps you can do this by adding the following snippet to your code:',
+        'cds',
+        '  .connect()',
+        "  .serve('CatalogService')",
+        '  .in(<your-express-app>)',
+        '',
+        'For other frameworks please refer to the documentation.'
+      ].join('\n')
     );
   }
 }
