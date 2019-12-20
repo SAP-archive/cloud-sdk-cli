@@ -90,13 +90,10 @@ describe('generate-vdm', () => {
 
   function getDefault(projectDir: string): GeneratorOptionsSDK {
     return {
-      ...(Object.keys(generatorOptionsSDK).reduce((prev, current) => {
+      ...Object.keys(generatorOptionsSDK).reduce((prev, current) => {
         const value = generatorOptionsSDK[current as keyof GeneratorOptionsSDK];
-        if (value) {
-          prev[current as keyof GeneratorOptionsSDK] = value.default;
-        }
-        return prev;
-      }, {} as any) as GeneratorOptionsSDK),
+        return value ? { ...prev, [current]: value.default } : prev;
+      }, {} as any),
       inputDir: path.resolve(projectDir, 'input'),
       outputDir: path.resolve(projectDir, 'output'),
       serviceMapping: path.resolve(projectDir, 'input', 'service-mapping.json')
@@ -105,18 +102,15 @@ describe('generate-vdm', () => {
 
   function getCliInputWithAllBooleanFlagsFalse(): string[] {
     const allFalse = getParsedInputWithAllBooleanFlagsFalse();
-    const stringArguments = Object.entries(allFalse).reduce((collected: string[], [key, value]) => {
+    return Object.entries(allFalse).reduce((collected: string[], [key, value]) => {
       switch (typeof allFalse[key as keyof generateVdmUtil.FlagsParsed]) {
         case 'string':
-          collected.push(`--${key}`, value!.toString());
-          break;
+          return [...collected, `--${key}`, value!.toString()];
         case 'boolean':
-          collected = generatorOptionsSDK[key as keyof GeneratorOptionsSDK]?.default ? [...collected, `--no-${key}`] : collected;
-          break;
+        default:
+          return generatorOptionsSDK[key as keyof GeneratorOptionsSDK]?.default ? [...collected, `--no-${key}`] : collected;
       }
-      return collected;
     }, []);
-    return [...stringArguments];
   }
 
   function getParsedInputWithAllBooleanFlagsFalse(): generateVdmUtil.FlagsParsed {
