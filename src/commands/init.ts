@@ -23,7 +23,6 @@ import {
   usageAnalytics
 } from '../utils/';
 import { boxMessage } from '../utils/message-formatter';
-import { getProjectDir } from '../utils/project-dir';
 
 export default class Init extends Command {
   static description = 'Initializes your project for the SAP Cloud SDK, SAP Cloud Platform Cloud Foundry and CI/CD using the SAP Cloud SDK toolkit';
@@ -90,7 +89,7 @@ export default class Init extends Command {
 
   async run() {
     const { flags, args } = this.parse(Init);
-    const projectDir = getProjectDir(this, flags, args);
+    const projectDir = args.projectDir || '.';
 
     try {
       fs.mkdirSync(projectDir, { recursive: true });

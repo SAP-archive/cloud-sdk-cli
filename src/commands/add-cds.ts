@@ -7,7 +7,6 @@ import cli from 'cli-ux';
 import * as Listr from 'listr';
 import { installDependencies, modifyGitIgnore, modifyPackageJson } from '../utils';
 import { getProjectNameFromManifest } from '../utils/manifest-yaml';
-import { getProjectDir } from '../utils/project-dir';
 import { copyFiles, findConflicts, getCopyDescriptors, getTemplatePaths } from '../utils/templates';
 
 export default class AddCds extends Command {
@@ -17,9 +16,6 @@ export default class AddCds extends Command {
 
   static flags = {
     // visible
-    projectDir: flags.string({
-      description: 'Path to the project directory in which the cds sources should be added.'
-    }),
     force: flags.boolean({
       description: 'Do not fail if a file or npm script already exist and overwrite it.'
     }),
@@ -51,7 +47,7 @@ export default class AddCds extends Command {
 
   async run() {
     const { flags, args } = this.parse(AddCds);
-    const projectDir = getProjectDir(this, flags, args);
+    const projectDir = args.projectDir || '.';
 
     try {
       const options = await this.getOptions();

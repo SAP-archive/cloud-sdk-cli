@@ -33,11 +33,6 @@ export default class Package extends Command {
       default: false,
       description: 'Skip `npm i --production` during packaging'
     }),
-    projectDir: flags.string({
-      hidden: true,
-      default: '',
-      description: 'Path to the folder in which the project should be created.'
-    }),
     include: flags.string({
       char: 'i',
       default: 'package.json,package-lock.json,index.js,dist/**/*',
@@ -54,9 +49,17 @@ export default class Package extends Command {
     })
   };
 
+  static args = [
+    {
+      name: 'projectDir',
+      description: 'Path to the project directory that shall be packaged.'
+    }
+  ];
+
   async run() {
-    const { flags } = this.parse(Package);
-    const outputDir = path.resolve(flags.projectDir, flags.output);
+    const { flags, args } = this.parse(Package);
+    const projectDir = args.projectDir || '.';
+    const outputDir = path.resolve(projectDir, flags.output);
 
     const tasks = new Listr([
       {
@@ -78,16 +81,16 @@ export default class Package extends Command {
           const include = await glob(flags.include.split(','), {
             dot: true,
             absolute: true,
-            cwd: flags.projectDir
+            cwd: projectDir
           });
           const exclude: string[] = flags.exclude.length
             ? await glob(flags.exclude.split(','), {
                 dot: true,
                 absolute: true,
-                cwd: flags.projectDir
+                cwd: projectDir
               })
             : [];
-          const filtered = include.filter(filepath => !exclude.includes(filepath)).map(filepath => path.relative(flags.projectDir, filepath));
+          const filtered = include.filter(filepath => !exclude.includes(filepath)).map(filepath => path.relative(projectDir, filepath));
 
           filtered.forEach(filepath => {
             const outputFilePath = path.resolve(outputDir, filepath);

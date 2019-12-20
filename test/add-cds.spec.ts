@@ -34,8 +34,7 @@ describe('Add CDS', () => {
 
     fs.copySync(path.resolve(__dirname, 'express'), projectDir, { recursive: true });
 
-    const argv = [`--projectDir=${projectDir}`, '--skipInstall'];
-    await AddCds.run(argv);
+    await AddCds.run([projectDir, '--skipInstall']);
 
     const files = fs.readdirSync(projectDir);
 
@@ -55,8 +54,7 @@ describe('Add CDS', () => {
     fs.createFileSync(path.resolve(projectDir, 'db', 'data-model.cds'));
     fs.writeFileSync(path.resolve(projectDir, 'db', 'data-model.cds'), 'some text', 'utf8');
 
-    const argv = [`--projectDir=${projectDir}`, '--skipInstall'];
-    await AddCds.run(argv);
+    await AddCds.run([projectDir, '--skipInstall']);
 
     expect(error).toHaveBeenCalledWith(
       'A file with the name "data-model.cds" already exists. If you want to overwrite it, rerun the command with `--force`.',

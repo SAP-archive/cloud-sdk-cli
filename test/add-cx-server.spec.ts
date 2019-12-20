@@ -30,8 +30,7 @@ describe('Add CX Server', () => {
   it('should add the necessary files', async () => {
     const projectDir = getCleanProjectDir(pathPrefix, 'add-cx-server');
 
-    const argv = [`--projectDir=${projectDir}`];
-    await AddCxServer.run(argv);
+    await AddCxServer.run([projectDir]);
 
     const files = fs.readdirSync(projectDir);
     expect(files).toContain('cx-server');
@@ -44,8 +43,7 @@ describe('Add CX Server', () => {
   it('should add the necessary files on windows', async () => {
     const projectDir = getCleanProjectDir(pathPrefix, 'add-cx-server');
 
-    const argv = [`--projectDir=${projectDir}`, '--platform=win32'];
-    await AddCxServer.run(argv);
+    await AddCxServer.run([projectDir, '--platform=win32']);
 
     const files = fs.readdirSync(projectDir);
     expect(files).toContain('cx-server');
@@ -61,8 +59,7 @@ describe('Add CX Server', () => {
 
     fs.copySync(path.resolve(__dirname, 'express'), projectDir, { recursive: true });
 
-    const argv = [`--projectDir=${projectDir}`];
-    await AddCxServer.run(argv);
+    await AddCxServer.run([projectDir]);
 
     const files = fs.readdirSync(projectDir);
     expect(files).toContain('cx-server');
@@ -78,8 +75,7 @@ describe('Add CX Server', () => {
     fs.mkdirSync(path.resolve(projectDir, 'cx-server'), { recursive: true });
     fs.createFileSync(path.resolve(projectDir, 'cx-server', 'cx-server'));
 
-    const argv = [`--projectDir=${projectDir}`];
-    await AddCxServer.run(argv);
+    await AddCxServer.run([projectDir]);
 
     expect(error).toHaveBeenCalledWith(
       'A file with the name "cx-server" already exists. If you want to overwrite it, rerun the command with `--force`.',

@@ -32,8 +32,7 @@ describe('Add Approuter', () => {
   it('should add preconfigured files', async () => {
     const projectDir = getCleanProjectDir(pathPrefix, 'add-approuter');
 
-    const argv = [`--projectDir=${projectDir}`];
-    await AddApprouter.run(argv);
+    await AddApprouter.run([projectDir]);
 
     const files = fs.readdirSync(projectDir);
     expect(files).toContain('approuter');
@@ -51,8 +50,7 @@ describe('Add Approuter', () => {
 
     fs.copySync(path.resolve(__dirname, 'express'), projectDir, { recursive: true });
 
-    const argv = [`--projectDir=${projectDir}`];
-    await AddApprouter.run(argv);
+    await AddApprouter.run([projectDir]);
 
     const files = fs.readdirSync(projectDir);
     expect(files).toContain('approuter');
@@ -73,8 +71,7 @@ describe('Add Approuter', () => {
     fs.createFileSync(path.resolve(projectDir, 'approuter', 'xs-security.json'));
     fs.writeFileSync(path.resolve(projectDir, 'approuter', 'xs-security.json'), JSON.stringify({ 'tenant-mode': 'shared' }), 'utf8');
 
-    const argv = [`--projectDir=${projectDir}`];
-    await AddApprouter.run(argv);
+    await AddApprouter.run([projectDir]);
 
     expect(error).toHaveBeenCalledWith(
       'A file with the name "xs-security.json" already exists. If you want to overwrite it, rerun the command with `--force`.',

@@ -6,7 +6,6 @@ import { Command, flags } from '@oclif/command';
 import cli from 'cli-ux';
 import * as Listr from 'listr';
 import { getProjectNameFromManifest } from '../utils/manifest-yaml';
-import { getProjectDir } from '../utils/project-dir';
 import { copyFiles, findConflicts, getCopyDescriptors, getTemplatePaths } from '../utils/templates';
 
 export default class AddApprouter extends Command {
@@ -15,10 +14,6 @@ export default class AddApprouter extends Command {
   static examples = ['$ sap-cloud-sdk add-approuter'];
 
   static flags = {
-    projectDir: flags.string({
-      hidden: true,
-      description: 'Path to the project directory to which the approuter should be added.'
-    }),
     force: flags.boolean({
       description: 'Do not fail if a file already exist and overwrite it.'
     }),
@@ -37,7 +32,7 @@ export default class AddApprouter extends Command {
 
   async run() {
     const { flags, args } = this.parse(AddApprouter);
-    const projectDir = getProjectDir(this, flags, args);
+    const projectDir = args.projectDir || '.';
 
     try {
       const options = await this.getOptions();
