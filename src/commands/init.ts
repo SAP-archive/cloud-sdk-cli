@@ -170,8 +170,23 @@ export default class Init extends Command {
   }
 
   private printSuccessMessage(isScaffold: boolean, addCds: boolean) {
-    const message = ['✅ Init finished successfully.', '', '🚀 Next steps:'];
+    const message = [
+      '✅ Init finished successfully.',
+      '',
+      '🚀 Next steps:',
+      ...this.getNextSteps(isScaffold, addCds),
+      '',
+      '🔨 Consider setting up Jenkins to continuously build your app.',
+      'Use `sap-cloud-sdk add-cx-server` to create the setup script.'
+    ];
 
+    message.push();
+
+    this.log(boxMessage(message));
+  }
+
+  private getNextSteps(isScaffold: boolean, addCds: boolean): string[] {
+    const message = [];
     if (addCds) {
       message.push('- Deploy your database locally (`npm run cds-deploy`)');
     }
@@ -185,13 +200,7 @@ export default class Init extends Command {
       message.push(...this.nextStepsNoScaffold());
     }
 
-    message.push(
-      '',
-      '🔨 Consider setting up Jenkins to continuously build your app.',
-      'Use `sap-cloud-sdk add-cx-server` to create the setup script.'
-    );
-
-    this.log(boxMessage(message));
+    return message;
   }
 
   private nextStepsNoScaffold() {

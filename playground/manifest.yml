@@ -1,0 +1,8 @@
+applications:
+  - name: playground
+    path: deployment/
+    buildpacks:
+      - nodejs_buildpack
+    memory: 256M
+    command: npm run start:prod
+    random-route: true

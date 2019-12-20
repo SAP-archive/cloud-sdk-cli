@@ -5,7 +5,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as rm from 'rimraf';
 
-export function getPathPrefix(dir: string, file: string): string {
+export function getTestOutputDir(dir: string, file: string): string {
   return path.resolve(dir, file.replace(/\./g, '-')).replace('-ts', '');
 }
 

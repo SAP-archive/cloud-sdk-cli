@@ -18,10 +18,10 @@ jest.mock('cli-ux', () => {
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import AddCxServer from '../src/commands/add-cx-server';
-import { getCleanProjectDir, getPathPrefix } from './test-utils';
+import { getCleanProjectDir, getTestOutputDir } from './test-utils';
 
 describe('Add CX Server', () => {
-  const pathPrefix = getPathPrefix(__dirname, __filename);
+  const pathPrefix = getTestOutputDir(__dirname, __filename);
 
   afterAll(() => {
     fs.removeSync(pathPrefix);

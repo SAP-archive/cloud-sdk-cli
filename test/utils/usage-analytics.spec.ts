@@ -19,9 +19,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as rm from 'rimraf';
 import { usageAnalytics } from '../../src/utils';
-import { getCleanProjectDir, getPathPrefix } from '../test-utils';
+import { getCleanProjectDir, getTestOutputDir } from '../test-utils';
 
-const pathPrefix = getPathPrefix(__dirname, __filename);
+const pathPrefix = getTestOutputDir(__dirname, __filename);
 
 function readConsentFile(projectDir: string) {
   const filePath = path.resolve(projectDir, 'sap-cloud-sdk-analytics.json');

@@ -8,9 +8,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as rm from 'rimraf';
 import { installDependencies, modifyPackageJson, parsePackageJson } from '../../src/utils';
-import { getCleanProjectDir, getPathPrefix } from '../test-utils';
+import { getCleanProjectDir, getTestOutputDir } from '../test-utils';
 
-const pathPrefix = getPathPrefix(__dirname, __filename);
+const pathPrefix = getTestOutputDir(__dirname, __filename);
 
 describe('Package Json Utils', () => {
   afterAll(() => {

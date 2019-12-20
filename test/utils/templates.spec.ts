@@ -5,9 +5,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as rm from 'rimraf';
 import { copyFiles, findConflicts, getCopyDescriptors, getTemplatePaths } from '../../src/utils';
-import { getCleanProjectDir, getPathPrefix } from '../test-utils';
+import { getCleanProjectDir, getTestOutputDir } from '../test-utils';
 
-const pathPrefix = getPathPrefix(__dirname, __filename);
+const pathPrefix = getTestOutputDir(__dirname, __filename);
 
 describe('Templates Utils', () => {
   afterAll(() => {
@@ -35,6 +35,7 @@ describe('Templates Utils', () => {
     expect(fs.readdirSync(projectDir).sort()).toMatchSnapshot();
   });
 
+  // TODO:
   // it('should copy files remotely', async () => {
   //   const projectDir = getCleanProjectDir(pathPrefix, 'copy-files-remotely');
   // });

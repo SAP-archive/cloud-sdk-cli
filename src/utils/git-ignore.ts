@@ -9,7 +9,8 @@ export function modifyGitIgnore(projectDir: string, addCds: boolean) {
   const pathToGitignore = path.resolve(projectDir, '.gitignore');
   const pathsToIgnore = ['credentials.json', '/s4hana_pipeline', '/deployment'];
   if (addCds) {
-    pathsToIgnore.push(...cdsPathsToIgnore());
+    const cdsPathsToIgnore = ['_out', '.cds_gen.log', '*.db', 'connection.properties', 'default-*.json', 'gen/', 'target/'];
+    pathsToIgnore.push(...cdsPathsToIgnore);
   }
 
   if (fs.existsSync(pathToGitignore)) {
@@ -29,8 +30,4 @@ export function modifyGitIgnore(projectDir: string, addCds: boolean) {
     cli.log('If your project is using a different version control system, please make sure the following paths are not tracked:');
     pathsToIgnore.forEach(path => cli.log('  ' + path));
   }
-}
-
-function cdsPathsToIgnore() {
-  return ['_out', '.cds_gen.log', '*.db', 'connection.properties', 'default-*.json', 'gen/', 'target/'];
 }

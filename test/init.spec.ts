@@ -26,9 +26,9 @@ import execa = require('execa');
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import Init from '../src/commands/init';
-import { getCleanProjectDir, getPathPrefix } from './test-utils';
+import { getCleanProjectDir, getTestOutputDir } from './test-utils';
 
-const pathPrefix = getPathPrefix(__dirname, __filename);
+const pathPrefix = getTestOutputDir(__dirname, __filename);
 
 describe('Init', () => {
   const expressAppDir = path.resolve('test', 'express');
@@ -40,7 +40,7 @@ describe('Init', () => {
 
   it('should create a new project with the necessary files', async () => {
     const projectDir = getCleanProjectDir(pathPrefix, 'full-init');
-    await Init.run([projectDir, '--projectName=testingApp', '--buildScaffold', '--no-analytics', '--verbose']);
+    await Init.run([projectDir, '--projectName=testingApp', '--buildScaffold', '--no-analytics']);
 
     ['.npmrc', 'credentials.json', 'systems.json', 'manifest.yml']
       .map(file => path.resolve(projectDir, file))

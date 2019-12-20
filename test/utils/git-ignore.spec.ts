@@ -20,9 +20,9 @@ jest.mock('cli-ux', () => {
 import * as fs from 'fs';
 import * as rm from 'rimraf';
 import { modifyGitIgnore } from '../../src/utils';
-import { getCleanProjectDir, getPathPrefix } from '../test-utils';
+import { getCleanProjectDir, getTestOutputDir } from '../test-utils';
 
-const pathPrefix = getPathPrefix(__dirname, __filename);
+const pathPrefix = getTestOutputDir(__dirname, __filename);
 
 describe('Git Ignore Utils', () => {
   afterAll(() => {
