@@ -23,14 +23,14 @@ import AddApprouter from '../src/commands/add-approuter';
 import { getCleanProjectDir, getTestOutputDir } from './test-utils';
 
 describe('Add Approuter', () => {
-  const pathPrefix = getTestOutputDir(__dirname, __filename);
+  const testOutputDir = getTestOutputDir(__filename);
 
   afterAll(() => {
-    fs.removeSync(pathPrefix);
+    fs.removeSync(testOutputDir);
   });
 
   it('should add preconfigured files', async () => {
-    const projectDir = getCleanProjectDir(pathPrefix, 'add-approuter');
+    const projectDir = getCleanProjectDir(testOutputDir, 'add-approuter');
 
     await AddApprouter.run([projectDir]);
 
@@ -46,7 +46,7 @@ describe('Add Approuter', () => {
   });
 
   it('should add necessary files to an existing project', async () => {
-    const projectDir = getCleanProjectDir(pathPrefix, 'add-approuter-to-existing-project');
+    const projectDir = getCleanProjectDir(testOutputDir, 'add-approuter-to-existing-project');
 
     fs.copySync(path.resolve(__dirname, 'express'), projectDir, { recursive: true });
 
@@ -64,7 +64,7 @@ describe('Add Approuter', () => {
   });
 
   it('should detect and fail if there are conflicts', async () => {
-    const projectDir = getCleanProjectDir(pathPrefix, 'add-approuter-conflicts');
+    const projectDir = getCleanProjectDir(testOutputDir, 'add-approuter-conflicts');
 
     fs.copySync(path.resolve(__dirname, 'express'), projectDir, { recursive: true });
     fs.mkdirSync(path.resolve(projectDir, 'approuter'));

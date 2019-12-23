@@ -20,15 +20,15 @@ import * as rm from 'rimraf';
 import { buildScaffold, shouldBuildScaffold } from '../../src/utils';
 import { getCleanProjectDir, getTestOutputDir } from '../test-utils';
 
-const pathPrefix = getTestOutputDir(__dirname, __filename);
+const testOutputDir = getTestOutputDir(__filename);
 
 describe('Scaffold Utils', () => {
   afterAll(() => {
-    rm.sync(pathPrefix);
+    rm.sync(testOutputDir);
   });
 
   it('should determine if scaffold is needed', async () => {
-    const projectDir = getCleanProjectDir(pathPrefix, 'should-build-scaffold');
+    const projectDir = getCleanProjectDir(testOutputDir, 'should-build-scaffold');
 
     expect(await shouldBuildScaffold(projectDir, false)).toBe(true);
     expect(await shouldBuildScaffold(projectDir, true)).toBe(true);
@@ -39,7 +39,7 @@ describe('Scaffold Utils', () => {
   });
 
   it('should build the scaffold', async () => {
-    const projectDir = getCleanProjectDir(pathPrefix, 'build-scaffold');
+    const projectDir = getCleanProjectDir(testOutputDir, 'build-scaffold');
 
     await buildScaffold(projectDir, false, false);
 

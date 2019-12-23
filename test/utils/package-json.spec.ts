@@ -10,11 +10,11 @@ import * as rm from 'rimraf';
 import { installDependencies, modifyPackageJson, parsePackageJson } from '../../src/utils';
 import { getCleanProjectDir, getTestOutputDir } from '../test-utils';
 
-const pathPrefix = getTestOutputDir(__dirname, __filename);
+const testOutputDir = getTestOutputDir(__filename);
 
 describe('Package Json Utils', () => {
   afterAll(() => {
-    rm.sync(pathPrefix);
+    rm.sync(testOutputDir);
   });
 
   it('should call `npm install`', () => {
@@ -23,7 +23,7 @@ describe('Package Json Utils', () => {
   });
 
   it('should parse the package.json', () => {
-    const projectDir = getCleanProjectDir(pathPrefix, 'parse-package-json');
+    const projectDir = getCleanProjectDir(testOutputDir, 'parse-package-json');
     const packageJsonPath = path.resolve(projectDir, 'package.json');
     fs.copyFileSync(path.resolve('test', 'nest', 'package.json'), packageJsonPath);
 
@@ -31,7 +31,7 @@ describe('Package Json Utils', () => {
   });
 
   it('add scripts, dependencies and test config for existing project', async () => {
-    const projectDir = getCleanProjectDir(pathPrefix, 'modify-package-json-existing');
+    const projectDir = getCleanProjectDir(testOutputDir, 'modify-package-json-existing');
     const packageJsonPath = path.resolve(projectDir, 'package.json');
     fs.copyFileSync(path.resolve('test', 'nest', 'package.json'), packageJsonPath);
 
@@ -46,7 +46,7 @@ describe('Package Json Utils', () => {
   });
 
   it('add scripts, dependencies and test config for scaffolded project', async () => {
-    const projectDir = getCleanProjectDir(pathPrefix, 'modify-package-json-existing');
+    const projectDir = getCleanProjectDir(testOutputDir, 'modify-package-json-existing');
     const packageJsonPath = path.resolve(projectDir, 'package.json');
     fs.copyFileSync(path.resolve('test', 'nest', 'package.json'), packageJsonPath);
 

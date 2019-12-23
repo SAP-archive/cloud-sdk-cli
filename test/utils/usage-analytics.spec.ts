@@ -21,7 +21,7 @@ import * as rm from 'rimraf';
 import { usageAnalytics } from '../../src/utils';
 import { getCleanProjectDir, getTestOutputDir } from '../test-utils';
 
-const pathPrefix = getTestOutputDir(__dirname, __filename);
+const testOutputDir = getTestOutputDir(__filename);
 
 function readConsentFile(projectDir: string) {
   const filePath = path.resolve(projectDir, 'sap-cloud-sdk-analytics.json');
@@ -30,11 +30,11 @@ function readConsentFile(projectDir: string) {
 
 describe('Usage Analytics Utils', () => {
   afterAll(() => {
-    rm.sync(pathPrefix);
+    rm.sync(testOutputDir);
   });
 
   it('Create usage analytics consent file', async () => {
-    const projectDir = getCleanProjectDir(pathPrefix, 'usage-analytics');
+    const projectDir = getCleanProjectDir(testOutputDir, 'usage-analytics');
 
     await usageAnalytics(projectDir, true);
     expect(readConsentFile(projectDir).enabled).toBe(true);

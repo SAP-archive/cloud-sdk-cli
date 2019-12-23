@@ -23,14 +23,14 @@ import AddCds from '../src/commands/add-cds';
 import { getCleanProjectDir, getTestOutputDir } from './test-utils';
 
 describe('Add CDS', () => {
-  const pathPrefix = getTestOutputDir(__dirname, __filename);
+  const testOutputDir = getTestOutputDir(__filename);
 
   afterAll(() => {
-    fs.removeSync(pathPrefix);
+    fs.removeSync(testOutputDir);
   });
 
   it('should add necessary files to an existing project', async () => {
-    const projectDir = getCleanProjectDir(pathPrefix, 'add-cds-to-existing-project');
+    const projectDir = getCleanProjectDir(testOutputDir, 'add-cds-to-existing-project');
 
     fs.copySync(path.resolve(__dirname, 'express'), projectDir, { recursive: true });
 
@@ -47,7 +47,7 @@ describe('Add CDS', () => {
   }, 10000);
 
   it('should detect and fail if there are conflicts', async () => {
-    const projectDir = getCleanProjectDir(pathPrefix, 'add-cds-conflicts');
+    const projectDir = getCleanProjectDir(testOutputDir, 'add-cds-conflicts');
 
     fs.copySync(path.resolve(__dirname, 'express'), projectDir, { recursive: true });
     fs.mkdirSync(path.resolve(projectDir, 'db'));

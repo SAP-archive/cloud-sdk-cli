@@ -4,9 +4,16 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as rm from 'rimraf';
+import { testDir, testOutputRootDir } from './test-output';
 
-export function getTestOutputDir(dir: string, file: string): string {
-  return path.resolve(dir, file.replace(/\./g, '-')).replace('-ts', '');
+export function getTestOutputDir(file: string): string {
+  const relativeDirPath = path.relative(testDir, path.dirname(file));
+  const outputDirName = path
+    .basename(file, '.ts')
+    .split('.')
+    .join('-');
+
+  return path.resolve(testOutputRootDir, relativeDirPath, outputDirName);
 }
 
 export function getCleanProjectDir(pathPrefix: string, name: string): string {

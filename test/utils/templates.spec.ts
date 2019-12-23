@@ -7,11 +7,11 @@ import * as rm from 'rimraf';
 import { copyFiles, findConflicts, getCopyDescriptors, getTemplatePaths } from '../../src/utils';
 import { getCleanProjectDir, getTestOutputDir } from '../test-utils';
 
-const pathPrefix = getTestOutputDir(__dirname, __filename);
+const testOutputDir = getTestOutputDir(__filename);
 
 describe('Templates Utils', () => {
   afterAll(() => {
-    rm.sync(pathPrefix);
+    rm.sync(testOutputDir);
   });
 
   it('should return information which files to copy where', () => {
@@ -23,20 +23,20 @@ describe('Templates Utils', () => {
   });
 
   it('should find conflicts', async () => {
-    const projectDir = getCleanProjectDir(pathPrefix, 'find-conflicts');
+    const projectDir = getCleanProjectDir(testOutputDir, 'find-conflicts');
     fs.writeFileSync(path.resolve(projectDir, '.npmrc'), 'foobar');
     findConflicts(getCopyDescriptors(projectDir, getTemplatePaths(['init'])), true);
     expect(fs.existsSync(path.resolve(projectDir, '.npmrc'))).toBe(false);
   });
 
   it('should copy files locally', async () => {
-    const projectDir = getCleanProjectDir(pathPrefix, 'copy-files-locally');
+    const projectDir = getCleanProjectDir(testOutputDir, 'copy-files-locally');
     copyFiles(getCopyDescriptors(projectDir, getTemplatePaths(['init'])), {});
     expect(fs.readdirSync(projectDir).sort()).toMatchSnapshot();
   });
 
   // TODO:
   // it('should copy files remotely', async () => {
-  //   const projectDir = getCleanProjectDir(pathPrefix, 'copy-files-remotely');
+  //   const projectDir = getCleanProjectDir(testOutputDir, 'copy-files-remotely');
   // });
 });

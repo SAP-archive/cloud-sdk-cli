@@ -7,11 +7,11 @@ import * as rm from 'rimraf';
 import { getJestConfig, modifyJestConfig } from '../../src/utils';
 import { getCleanProjectDir, getTestOutputDir } from '../test-utils';
 
-const pathPrefix = getTestOutputDir(__dirname, __filename);
+const testOutputDir = getTestOutputDir(__filename);
 
 describe('Jest Config Utils', () => {
   afterAll(() => {
-    rm.sync(pathPrefix);
+    rm.sync(testOutputDir);
   });
 
   it('returns jest config object for tests', () => {
@@ -20,7 +20,7 @@ describe('Jest Config Utils', () => {
   });
 
   it('returns adds jest config to file', () => {
-    const projectDir = getCleanProjectDir(pathPrefix, 'jest-config');
+    const projectDir = getCleanProjectDir(testOutputDir, 'jest-config');
     const jestConfigPath = path.resolve(projectDir, 'jest-e2e.json');
     fs.copyFileSync(path.resolve('test', 'nest', 'test', 'jest-e2e.json'), jestConfigPath);
 

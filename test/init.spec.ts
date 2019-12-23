@@ -28,18 +28,18 @@ import * as path from 'path';
 import Init from '../src/commands/init';
 import { getCleanProjectDir, getTestOutputDir } from './test-utils';
 
-const pathPrefix = getTestOutputDir(__dirname, __filename);
+const testOutputDir = getTestOutputDir(__filename);
 
 describe('Init', () => {
   const expressAppDir = path.resolve('test', 'express');
   const nestAppDir = path.resolve('test', 'nest');
 
   afterAll(() => {
-    fs.removeSync(pathPrefix);
+    fs.removeSync(testOutputDir);
   });
 
   it('should create a new project with the necessary files', async () => {
-    const projectDir = getCleanProjectDir(pathPrefix, 'full-init');
+    const projectDir = getCleanProjectDir(testOutputDir, 'full-init');
     await Init.run([projectDir, '--projectName=testingApp', '--buildScaffold', '--no-analytics']);
 
     ['.npmrc', 'credentials.json', 'systems.json', 'manifest.yml']
@@ -61,7 +61,7 @@ describe('Init', () => {
   }, 240000);
 
   it('should create a new project with the necessary files when adding cds', async () => {
-    const projectDir = getCleanProjectDir(pathPrefix, 'full-init-cds');
+    const projectDir = getCleanProjectDir(testOutputDir, 'full-init-cds');
     await Init.run([projectDir, '--projectName=testingApp', '--buildScaffold', '--no-analytics', '--addCds']);
 
     ['.cdsrc.json', 'srv/cat-service.cds', 'db/data-model.cds', 'src/catalogue/catalogue.module.ts']
@@ -75,7 +75,7 @@ describe('Init', () => {
   }, 240000);
 
   it('should add necessary files to an existing project', async () => {
-    const projectDir = getCleanProjectDir(pathPrefix, 'add-to-existing');
+    const projectDir = getCleanProjectDir(testOutputDir, 'add-to-existing');
     fs.copySync(expressAppDir, projectDir, { recursive: true });
 
     await Init.run([projectDir, '--projectName=testingApp', '--startCommand="npm start"', '--no-analytics', '--skipInstall', '--force']);
@@ -89,7 +89,7 @@ describe('Init', () => {
   }, 10000);
 
   it('should add necessary files to an existing project when adding cds', async () => {
-    const projectDir = getCleanProjectDir(pathPrefix, 'add-to-existing');
+    const projectDir = getCleanProjectDir(testOutputDir, 'add-to-existing');
     fs.copySync(expressAppDir, projectDir, { recursive: true });
 
     await Init.run([projectDir, '--projectName=testingApp', '--addCds', '--startCommand="npm start"', '--no-analytics', '--skipInstall', '--force']);
@@ -102,7 +102,7 @@ describe('Init', () => {
   }, 10000);
 
   it('init should detect and fail if there are conflicts', async () => {
-    const projectDir = getCleanProjectDir(pathPrefix, 'detect-conflicts');
+    const projectDir = getCleanProjectDir(testOutputDir, 'detect-conflicts');
     fs.copySync(nestAppDir, projectDir, { recursive: true });
     fs.createFileSync(`${projectDir}/.npmrc`);
 
@@ -115,7 +115,7 @@ describe('Init', () => {
   }, 10000);
 
   it('should add to .gitignore if there is one', async () => {
-    const projectDir = getCleanProjectDir(pathPrefix, 'add-to-gitignore');
+    const projectDir = getCleanProjectDir(testOutputDir, 'add-to-gitignore');
     fs.copySync(nestAppDir, projectDir, { recursive: true });
 
     await Init.run([projectDir, '--projectName=testingApp', '--startCommand="npm start"', '--skipInstall', '--no-analytics']);
@@ -132,7 +132,7 @@ describe('Init', () => {
   }, 10000);
 
   it('should show a warning if the project is not using git', async () => {
-    const projectDir = getCleanProjectDir(pathPrefix, 'warn-on-no-git');
+    const projectDir = getCleanProjectDir(testOutputDir, 'warn-on-no-git');
 
     fs.createFileSync(path.resolve(projectDir, 'package.json'));
     fs.writeFileSync(path.resolve(projectDir, 'package.json'), JSON.stringify({ name: 'project' }), 'utf8');
@@ -143,7 +143,7 @@ describe('Init', () => {
   }, 10000);
 
   it('should add our scripts and dependencies to the package.json', async () => {
-    const projectDir = getCleanProjectDir(pathPrefix, 'add-scripts-and-dependencies');
+    const projectDir = getCleanProjectDir(testOutputDir, 'add-scripts-and-dependencies');
     fs.createFileSync(path.resolve(projectDir, 'package.json'));
     fs.writeFileSync(path.resolve(projectDir, 'package.json'), JSON.stringify({ name: 'project' }), 'utf8');
 
@@ -163,7 +163,7 @@ describe('Init', () => {
   }, 10000);
 
   it('should add the analytics file', async () => {
-    const projectDir = getCleanProjectDir(pathPrefix, 'add-to-gitignore');
+    const projectDir = getCleanProjectDir(testOutputDir, 'add-to-gitignore');
     fs.copySync(nestAppDir, projectDir, { recursive: true });
 
     await Init.run([
@@ -179,7 +179,7 @@ describe('Init', () => {
   }, 10000);
 
   it('should add a disabled analytics file', async () => {
-    const projectDir = getCleanProjectDir(pathPrefix, 'add-to-gitignore');
+    const projectDir = getCleanProjectDir(testOutputDir, 'add-to-gitignore');
     fs.copySync(expressAppDir, projectDir, { recursive: true });
 
     await Init.run([projectDir, '--projectName=testingApp', '--startCommand="npm start"', '--skipInstall', '--no-analytics']);

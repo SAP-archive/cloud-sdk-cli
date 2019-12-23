@@ -21,14 +21,14 @@ import AddCxServer from '../src/commands/add-cx-server';
 import { getCleanProjectDir, getTestOutputDir } from './test-utils';
 
 describe('Add CX Server', () => {
-  const pathPrefix = getTestOutputDir(__dirname, __filename);
+  const testOutputDir = getTestOutputDir(__filename);
 
   afterAll(() => {
-    fs.removeSync(pathPrefix);
+    fs.removeSync(testOutputDir);
   });
 
   it('should add the necessary files', async () => {
-    const projectDir = getCleanProjectDir(pathPrefix, 'add-cx-server');
+    const projectDir = getCleanProjectDir(testOutputDir, 'add-cx-server');
 
     await AddCxServer.run([projectDir]);
 
@@ -41,7 +41,7 @@ describe('Add CX Server', () => {
   }, 30000);
 
   it('should add the necessary files on windows', async () => {
-    const projectDir = getCleanProjectDir(pathPrefix, 'add-cx-server');
+    const projectDir = getCleanProjectDir(testOutputDir, 'add-cx-server');
 
     await AddCxServer.run([projectDir, '--platform=win32']);
 
@@ -55,7 +55,7 @@ describe('Add CX Server', () => {
   }, 30000);
 
   it('should add necessary files to an existing project', async () => {
-    const projectDir = getCleanProjectDir(pathPrefix, 'add-cx-server-to-existing-project');
+    const projectDir = getCleanProjectDir(testOutputDir, 'add-cx-server-to-existing-project');
 
     fs.copySync(path.resolve(__dirname, 'express'), projectDir, { recursive: true });
 
@@ -70,7 +70,7 @@ describe('Add CX Server', () => {
   }, 30000);
 
   it('should detect and fail if there are conflicts', async () => {
-    const projectDir = getCleanProjectDir(pathPrefix, 'add-cx-server-conflicts');
+    const projectDir = getCleanProjectDir(testOutputDir, 'add-cx-server-conflicts');
 
     fs.mkdirSync(path.resolve(projectDir, 'cx-server'), { recursive: true });
     fs.createFileSync(path.resolve(projectDir, 'cx-server', 'cx-server'));
