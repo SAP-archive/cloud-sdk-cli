@@ -5,9 +5,13 @@ import cli from 'cli-ux';
 import * as fs from 'fs';
 import * as path from 'path';
 
-export function modifyGitIgnore(projectDir: string) {
+export function modifyGitIgnore(projectDir: string, addCds: boolean) {
   const pathToGitignore = path.resolve(projectDir, '.gitignore');
   const pathsToIgnore = ['credentials.json', '/s4hana_pipeline', '/deployment'];
+  if (addCds) {
+    const cdsPathsToIgnore = ['_out', '.cds_gen.log', '*.db', 'connection.properties', 'default-*.json', 'gen/', 'target/'];
+    pathsToIgnore.push(...cdsPathsToIgnore);
+  }
 
   if (fs.existsSync(pathToGitignore)) {
     try {

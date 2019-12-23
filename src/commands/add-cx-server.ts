@@ -15,11 +15,6 @@ export default class AddCxServer extends Command {
   static examples = ['$ sap-cloud-sdk add-cx-server'];
 
   static flags = {
-    projectDir: flags.string({
-      hidden: true,
-      default: '',
-      description: 'Path to the folder in which the project should be created.'
-    }),
     force: flags.boolean({
       description: 'Do not fail if a file already exist and overwrite it.'
     }),
@@ -28,17 +23,28 @@ export default class AddCxServer extends Command {
       default: process.platform,
       description: 'The currently running OS.'
     }),
-    help: flags.help({ char: 'h' })
+    help: flags.help({
+      char: 'h',
+      description: 'Show help for the add-cx-server command.'
+    })
   };
 
+  static args = [
+    {
+      name: 'projectDir',
+      description: 'Path to the project directory to which the cx-server should be added.'
+    }
+  ];
+
   async run() {
-    const { flags } = this.parse(AddCxServer);
+    const { flags, args } = this.parse(AddCxServer);
+    const projectDir = args.projectDir || '.';
     const options = await this.getOptions();
 
     try {
-      const files = [this.copyDescriptorForGithub('cx-server', flags), this.copyDescriptorForGithub('server.cfg', flags)];
+      const files = [this.copyDescriptorForGithub('cx-server', projectDir), this.copyDescriptorForGithub('server.cfg', projectDir)];
       if (flags.platform === 'win32') {
-        files.push(this.copyDescriptorForGithub('cx-server.bat', flags));
+        files.push(this.copyDescriptorForGithub('cx-server.bat', projectDir));
       }
 
       const tasks = new Listr([
@@ -58,12 +64,12 @@ export default class AddCxServer extends Command {
     }
   }
 
-  private copyDescriptorForGithub(fileName: string, flags: Flags): CopyDescriptor {
+  private copyDescriptorForGithub(fileName: string, projectDir: string): CopyDescriptor {
     const githubPrefix = 'https://raw.githubusercontent.com/SAP/devops-docker-cx-server/master/cx-server-companion/life-cycle-scripts/';
 
     return {
       sourcePath: new URL(fileName, githubPrefix),
-      fileName: path.resolve(flags.projectDir, 'cx-server', fileName)
+      fileName: path.resolve(projectDir, 'cx-server', fileName)
     };
   }
 

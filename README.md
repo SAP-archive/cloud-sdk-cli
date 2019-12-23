@@ -37,7 +37,7 @@ $ npm install -g @sap-cloud-sdk/cli
 $ sap-cloud-sdk COMMAND
 running command...
 $ sap-cloud-sdk (-v|--version|version)
-@sap-cloud-sdk/cli/0.0.10 darwin-x64 node-v13.3.0
+@sap-cloud-sdk/cli/0.0.10 darwin-x64 node-v12.8.1
 $ sap-cloud-sdk --help [COMMAND]
 USAGE
   $ sap-cloud-sdk COMMAND
@@ -70,25 +70,28 @@ Start by running [`sap-cloud-sdk add-approuter`](#sap-cloud-sdk-add-approuter) a
 ## Commands
 
 <!-- commands -->
-* [`sap-cloud-sdk add-approuter`](#sap-cloud-sdk-add-approuter)
-* [`sap-cloud-sdk add-cx-server`](#sap-cloud-sdk-add-cx-server)
+* [`sap-cloud-sdk add-approuter [PROJECTDIR]`](#sap-cloud-sdk-add-approuter-projectdir)
+* [`sap-cloud-sdk add-cx-server [PROJECTDIR]`](#sap-cloud-sdk-add-cx-server-projectdir)
 * [`sap-cloud-sdk autocomplete [SHELL]`](#sap-cloud-sdk-autocomplete-shell)
 * [`sap-cloud-sdk generate-vdm`](#sap-cloud-sdk-generate-vdm)
 * [`sap-cloud-sdk help [COMMAND]`](#sap-cloud-sdk-help-command)
 * [`sap-cloud-sdk help-page`](#sap-cloud-sdk-help-page)
 * [`sap-cloud-sdk init [PROJECTDIR]`](#sap-cloud-sdk-init-projectdir)
-* [`sap-cloud-sdk package`](#sap-cloud-sdk-package)
+* [`sap-cloud-sdk package [PROJECTDIR]`](#sap-cloud-sdk-package-projectdir)
 
-## `sap-cloud-sdk add-approuter`
+## `sap-cloud-sdk add-approuter [PROJECTDIR]`
 
 Setup your Cloud Foundry app to authenticate through the app router
 
 ```
 USAGE
-  $ sap-cloud-sdk add-approuter
+  $ sap-cloud-sdk add-approuter [PROJECTDIR]
+
+ARGUMENTS
+  PROJECTDIR  Path to the project directory to which the approuter should be added.
 
 OPTIONS
-  -h, --help  show CLI help
+  -h, --help  Show help for the add-approuter command.
   --force     Do not fail if a file already exist and overwrite it.
 
 ALIASES
@@ -100,16 +103,19 @@ EXAMPLE
 
 _See code: [src/commands/add-approuter.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.10/src/commands/add-approuter.ts)_
 
-## `sap-cloud-sdk add-cx-server`
+## `sap-cloud-sdk add-cx-server [PROJECTDIR]`
 
 Add the scripts to set up a Jenkins master for CI/CD of your project
 
 ```
 USAGE
-  $ sap-cloud-sdk add-cx-server
+  $ sap-cloud-sdk add-cx-server [PROJECTDIR]
+
+ARGUMENTS
+  PROJECTDIR  Path to the project directory to which the cx-server should be added.
 
 OPTIONS
-  -h, --help  show CLI help
+  -h, --help  Show help for the add-cx-server command.
   --force     Do not fail if a file already exist and overwrite it.
 
 EXAMPLE
@@ -265,14 +271,14 @@ USAGE
   $ sap-cloud-sdk init [PROJECTDIR]
 
 ARGUMENTS
-  PROJECTDIR  Path to the folder in which the project should be created.
+  PROJECTDIR  Path to the directory in which the project should be created.
 
 OPTIONS
-  -h, --help               Show help for the new command.
+  -h, --help               Show help for the init command.
   -v, --verbose            Show more detailed output.
   --force                  Do not fail if a file or npm script already exist and overwrite it.
   --frontendScripts        Add frontend-related npm scripts which are executed by our CI/CD toolkit.
-  --projectDir=projectDir  Path to the folder in which the project should be created.
+  --projectDir=projectDir  Path to the directory in which the project should be created.
 
 EXAMPLES
   $ sap-cloud-sdk init
@@ -281,17 +287,20 @@ EXAMPLES
 
 _See code: [src/commands/init.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.10/src/commands/init.ts)_
 
-## `sap-cloud-sdk package`
+## `sap-cloud-sdk package [PROJECTDIR]`
 
 Copies the specified files to the deployment folder
 
 ```
 USAGE
-  $ sap-cloud-sdk package
+  $ sap-cloud-sdk package [PROJECTDIR]
+
+ARGUMENTS
+  PROJECTDIR  Path to the project directory that shall be packaged.
 
 OPTIONS
   -e, --exclude=exclude  Comma seperated list of files or globs to exclude
-  -h, --help             show CLI help
+  -h, --help             Show help for the package command.
 
   -i, --include=include  [default: package.json,package-lock.json,index.js,dist/**/*] Comma seperated list of files or
                          globs to include

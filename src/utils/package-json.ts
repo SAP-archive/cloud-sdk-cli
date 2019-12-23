@@ -22,6 +22,17 @@ const frontendTestScripts: PackageJsonChange = {
   }
 };
 
+const cdsChanges = {
+  scripts: {
+    'cds-build': 'cds build/all',
+    'cds-deploy': 'cds deploy',
+    'ci-build': 'npm run cds-deploy && npm run cds-build && npm run build',
+    'ci-package': 'sap-cloud-sdk package --include="package.json,package-lock.json,index.js,dist/**/*,db/**/*,srv/**/*,.cdsrc.json"'
+  },
+  devDependencies: ['sqlite3'],
+  dependencies: ['@sap/cds', '@sap/cds-dk']
+};
+
 const scaffoldProjectPackageJson: PackageJsonChange = {
   scripts: {
     'deploy': 'npm run ci-build && npm run ci-package && cf push',
@@ -64,10 +75,14 @@ function findScriptConflicts(originalScripts: any, scriptsToBeAdded: any) {
   return originalScripts ? Object.keys(scriptsToBeAdded).filter(name => Object.keys(originalScripts).includes(name)) : [];
 }
 
-async function getPackageJsonChanges(isScaffold: boolean, frontendScripts: boolean) {
+async function getPackageJsonChanges(isScaffold: boolean, frontendScripts: boolean, addCds: boolean) {
   const changes: PackageJsonChange[] = [isScaffold ? scaffoldProjectPackageJson : existingProjectPackageJson];
   if (frontendScripts) {
     changes.push(frontendTestScripts);
+  }
+
+  if (addCds) {
+    changes.push(cdsChanges);
   }
 
   const merged = changes.reduce((mergedChanges, change) => {
@@ -101,9 +116,21 @@ function mergePackageJson(originalPackageJson: any, changes: any) {
   return adjustedPackageJson;
 }
 
-export async function modifyPackageJson(projectDir: string, isScaffold: boolean, frontendScripts: boolean, force: boolean) {
+export async function modifyPackageJson({
+  projectDir,
+  isScaffold = false,
+  frontendScripts = false,
+  force = false,
+  addCds = false
+}: {
+  projectDir: string;
+  isScaffold?: boolean;
+  frontendScripts?: boolean;
+  force?: boolean;
+  addCds?: boolean;
+}) {
   const originalPackageJson = parsePackageJson(projectDir);
-  const changes = await getPackageJsonChanges(isScaffold, frontendScripts);
+  const changes = await getPackageJsonChanges(isScaffold, frontendScripts, addCds);
   const conflicts = findScriptConflicts(originalPackageJson.scripts, changes.scripts);
 
   if (conflicts.length && !force) {

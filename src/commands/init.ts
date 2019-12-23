@@ -22,6 +22,7 @@ import {
   shouldBuildScaffold,
   usageAnalytics
 } from '../utils/';
+import { boxMessage } from '../utils/message-formatter';
 
 export default class Init extends Command {
   static description = 'Initializes your project for the SAP Cloud SDK, SAP Cloud Platform Cloud Foundry and CI/CD using the SAP Cloud SDK toolkit';
@@ -31,7 +32,7 @@ export default class Init extends Command {
   static flags = {
     // visible
     projectDir: flags.string({
-      description: 'Path to the folder in which the project should be created.'
+      description: 'Path to the directory in which the project should be created.'
     }),
     force: flags.boolean({
       description: 'Do not fail if a file or npm script already exist and overwrite it.'
@@ -41,7 +42,7 @@ export default class Init extends Command {
     }),
     help: flags.help({
       char: 'h',
-      description: 'Show help for the new command.'
+      description: 'Show help for the init command.'
     }),
     verbose: flags.boolean({
       char: 'v',
@@ -50,7 +51,7 @@ export default class Init extends Command {
     // hidden
     projectName: flags.string({
       hidden: true,
-      description: 'Give project name which is used for the Cloud Foundry mainfest.yml'
+      description: 'Give project name which is used for the Cloud Foundry mainfest.yml.'
     }),
     startCommand: flags.string({
       hidden: true,
@@ -72,34 +73,29 @@ export default class Init extends Command {
     skipInstall: flags.boolean({
       hidden: true,
       description: 'Skip installing npm dependencies. If you use this, make sure to install manually afterwards.'
+    }),
+    addCds: flags.boolean({
+      hidden: true,
+      description: 'Add a cds configuration and example data to follow the SAP Cloud Application Promgramming model.'
     })
   };
 
   static args = [
     {
       name: 'projectDir',
-      description: 'Path to the folder in which the project should be created.'
+      description: 'Path to the directory in which the project should be created.'
     }
   ];
 
   async run() {
     const { flags, args } = this.parse(Init);
-    const { verbose } = flags;
-
-    if (typeof flags.projectDir !== 'undefined' && typeof args.projectDir !== 'undefined' && flags.projectDir !== args.projectDir) {
-      this.error(
-        `Project directory was given via argument (${args.projectDir}) and via the \`--projectDir\` flag (${flags.projectDir}). Please only provide one.`,
-        { exit: 1 }
-      );
-    }
-
-    const projectDir: string = flags.projectDir || args.projectDir || '.';
+    const projectDir = args.projectDir || '.';
 
     try {
       fs.mkdirSync(projectDir, { recursive: true });
       const isScaffold = await shouldBuildScaffold(projectDir, flags.buildScaffold, flags.force);
       if (isScaffold) {
-        await buildScaffold(projectDir, flags.verbose);
+        await buildScaffold(projectDir, flags.verbose, flags.addCds);
       }
       const options = await this.getOptions(projectDir, isScaffold ? 'npm run start:prod' : flags.startCommand, flags.projectName);
 
@@ -109,7 +105,7 @@ export default class Init extends Command {
         {
           title: 'Creating files',
           task: () => {
-            const copyDescriptors = getCopyDescriptors(projectDir, getTemplatePaths(['init']));
+            const copyDescriptors = getCopyDescriptors(projectDir, getTemplatePaths(this.getTemplateNames(isScaffold, flags.addCds)));
             findConflicts(copyDescriptors, flags.force);
             copyFiles(copyDescriptors, options);
           }
@@ -121,25 +117,37 @@ export default class Init extends Command {
         },
         {
           title: 'Adding dependencies to package.json',
-          task: () => modifyPackageJson(projectDir, isScaffold, flags.frontendScripts, flags.force)
+          task: () => modifyPackageJson({ projectDir, isScaffold, frontendScripts: flags.frontendScripts, force: flags.force, addCds: flags.addCds })
         },
         {
           title: 'Installing dependencies',
-          task: () => installDependencies(projectDir, verbose).catch(e => this.error(`Error during npm install: ${e.message}`, { exit: 13 })),
+          task: () => installDependencies(projectDir, flags.verbose).catch(e => this.error(`Error during npm install: ${e.message}`, { exit: 13 })),
           enabled: () => !flags.skipInstall
         },
         {
           title: 'Modifying `.gitignore`',
-          task: () => modifyGitIgnore(projectDir)
+          task: () => modifyGitIgnore(projectDir, flags.addCds)
         }
       ]);
 
       await tasks.run();
 
-      this.printSuccessMessage(isScaffold);
+      this.printSuccessMessage(isScaffold, flags.addCds);
     } catch (error) {
       this.error(error, { exit: 1 });
     }
+  }
+
+  private getTemplateNames(isScaffold: boolean, addCds: boolean): string[] {
+    const templates = ['init'];
+    if (addCds) {
+      templates.push('add-cds');
+      if (isScaffold) {
+        templates.push('add-cds-scaffold');
+      }
+    }
+
+    return templates;
   }
 
   private async getOptions(projectDir: string, startCommand?: string, projectName?: string) {
@@ -161,29 +169,64 @@ export default class Init extends Command {
     return options;
   }
 
-  private printSuccessMessage(isScaffold: boolean) {
-    this.log('+---------------------------------------------------------------+');
-    this.log('| ✅ Init finished successfully.                                |');
-    this.log('|                                                               |');
-    this.log('| 🚀 Next steps:                                                |');
+  private printSuccessMessage(isScaffold: boolean, addCds: boolean) {
+    const message = [
+      '✅ Init finished successfully.',
+      '',
+      '🚀 Next steps:',
+      ...this.getNextSteps(isScaffold, addCds),
+      '',
+      '🔨 Consider setting up Jenkins to continuously build your app.',
+      'Use `sap-cloud-sdk add-cx-server` to create the setup script.'
+    ];
 
-    isScaffold ? this.printNextStepsScaffold() : this.printNextStepsBase();
+    message.push();
 
-    this.log('|                                                               |');
-    this.log('| 🔨 Consider setting up Jenkins to continuously build your app |');
-    this.log('| Use `sap-cloud-sdk add-cx-server` to create the setup script  |');
-    this.log('+---------------------------------------------------------------+');
+    this.log(boxMessage(message));
   }
 
-  private printNextStepsBase() {
-    this.log('| 1. Make sure that your app listens to `process.env.PORT`      |');
-    this.log('| 2. Build your app if necessary                                |');
-    this.log('| 3. Run `sap-cloud-sdk package [--include INC][--exclude EXC]` |');
-    this.log('| 4. Push to Cloud Foundry (`cf push`)                          |');
+  private getNextSteps(isScaffold: boolean, addCds: boolean): string[] {
+    const message = [];
+    if (addCds) {
+      message.push('- Deploy your database locally (`npm run cds-deploy`)');
+    }
+
+    if (isScaffold) {
+      message.push(...this.nextStepsScaffold());
+    } else {
+      if (addCds) {
+        message.push(...this.nextStepsCdsNoScaffold());
+      }
+      message.push(...this.nextStepsNoScaffold());
+    }
+
+    return message;
   }
 
-  private printNextStepsScaffold() {
-    this.log('| - Run the application locally (`npm run start:dev`)           |');
-    this.log('| - Deploy your application (`npm run deploy`)                  |');
+  private nextStepsNoScaffold() {
+    return [
+      '- Make sure that your app listens to `process.env.PORT`',
+      '- Build your app if necessary',
+      '- Run `sap-cloud-sdk package [--include INC][--exclude EXC]`',
+      '- Push to Cloud Foundry (`cf push`)'
+    ];
+  }
+
+  private nextStepsScaffold() {
+    return ['- Run the application locally (`npm run start:dev`)', '- Deploy your application (`npm run deploy`)'];
+  }
+
+  private nextStepsCdsNoScaffold() {
+    return [
+      'Expose your service:',
+      'For express apps add the following snippet to your code:',
+      '',
+      'cds',
+      '  .connect()',
+      "  .serve('CatalogService')",
+      '  .in(<your-express-app>);',
+      '',
+      'For other frameworks please refer to the documentation.'
+    ];
   }
 }

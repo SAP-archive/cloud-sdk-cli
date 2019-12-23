@@ -18,39 +18,41 @@ jest.mock('cli-ux', () => {
 });
 
 import * as fs from 'fs';
-import * as path from 'path';
 import * as rm from 'rimraf';
 import { modifyGitIgnore } from '../../src/utils';
+import { getCleanProjectDir, getTestOutputDir } from '../test-utils';
 
-const pathPrefix = path.resolve(__dirname, __filename.replace(/\./g, '-')).replace('-ts', '');
-
-function getCleanProjectDir(name: string) {
-  const projectDir = path.resolve(pathPrefix, name);
-  if (fs.existsSync(projectDir)) {
-    rm.sync(projectDir);
-  }
-  fs.mkdirSync(projectDir, { recursive: true });
-  return projectDir;
-}
+const testOutputDir = getTestOutputDir(__filename);
 
 describe('Git Ignore Utils', () => {
   afterAll(() => {
-    rm.sync(pathPrefix);
+    rm.sync(testOutputDir);
   });
 
   it('should add paths to empty git ignore', () => {
-    const projectDir = getCleanProjectDir('empty-git-ignore');
+    const projectDir = getCleanProjectDir(testOutputDir, 'empty-git-ignore');
     fs.writeFileSync(`${projectDir}/.gitignore`, '');
 
-    modifyGitIgnore(projectDir);
+    modifyGitIgnore(projectDir, false);
 
     const gitIgnoreContent = fs.readFileSync(`${projectDir}/.gitignore`, { encoding: 'utf8' }).split('\n');
     expect(gitIgnoreContent).toContain('/s4hana_pipeline');
     expect(gitIgnoreContent).toContain('credentials.json');
   });
 
+  it('should add cds paths to empty git ignore', () => {
+    const projectDir = getCleanProjectDir(testOutputDir, 'empty-git-ignore-cds');
+    fs.writeFileSync(`${projectDir}/.gitignore`, '');
+
+    modifyGitIgnore(projectDir, true);
+
+    const gitIgnoreContent = fs.readFileSync(`${projectDir}/.gitignore`, { encoding: 'utf8' }).split('\n');
+    expect(gitIgnoreContent).toContain('gen/');
+    expect(gitIgnoreContent).toContain('*.db');
+  });
+
   it('should add paths to existing git ignore', () => {
-    const projectDir = getCleanProjectDir('existing-git-ignore');
+    const projectDir = getCleanProjectDir(testOutputDir, 'existing-git-ignore');
     fs.writeFileSync(
       `${projectDir}/.gitignore`,
       `myPath
@@ -59,17 +61,18 @@ describe('Git Ignore Utils', () => {
       !@#$%^&^
       \\n`
     );
-    modifyGitIgnore(projectDir);
+    modifyGitIgnore(projectDir, false);
 
     const gitIgnoreContent = fs.readFileSync(`${projectDir}/.gitignore`, { encoding: 'utf8' }).split('\n');
     expect(gitIgnoreContent).toContain('/s4hana_pipeline');
+    expect(gitIgnoreContent).toContain('myPath');
     expect(gitIgnoreContent).toContain('credentials.json');
   });
 
   it('warn if there is no git ignore', () => {
-    const projectDir = getCleanProjectDir('no-git-ignore');
+    const projectDir = getCleanProjectDir(testOutputDir, 'no-git-ignore');
 
-    modifyGitIgnore(projectDir);
+    modifyGitIgnore(projectDir, false);
 
     expect(warn).toHaveBeenCalledWith('No .gitignore file found!');
     expect(log).toHaveBeenCalledTimes(4);
