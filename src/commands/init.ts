@@ -7,7 +7,21 @@ import cli from 'cli-ux';
 import * as fs from 'fs';
 import * as Listr from 'listr';
 import * as path from 'path';
-import { buildScaffold, copyFiles, findConflicts, getCopyDescriptors, getJestConfig, getTemplatePaths, installDependencies, modifyGitIgnore, modifyJestConfig, modifyPackageJson, parsePackageJson, shouldBuildScaffold, usageAnalytics } from '../utils/';
+import {
+  buildScaffold,
+  copyFiles,
+  findConflicts,
+  getCopyDescriptors,
+  getJestConfig,
+  getTemplatePaths,
+  installDependencies,
+  modifyGitIgnore,
+  modifyJestConfig,
+  modifyPackageJson,
+  parsePackageJson,
+  shouldBuildScaffold,
+  usageAnalytics
+} from '../utils/';
 import { boxMessage } from '../utils/message-formatter';
 
 export default class Init extends Command {
