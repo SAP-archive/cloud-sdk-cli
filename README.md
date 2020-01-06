@@ -326,6 +326,12 @@ The CLI is based on [oclif](https://oclif.io/docs/introduction.html) and can be 
 If you think your plugin should be part of the CLI itself, feel free to [open a pull request](https://github.com/SAP/cloud-sdk-cli/compare).
 If you have found a bug in our existing functionality, please [open an issue](https://github.com/SAP/cloud-sdk-cli/issues/new/choose).
 
+### Package Manager
+
+This repository uses [yarn](https://yarnpkg.com/) as a package manager. 
+This is only relevant for the development of the CLI.
+Projects that use the CLI are free to use any package manager as long as a `package.json` is present.
+
 ### Release
 
 The easiest way to create a new release is running
