@@ -16,8 +16,7 @@ jobs:
       - name: Deploy a stable release to NPM
         run: |
           echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' >> .npmrc
-          npm whoami
-          npm ci
+          yarn install --frozen-lockfile
           npm publish --access public
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
