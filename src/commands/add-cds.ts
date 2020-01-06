@@ -13,7 +13,6 @@ export default class AddCds extends Command {
   static description = 'Setup your Cloud Foundry app to use a CDS service';
   static aliases = ['add-cap'];
   static examples = ['$ sap-cloud-sdk add-cds'];
-  static hidden = true;
 
   static flags = {
     // visible

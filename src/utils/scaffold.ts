@@ -69,7 +69,7 @@ function modifyMainTs(pathToMainTs: string) {
 export function addCatalogueModule(pathToAppModuleTs: string) {
   const appModuleTs = fs.readFileSync(pathToAppModuleTs, { encoding: 'utf8' });
   const moduleName = 'CatalogueModule';
-  const importToAdd = `import { ${moduleName} } from './catalogue/catalogue.module'`;
+  const importToAdd = `import { ${moduleName} } from './catalogue/catalogue.module';`;
   const modifiedAppModuleTs = appModuleTs
     .replace('@Module', [importToAdd, '@Module'].join('\n\n'))
     .replace('imports: []', `imports: [${moduleName}]`);
