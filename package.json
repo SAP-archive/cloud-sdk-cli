@@ -15,7 +15,7 @@
     "@oclif/plugin-help": "^2.2.3",
     "@oclif/plugin-not-found": "^1.2.3",
     "@oclif/plugin-warn-if-update-available": "^1.7.0",
-    "@sap/cloud-sdk-generator": "^1.15.0",
+    "@sap/cloud-sdk-generator": ">=1.14.0",
     "boxen": "^4.2.0",
     "cli-ux": "^5.4.1",
     "execa": "^3.4.0",
