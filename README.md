@@ -340,9 +340,9 @@ The easiest way to create a new release is running
 $ npx np
 ```
 
-This will test the code, run any prepublish steps, increase the version as selected by the user and create a draft release in github.
+This will test the code, run any pre-publish steps, increase the version as selected by the user and create a draft release in github.
 Afterwards fill in the release notes and press "Publish release".
-This will trigger the github action and a new release will be published on npm automatically.
+This will trigger the github action and a new release will be published on `npm` automatically.
 
 ## License
 
