@@ -82,7 +82,6 @@
     ]
   },
   "np": {
-    "yarn": false,
     "publish": false
   },
   "repository": "https://github.com/SAP/cloud-sdk-cli",
