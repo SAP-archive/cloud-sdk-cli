@@ -1,4 +1,4 @@
-<a href="https://sap.com/s4sdk"><img src="https://help.sap.com/doc/6c02295dfa8f47cf9c08a19f2e172901/1.0/en-US/logo-with-js.svg" alt="SAP Cloud SDK for JavaScript Logo" height="122.92" width="226.773"/></a>
+<a href="https://sap.com/s4sdk"><img src="https://help.sap.com/doc/2324e9c3b28748a4ae2ad08166d77675/1.0/en-US/logo-with-js.svg" alt="SAP Cloud SDK for JavaScript Logo" height="122.92" width="226.773"/></a>
 
 # SAP Cloud SDK CLI
 
@@ -326,6 +326,12 @@ The CLI is based on [oclif](https://oclif.io/docs/introduction.html) and can be 
 If you think your plugin should be part of the CLI itself, feel free to [open a pull request](https://github.com/SAP/cloud-sdk-cli/compare).
 If you have found a bug in our existing functionality, please [open an issue](https://github.com/SAP/cloud-sdk-cli/issues/new/choose).
 
+### Package Manager
+
+This repository uses [yarn](https://yarnpkg.com/) as a package manager. 
+This is only relevant for the development of the CLI.
+Projects that use the CLI are free to use any package manager as long as a `package.json` is present.
+
 ### Release
 
 The easiest way to create a new release is running
@@ -334,9 +340,9 @@ The easiest way to create a new release is running
 $ npx np
 ```
 
-This will test the code, run any prepublish steps, increase the version as selected by the user and create a draft release in github.
+This will test the code, run any pre-publish steps, increase the version as selected by the user and create a draft release in github.
 Afterwards fill in the release notes and press "Publish release".
-This will trigger the github action and a new release will be published on npm automatically.
+This will trigger the github action and a new release will be published on `npm` automatically.
 
 ## License
 
