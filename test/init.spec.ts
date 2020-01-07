@@ -29,11 +29,10 @@ import Init from '../src/commands/init';
 import { getCleanProjectDir, getTestOutputDir } from './test-utils';
 
 const testOutputDir = getTestOutputDir(__filename);
+const expressAppDir = path.resolve('test', 'express');
+const nestAppDir = path.resolve('test', 'nest');
 
 describe('Init', () => {
-  const expressAppDir = path.resolve('test', 'express');
-  const nestAppDir = path.resolve('test', 'nest');
-
   afterAll(() => {
     fs.removeSync(testOutputDir);
   });
