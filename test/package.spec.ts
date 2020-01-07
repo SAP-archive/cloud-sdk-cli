@@ -12,11 +12,11 @@ const nestAppDir = path.resolve('test', 'nest');
 
 describe('Package', () => {
   afterAll(() => {
-    fs.removeSync(testOutputDir);
+    // fs.removeSync(testOutputDir);
   });
 
   it('should copy files correctly without parameters', async () => {
-    const projectDir = getCleanProjectDir(testOutputDir, 'package-without-param');
+    const projectDir = getCleanProjectDir(testOutputDir, 'no-params');
     fs.copySync(nestAppDir, projectDir, { recursive: true });
     await Package.run([projectDir, '--skipInstall']);
 
@@ -24,18 +24,28 @@ describe('Package', () => {
   });
 
   it('should copy files correctly with custom globs', async () => {
-    const projectDir = getCleanProjectDir(testOutputDir, 'package-with-globs');
+    const projectDir = getCleanProjectDir(testOutputDir, 'globs');
     fs.copySync(nestAppDir, projectDir, { recursive: true });
     await Package.run([projectDir, '--include=*.json', '--exclude=package*,tsconfig*', '--skipInstall']);
 
     expect(fs.readdirSync(path.resolve(projectDir, 'deployment'))).toIncludeAllMembers(['nest-cli.json', 'tslint.json']);
   });
 
-  it('should overwrite output folder', () => {
-    expect(true).toBe(true);
+  it('should overwrite output folder', async () => {
+    const projectDir = getCleanProjectDir(testOutputDir, 'folder-overwrite');
+    fs.copySync(nestAppDir, projectDir, { recursive: true });
+    await Package.run([projectDir, '--include=.gitignore', '--skipInstall']);
+    await Package.run([projectDir, '--include=README.md', '--skipInstall']);
+
+    expect(fs.readdirSync(path.resolve(projectDir, 'deployment'))).toEqual(['README.md']);
   });
 
-  it('should install productive dependencies only', () => {
-    expect(true).toBe(true);
-  });
+  it('should install productive dependencies only', async () => {
+    const projectDir = getCleanProjectDir(testOutputDir, 'productive-dependencies');
+    fs.copySync(nestAppDir, projectDir, { recursive: true });
+    await Package.run([projectDir]);
+
+    expect(fs.readdirSync(path.resolve(projectDir, 'deployment'))).toIncludeAllMembers(['package.json', 'package-lock.json', 'node_modules']);
+    expect(fs.readdirSync(path.resolve(projectDir, 'deployment', 'node_modules', '@nestjs'))).not.toContain('cli');
+  }, 20000);
 });
