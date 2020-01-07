@@ -47,5 +47,5 @@ describe('Package', () => {
 
     expect(fs.readdirSync(path.resolve(projectDir, 'deployment'))).toIncludeAllMembers(['package.json', 'package-lock.json', 'node_modules']);
     expect(fs.readdirSync(path.resolve(projectDir, 'deployment', 'node_modules', '@nestjs'))).not.toContain('cli');
-  }, 20000);
+  }, 60000);
 });
