@@ -34,6 +34,9 @@ export default class Init extends Command {
     projectDir: flags.string({
       description: 'Path to the directory in which the project should be created.'
     }),
+    addCds: flags.boolean({
+      description: 'Add a cds configuration and example data to follow the SAP Cloud Application Promgramming model.'
+    }),
     force: flags.boolean({
       description: 'Do not fail if a file or npm script already exist and overwrite it.'
     }),
@@ -73,10 +76,6 @@ export default class Init extends Command {
     skipInstall: flags.boolean({
       hidden: true,
       description: 'Skip installing npm dependencies. If you use this, make sure to install manually afterwards.'
-    }),
-    addCds: flags.boolean({
-      hidden: true,
-      description: 'Add a cds configuration and example data to follow the SAP Cloud Application Promgramming model.'
     })
   };
 
