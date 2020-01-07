@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 import { GeneratorOptions as GeneratorOptionsSDK, generatorOptionsCli as generatorOptionsSDK } from '@sap/cloud-sdk-generator';
 import * as fs from 'fs-extra';

@@ -375,7 +375,7 @@ This will trigger the github action and a new release will be published on `npm`
 
 ## License
 
-Copyright (c) 2019 SAP SE or an SAP affiliate company.
+Copyright (c) 2020 SAP SE or an SAP affiliate company.
 All rights reserved.
 This file is licensed under the Apache Software License, v. 2 except as noted otherwise in the [LICENSE file](LICENSE).
 
