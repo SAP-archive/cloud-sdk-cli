@@ -3,12 +3,9 @@
  */
 
 import { Command, flags } from '@oclif/command';
-import { OutputFlags } from '@oclif/parser';
 import * as Listr from 'listr';
 import * as path from 'path';
 import { CopyDescriptor, copyFiles, findConflicts } from '../utils/';
-
-type Flags = OutputFlags<typeof AddCxServer.flags>;
 
 export default class AddCxServer extends Command {
   static description = 'Add the scripts to set up a Jenkins master for CI/CD of your project';
