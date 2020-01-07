@@ -10,8 +10,8 @@
     "arrow-parens": [false, "as-needed"],
     "file-header": [
       true,
-      "Copyright \\(c\\) 2019 SAP SE or an SAP affiliate company. All rights reserved.",
-      "Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved."
+      "Copyright \\(c\\) 2020 SAP SE or an SAP affiliate company. All rights reserved.",
+      "Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved."
     ],
     "interface-name": false,
     "max-line-length": false,

@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 const log = jest.fn();
 const warn = jest.fn(message => console.log('MOCKED WARNING: ', message));
