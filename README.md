@@ -37,7 +37,7 @@ $ npm install -g @sap-cloud-sdk/cli
 $ sap-cloud-sdk COMMAND
 running command...
 $ sap-cloud-sdk (-v|--version|version)
-@sap-cloud-sdk/cli/0.0.10 darwin-x64 node-v12.8.1
+@sap-cloud-sdk/cli/0.1.0 darwin-x64 node-v10.18.0
 $ sap-cloud-sdk --help [COMMAND]
 USAGE
   $ sap-cloud-sdk COMMAND
@@ -71,6 +71,7 @@ Start by running [`sap-cloud-sdk add-approuter`](#sap-cloud-sdk-add-approuter) a
 
 <!-- commands -->
 * [`sap-cloud-sdk add-approuter [PROJECTDIR]`](#sap-cloud-sdk-add-approuter-projectdir)
+* [`sap-cloud-sdk add-cds [PROJECTDIR]`](#sap-cloud-sdk-add-cds-projectdir)
 * [`sap-cloud-sdk add-cx-server [PROJECTDIR]`](#sap-cloud-sdk-add-cx-server-projectdir)
 * [`sap-cloud-sdk autocomplete [SHELL]`](#sap-cloud-sdk-autocomplete-shell)
 * [`sap-cloud-sdk generate-vdm`](#sap-cloud-sdk-generate-vdm)
@@ -101,7 +102,29 @@ EXAMPLE
   $ sap-cloud-sdk add-approuter
 ```
 
-_See code: [src/commands/add-approuter.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.10/src/commands/add-approuter.ts)_
+_See code: [src/commands/add-approuter.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.0/src/commands/add-approuter.ts)_
+
+## `sap-cloud-sdk add-cds [PROJECTDIR]`
+
+Setup your Cloud Foundry app to use a CDS service
+
+```
+USAGE
+  $ sap-cloud-sdk add-cds [PROJECTDIR]
+
+ARGUMENTS
+  PROJECTDIR  Path to the project directory in which the cds sources should be added.
+
+OPTIONS
+  -h, --help     Show help for the add-cds command.
+  -v, --verbose  Show more detailed output.
+  --force        Do not fail if a file or npm script already exist and overwrite it.
+
+EXAMPLE
+  $ sap-cloud-sdk add-cds
+```
+
+_See code: [src/commands/add-cds.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.0/src/commands/add-cds.ts)_
 
 ## `sap-cloud-sdk add-cx-server [PROJECTDIR]`
 
@@ -122,7 +145,7 @@ EXAMPLE
   $ sap-cloud-sdk add-cx-server
 ```
 
-_See code: [src/commands/add-cx-server.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.10/src/commands/add-cx-server.ts)_
+_See code: [src/commands/add-cx-server.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.0/src/commands/add-cx-server.ts)_
 
 ## `sap-cloud-sdk autocomplete [SHELL]`
 
@@ -229,7 +252,7 @@ EXAMPLES
   $ sap-cloud-sdk generate-vdm --help
 ```
 
-_See code: [src/commands/generate-vdm.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.10/src/commands/generate-vdm.ts)_
+_See code: [src/commands/generate-vdm.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.0/src/commands/generate-vdm.ts)_
 
 ## `sap-cloud-sdk help [COMMAND]`
 
@@ -246,7 +269,7 @@ OPTIONS
   --all  see all commands in CLI
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v2.2.2/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v2.2.3/src/commands/help.ts)_
 
 ## `sap-cloud-sdk help-page`
 
@@ -260,7 +283,7 @@ OPTIONS
   -h, --help  show CLI help
 ```
 
-_See code: [src/commands/help-page.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.10/src/commands/help-page.ts)_
+_See code: [src/commands/help-page.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.0/src/commands/help-page.ts)_
 
 ## `sap-cloud-sdk init [PROJECTDIR]`
 
@@ -276,8 +299,14 @@ ARGUMENTS
 OPTIONS
   -h, --help               Show help for the init command.
   -v, --verbose            Show more detailed output.
+
+  --addCds                 Add a cds configuration and example data to follow the SAP Cloud Application Promgramming
+                           model.
+
   --force                  Do not fail if a file or npm script already exist and overwrite it.
+
   --frontendScripts        Add frontend-related npm scripts which are executed by our CI/CD toolkit.
+
   --projectDir=projectDir  Path to the directory in which the project should be created.
 
 EXAMPLES
@@ -285,7 +314,7 @@ EXAMPLES
   $ sap-cloud-sdk init --help
 ```
 
-_See code: [src/commands/init.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.10/src/commands/init.ts)_
+_See code: [src/commands/init.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.0/src/commands/init.ts)_
 
 ## `sap-cloud-sdk package [PROJECTDIR]`
 
@@ -317,7 +346,7 @@ EXAMPLES
   $ sap-cloud-sdk package --include="package.json,package-lock.json,index.js,dist/**/*" --exclude="**/*.java"
 ```
 
-_See code: [src/commands/package.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.0.10/src/commands/package.ts)_
+_See code: [src/commands/package.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.0/src/commands/package.ts)_
 <!-- commandsstop -->
 
 ## Contribute
