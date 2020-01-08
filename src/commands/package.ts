@@ -90,10 +90,10 @@ export default class Package extends Command {
                 cwd: projectDir
               })
             : [];
-          const filtered = include.filter(filepath => !exclude.includes(filepath)).map(filepath => path.relative(projectDir, filepath));
+          const filtered = include.filter(filepath => !exclude.includes(filepath));
 
           filtered.forEach(filepath => {
-            const outputFilePath = path.resolve(outputDir, filepath);
+            const outputFilePath = path.resolve(outputDir, path.relative(projectDir, filepath));
             fs.mkdirSync(path.dirname(outputFilePath), { recursive: true });
             fs.copyFileSync(filepath, outputFilePath);
           });
@@ -102,13 +102,13 @@ export default class Package extends Command {
       {
         title: 'Install productive dependencies',
         enabled: () => !flags.skipInstall,
-        task: async () => {
+        task: async () =>
           execa('npm', ['install', '--production', '--prefix', outputDir], { stdio: flags.verbose ? 'inherit' : 'ignore' }).catch(e =>
             this.error(e, { exit: 10 })
-          );
-        }
+          )
       }
     ]);
-    tasks.run();
+
+    await tasks.run();
   }
 }
