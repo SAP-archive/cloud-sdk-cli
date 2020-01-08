@@ -10,7 +10,7 @@ export function recordWarning(...warn: string[]) {
 
 export function getWarnings(): string[] | undefined {
   if (warnings.length > 0) {
-    const result = ['⚠️  There were the following warnings:', ...warnings.map(warn => `- ${warn.join('\n  ')}`)];
+    const result = warnings.map(warn => `- ${warn.join('\n  ')}`);
     warnings = [];
     return result;
   }

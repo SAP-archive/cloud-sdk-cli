@@ -179,7 +179,7 @@ export default class Init extends Command {
     ];
 
     if (warnings) {
-      this.log(boxMessage(['➡️  Init finished with warnings.', '', ...warnings, '', ...body]));
+      this.log(boxMessage(['⚠️  Init finished with warnings:', ...warnings, '', ...body]));
     } else {
       this.log(boxMessage(['✅ Init finished successfully.', '', ...body]));
     }
