@@ -3,7 +3,7 @@
  */
 
 export * from './copy-list';
-export * from './generate-vdm-util';
+export * from './generate-odata-client-util';
 export * from './git-ignore';
 export * from './jest-config';
 export * from './manifest-yaml';
