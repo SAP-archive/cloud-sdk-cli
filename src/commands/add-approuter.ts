@@ -5,8 +5,7 @@
 import { Command, flags } from '@oclif/command';
 import cli from 'cli-ux';
 import * as Listr from 'listr';
-import { getProjectNameFromManifest } from '../utils/manifest-yaml';
-import { copyFiles, findConflicts, getCopyDescriptors, getTemplatePaths } from '../utils/templates';
+import { copyFiles, findConflicts, getCopyDescriptors, getProjectNameFromManifest, getTemplatePaths } from '../utils/';
 
 export default class AddApprouter extends Command {
   static description = 'Setup your Cloud Foundry app to authenticate through the app router';

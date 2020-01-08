@@ -7,6 +7,7 @@ import cli from 'cli-ux';
 import * as fs from 'fs';
 import * as Listr from 'listr';
 import * as path from 'path';
+import { boxMessage, getWarnings } from '../utils';
 import {
   buildScaffold,
   copyFiles,
@@ -22,7 +23,6 @@ import {
   shouldBuildScaffold,
   usageAnalytics
 } from '../utils/';
-import { boxMessage } from '../utils/message-formatter';
 
 export default class Init extends Command {
   static description = 'Initializes your project for the SAP Cloud SDK, SAP Cloud Platform Cloud Foundry and CI/CD using the SAP Cloud SDK toolkit';
@@ -169,9 +169,8 @@ export default class Init extends Command {
   }
 
   private printSuccessMessage(isScaffold: boolean, addCds: boolean) {
-    const message = [
-      '✅ Init finished successfully.',
-      '',
+    const warnings = getWarnings();
+    const body = [
       '🚀 Next steps:',
       ...this.getNextSteps(isScaffold, addCds),
       '',
@@ -179,9 +178,11 @@ export default class Init extends Command {
       'Use `sap-cloud-sdk add-cx-server` to create the setup script.'
     ];
 
-    message.push();
-
-    this.log(boxMessage(message));
+    if (warnings) {
+      this.log(boxMessage(['➡️  Init finished with warnings.', '', ...warnings, '', ...body]));
+    } else {
+      this.log(boxMessage(['✅ Init finished successfully.', '', ...body]));
+    }
   }
 
   private getNextSteps(isScaffold: boolean, addCds: boolean): string[] {
