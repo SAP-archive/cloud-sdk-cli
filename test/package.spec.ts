@@ -20,7 +20,9 @@ describe('Package', () => {
     fs.copySync(nestAppDir, projectDir, { recursive: true });
     await Package.run([projectDir, '--skipInstall']);
 
-    expect(fs.readdirSync(path.resolve(projectDir, 'deployment'))).toIncludeAllMembers(['package.json', 'package-lock.json']);
+    const copiedFiles = fs.readdirSync(path.resolve(projectDir, 'deployment'));
+    expect(copiedFiles).toIncludeAllMembers(['package.json', 'package-lock.json']);
+    expect(copiedFiles).toHaveLength(2);
   });
 
   it('should copy files correctly with custom globs', async () => {
