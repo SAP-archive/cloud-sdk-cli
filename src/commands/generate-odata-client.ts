@@ -4,15 +4,15 @@
 
 import { Command } from '@oclif/command';
 import { generate, generatorOptionsCli as generatorOptionsSDK } from '@sap/cloud-sdk-generator';
-import { BoolArgType, generatorOptionCli, StringArgType, toBooleanFlag, toGeneratorSDK, toStringFlag } from '../utils/generate-vdm-util';
+import { BoolArgType, generatorOptionCli, StringArgType, toBooleanFlag, toGeneratorSDK, toStringFlag } from '../utils/generate-odata-client-util';
 
-export default class GenerateVdm extends Command {
+export default class GenerateODataClient extends Command {
   static description =
-    'Generates a virtual data model (VDM) from a edmx service file definition. For SAP solutions, you can find these definitions at https://api.sap.com/.';
+    'Generates a OData client from a edmx service file definition. For SAP solutions, you can find these definitions at https://api.sap.com/.';
 
   static examples = [
-    '$ sap-cloud-sdk generate-vdm -i directoryWithEdmxFiles -o outputDirectory --forceOverwrite',
-    '$ sap-cloud-sdk generate-vdm --help'
+    '$ sap-cloud-sdk generate-odata-client -i directoryWithEdmxFiles -o outputDirectory --forceOverwrite',
+    '$ sap-cloud-sdk generate-odata-client --help'
   ];
 
   static flags: BoolArgType & StringArgType = {
@@ -39,7 +39,7 @@ export default class GenerateVdm extends Command {
   };
 
   async run() {
-    const { flags } = this.parse(GenerateVdm);
+    const { flags } = this.parse(GenerateODataClient);
 
     await generate(toGeneratorSDK(flags));
   }

@@ -9,4 +9,4 @@ node_modules
 test/**/*spec/*
 oclif.manifest.json
 *.edmx
-!test/resources/template-generator-vdm/edmxSource/SocialNetworkAccount.edmx
+!test/resources/template-generator-odata-client/edmxSource/SocialNetworkAccount.edmx

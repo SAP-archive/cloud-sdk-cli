@@ -4,16 +4,16 @@
 import { GeneratorOptions as GeneratorOptionsSDK, generatorOptionsCli as generatorOptionsSDK } from '@sap/cloud-sdk-generator';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import GenerateVdm from '../src/commands/generate-vdm';
-import * as generateVdmUtil from '../src/utils/generate-vdm-util';
+import GenerateODataClient from '../src/commands/generate-odata-client';
+import * as generateVdmUtil from '../src/utils/generate-odata-client-util';
 
 const spyToGeneratorSDK = jest.spyOn(generateVdmUtil, 'toGeneratorSDK');
 
-describe('generate-vdm', () => {
+describe('generate-odata-client', () => {
   const pathForTests = path.resolve(__dirname, __filename.replace(/\./g, '-')).replace('-ts', '');
 
   beforeAll(() => {
-    const pathForResources = path.resolve(__dirname, 'resources', 'template-generator-vdm');
+    const pathForResources = path.resolve(__dirname, 'resources', 'template-generator-odata-client');
     fs.copySync(pathForResources, pathForTests);
   });
 
@@ -23,7 +23,7 @@ describe('generate-vdm', () => {
 
   it('should fail if the mandatory parameters are not there', async () => {
     try {
-      await GenerateVdm.run([]);
+      await GenerateODataClient.run([]);
     } catch (e) {
       expect(e.message).toContain('-i, --inputDir INPUTDIR');
     }
@@ -33,7 +33,7 @@ describe('generate-vdm', () => {
     const expected = getParsedInputWithAllBooleanFlagsFalse();
     delete expected.projectDir;
     try {
-      await GenerateVdm.run([...getCliInputWithAllBooleanFlagsFalse(), '--projectDir', getProjectDir()]);
+      await GenerateODataClient.run([...getCliInputWithAllBooleanFlagsFalse(), '--projectDir', getProjectDir()]);
     } catch (e) {
       expect(e.message).toContain('ENOENT: no such file or directory');
       expect(spyToGeneratorSDK).toHaveReturnedWith(expected);
@@ -46,7 +46,7 @@ describe('generate-vdm', () => {
       const expected = getDefault(getProjectDir());
 
       try {
-        await GenerateVdm.run(['-i', 'input', '-o', 'output', '--projectDir', getProjectDir()]);
+        await GenerateODataClient.run(['-i', 'input', '-o', 'output', '--projectDir', getProjectDir()]);
       } catch (e) {
         expect(e.message).toContain('ENOENT: no such file or directory');
         expect(spyToGeneratorSDK).toHaveReturnedWith(expected);
@@ -55,7 +55,7 @@ describe('generate-vdm', () => {
   });
 
   function getProjectDir() {
-    return path.resolve(__dirname, 'generate-vdm-spec');
+    return path.resolve(__dirname, 'generate-odata-client-spec');
   }
 
   function getInputAndExpected(key: keyof GeneratorOptionsSDK): { expected: GeneratorOptionsSDK; args: string[] } | undefined {
@@ -78,7 +78,7 @@ describe('generate-vdm', () => {
         const argsExpected = getInputAndExpected(key as keyof GeneratorOptionsSDK);
         if (argsExpected) {
           try {
-            await GenerateVdm.run(argsExpected.args);
+            await GenerateODataClient.run(argsExpected.args);
           } catch (e) {
             expect(e.message).toContain('ENOENT: no such file or directory');
             expect(spyToGeneratorSDK).toHaveReturnedWith(argsExpected.expected);
