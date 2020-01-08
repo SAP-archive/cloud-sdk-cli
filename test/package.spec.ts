@@ -12,7 +12,7 @@ const nestAppDir = path.resolve('test', 'nest');
 
 describe('Package', () => {
   afterAll(() => {
-    // fs.removeSync(testOutputDir);
+    fs.removeSync(testOutputDir);
   });
 
   it('should copy files correctly without parameters', async () => {
@@ -29,6 +29,7 @@ describe('Package', () => {
     await Package.run([projectDir, '--include=*.json', '--exclude=package*,tsconfig*', '--skipInstall']);
 
     expect(fs.readdirSync(path.resolve(projectDir, 'deployment'))).toIncludeAllMembers(['nest-cli.json', 'tslint.json']);
+    expect(fs.readdirSync(path.resolve(projectDir, 'deployment'))).not.toIncludeAnyMembers(['package.json', 'package-lock.json', 'tsconfig.json']);
   });
 
   it('should overwrite output folder', async () => {
