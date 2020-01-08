@@ -13,6 +13,7 @@ jest.mock('cli-ux', () => {
     }
   };
 });
+jest.mock('../src/utils/warnings');
 
 import execa = require('execa');
 import * as fs from 'fs-extra';
