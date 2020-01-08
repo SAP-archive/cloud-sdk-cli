@@ -1,10 +1,12 @@
 /*!
  * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
+
 import cli from 'cli-ux';
 import * as execa from 'execa';
 import * as fs from 'fs';
 import * as path from 'path';
+import { recordWarning } from '../utils/';
 import { getJestConfig } from './jest-config';
 
 interface PackageJsonChange {
@@ -157,7 +159,7 @@ async function getVersionOfDependency(dependency: string): Promise<string> {
 
     return `^${(await version).stdout}`;
   } catch (e) {
-    cli.warn(`Error in finding version for dependency ${dependency} - use LATEST as fallback.`);
+    recordWarning(`Could not find version information for dependency ${dependency}.`, 'Instead `LATEST` was used as fallback.');
     return 'latest';
   }
 }

@@ -2,8 +2,8 @@
  * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
-import cli from 'cli-ux';
 import * as fs from 'fs';
+import { recordWarning } from '../utils/';
 
 export function getJestConfig(isUnitTests: boolean) {
   return {
@@ -37,9 +37,10 @@ export function modifyJestConfig(jestConfigPath: string, data: any) {
 
     fs.writeFileSync(jestConfigPath, JSON.stringify(adjustedJestConfig, null, 2));
   } catch (error) {
-    cli.warn(error);
-    return cli.warn(
-      `Could not edit your Jest config at "${jestConfigPath}". Please verify if the location is correct and consider opening a bug ticket at github.com/SAP/cloud-sdk-cli`
+    recordWarning(
+      `Could not edit your Jest config at "${jestConfigPath}".`,
+      'Please verify if the location is correct and consider opening a bug ticket',
+      'at https://github.com/SAP/cloud-sdk-cli'
     );
   }
 }

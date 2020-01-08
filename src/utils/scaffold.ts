@@ -7,6 +7,7 @@ import * as execa from 'execa';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as rm from 'rimraf';
+import { recordWarning } from '../utils/';
 
 export async function shouldBuildScaffold(projectDir: string, buildScaffold: boolean, force: boolean = false): Promise<boolean> {
   if (buildScaffold) {
@@ -60,8 +61,9 @@ function modifyMainTs(pathToMainTs: string) {
   const modifiedMainTs = mainTs.replace('.listen(3000)', modifiedListen);
 
   if (!modifiedMainTs.includes(modifiedListen)) {
-    cli.warn('Could not adjust listening port to `process.env.PORT`. Please adjust manually.');
+    recordWarning('Could not set listening port to `process.env.PORT`', 'in file `app.module.ts`. Please adjust manually.');
   } else {
+    recordWarning('Could not set listening port to `process.env.PORT`', 'in file `app.module.ts`. Please adjust manually.');
     fs.writeFileSync(pathToMainTs, modifiedMainTs);
   }
 }
@@ -75,7 +77,7 @@ export function addCatalogueModule(pathToAppModuleTs: string) {
     .replace('imports: []', `imports: [${moduleName}]`);
 
   if (!modifiedAppModuleTs.includes(`imports: [${moduleName}]`)) {
-    cli.warn(`Could not add module ${moduleName} to app.module. Please add manually.`);
+    recordWarning(`Could not add module ${moduleName} to \`app.module.ts\`. Please add manually.`);
   } else {
     fs.writeFileSync(pathToAppModuleTs, modifiedAppModuleTs);
   }
