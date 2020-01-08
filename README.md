@@ -74,7 +74,7 @@ Start by running [`sap-cloud-sdk add-approuter`](#sap-cloud-sdk-add-approuter) a
 * [`sap-cloud-sdk add-cds [PROJECTDIR]`](#sap-cloud-sdk-add-cds-projectdir)
 * [`sap-cloud-sdk add-cx-server [PROJECTDIR]`](#sap-cloud-sdk-add-cx-server-projectdir)
 * [`sap-cloud-sdk autocomplete [SHELL]`](#sap-cloud-sdk-autocomplete-shell)
-* [`sap-cloud-sdk generate-vdm`](#sap-cloud-sdk-generate-vdm)
+* [`sap-cloud-sdk generate-odata-client`](#sap-cloud-sdk-generate-odata-client)
 * [`sap-cloud-sdk help [COMMAND]`](#sap-cloud-sdk-help-command)
 * [`sap-cloud-sdk help-page`](#sap-cloud-sdk-help-page)
 * [`sap-cloud-sdk init [PROJECTDIR]`](#sap-cloud-sdk-init-projectdir)
@@ -170,13 +170,13 @@ EXAMPLES
 
 _See code: [@oclif/plugin-autocomplete](https://github.com/oclif/plugin-autocomplete/blob/v0.1.5/src/commands/autocomplete/index.ts)_
 
-## `sap-cloud-sdk generate-vdm`
+## `sap-cloud-sdk generate-odata-client`
 
-Generates a virtual data model (VDM) from a edmx service file definition. For SAP solutions, you can find these definitions at https://api.sap.com/.
+Generates a OData client from a edmx service file definition. For SAP solutions, you can find these definitions at https://api.sap.com/.
 
 ```
 USAGE
-  $ sap-cloud-sdk generate-vdm
+  $ sap-cloud-sdk generate-odata-client
 
 OPTIONS
   -i, --inputDir=inputDir                              (required) This directory will be recursively searched for
@@ -248,11 +248,11 @@ OPTIONS
                                                        false].
 
 EXAMPLES
-  $ sap-cloud-sdk generate-vdm -i directoryWithEdmxFiles -o outputDirectory --forceOverwrite
-  $ sap-cloud-sdk generate-vdm --help
+  $ sap-cloud-sdk generate-odata-client -i directoryWithEdmxFiles -o outputDirectory --forceOverwrite
+  $ sap-cloud-sdk generate-odata-client --help
 ```
 
-_See code: [src/commands/generate-vdm.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.2/src/commands/generate-vdm.ts)_
+_See code: [src/commands/generate-odata-client.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.2/src/commands/generate-odata-client.ts)_
 
 ## `sap-cloud-sdk help [COMMAND]`
 

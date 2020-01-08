@@ -11,8 +11,8 @@ export default class GenerateODataClient extends Command {
     'Generates a OData client from a edmx service file definition. For SAP solutions, you can find these definitions at https://api.sap.com/.';
 
   static examples = [
-    '$ sap-cloud-sdk generate-vdm -i directoryWithEdmxFiles -o outputDirectory --forceOverwrite',
-    '$ sap-cloud-sdk generate-vdm --help'
+    '$ sap-cloud-sdk generate-odata-client -i directoryWithEdmxFiles -o outputDirectory --forceOverwrite',
+    '$ sap-cloud-sdk generate-odata-client --help'
   ];
 
   static flags: BoolArgType & StringArgType = {

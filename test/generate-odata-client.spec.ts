@@ -5,15 +5,15 @@ import { GeneratorOptions as GeneratorOptionsSDK, generatorOptionsCli as generat
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import GenerateODataClient from '../src/commands/generate-odata-client';
-import * as generateVdmUtil from '../src/utils/generate-vdm-util';
+import * as generateVdmUtil from '../src/utils/generate-odata-client-util';
 
 const spyToGeneratorSDK = jest.spyOn(generateVdmUtil, 'toGeneratorSDK');
 
-describe('generate-vdm', () => {
+describe('generate-odata-client', () => {
   const pathForTests = path.resolve(__dirname, __filename.replace(/\./g, '-')).replace('-ts', '');
 
   beforeAll(() => {
-    const pathForResources = path.resolve(__dirname, 'resources', 'template-generator-vdm');
+    const pathForResources = path.resolve(__dirname, 'resources', 'template-generator-odata-client');
     fs.copySync(pathForResources, pathForTests);
   });
 
@@ -55,7 +55,7 @@ describe('generate-vdm', () => {
   });
 
   function getProjectDir() {
-    return path.resolve(__dirname, 'generate-vdm-spec');
+    return path.resolve(__dirname, 'generate-odata-client-spec');
   }
 
   function getInputAndExpected(key: keyof GeneratorOptionsSDK): { expected: GeneratorOptionsSDK; args: string[] } | undefined {
