@@ -1,25 +1,10 @@
 /*!
  * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
-const log = jest.fn();
-const warn = jest.fn(message => console.log('MOCKED WARNING: ', message));
-
-jest.mock('cli-ux', () => {
-  // Mocking needs to happen before the command is imported
-  const cli = jest.requireActual('cli-ux');
-  return {
-    ...cli,
-    default: {
-      ...cli.default,
-      log,
-      warn
-    }
-  };
-});
-
+jest.mock('../../src/utils/warnings');
 import * as fs from 'fs';
 import * as rm from 'rimraf';
-import { modifyGitIgnore } from '../../src/utils';
+import { modifyGitIgnore, recordWarning } from '../../src/utils';
 import { getCleanProjectDir, getTestOutputDir } from '../test-utils';
 
 const testOutputDir = getTestOutputDir(__filename);
@@ -74,7 +59,13 @@ describe('Git Ignore Utils', () => {
 
     modifyGitIgnore(projectDir, false);
 
-    expect(warn).toHaveBeenCalledWith('No .gitignore file found!');
-    expect(log).toHaveBeenCalledTimes(4);
+    expect(recordWarning).toHaveBeenCalledWith(
+      'No .gitignore file found!',
+      'If your project is using a different version control system,',
+      'please make sure the following paths are not tracked:',
+      '  credentials.json',
+      '  /s4hana_pipeline',
+      '  /deployment'
+    );
   });
 });

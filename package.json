@@ -86,10 +86,11 @@
   },
   "repository": "https://github.com/SAP/cloud-sdk-cli",
   "scripts": {
-    "postpack": "rm -f oclif.manifest.json",
-    "pretest": "tslint -p . -t stylish && tslint -p test -t stylish && prettier -c \"**/*.ts\" && tsc -b",
+    "lint": "tslint -p . -t stylish && tslint -p test -t stylish && prettier -c \"**/*.ts\"",
     "fix:formatting": "tslint -p . -t stylish --fix && tslint -p test -t stylish --fix && prettier --write \"**/*.ts\"",
     "prepack": "rm -rf lib && tsc -b && cp -R src/templates lib/ && oclif-dev manifest && oclif-dev readme",
+    "postpack": "rm -f oclif.manifest.json",
+    "pretest": "rm -rf test/test-output/*-spec/ && npm run lint && tsc -b",
     "test": "jest",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "test:watch-debug": "node --inspect-brk node_modules/.bin/jest --watch --runInBand",
