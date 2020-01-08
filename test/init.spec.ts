@@ -2,13 +2,6 @@
  * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 const error = jest.fn();
-const warn = jest.fn(message => console.log('MOCKED WARNING: ', message));
-jest.mock('@oclif/command', () => {
-  const command = jest.requireActual('@oclif/command');
-  command.Command.prototype.warn = warn;
-  return command;
-});
-
 jest.mock('cli-ux', () => {
   // Mocking needs to happen before the command is imported
   const cli = jest.requireActual('cli-ux');
@@ -16,24 +9,24 @@ jest.mock('cli-ux', () => {
     ...cli,
     default: {
       ...cli.default,
-      error,
-      warn
+      error
     }
   };
 });
+jest.mock('../src/utils/warnings');
 
 import execa = require('execa');
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import Init from '../src/commands/init';
+import { getWarnings, recordWarning } from '../src/utils/warnings';
 import { getCleanProjectDir, getTestOutputDir } from './test-utils';
 
 const testOutputDir = getTestOutputDir(__filename);
+const expressAppDir = path.resolve('test', 'express');
+const nestAppDir = path.resolve('test', 'nest');
 
 describe('Init', () => {
-  const expressAppDir = path.resolve('test', 'express');
-  const nestAppDir = path.resolve('test', 'nest');
-
   afterAll(() => {
     fs.removeSync(testOutputDir);
   });
@@ -139,7 +132,15 @@ describe('Init', () => {
 
     await Init.run([projectDir, '--projectName=testingApp', '--startCommand="npm start"', '--skipInstall', '--no-analytics']);
 
-    expect(warn).toHaveBeenCalledWith('No .gitignore file found!');
+    expect(recordWarning).toHaveBeenCalledWith(
+      'No .gitignore file found!',
+      'If your project is using a different version control system,',
+      'please make sure the following paths are not tracked:',
+      '  credentials.json',
+      '  /s4hana_pipeline',
+      '  /deployment'
+    );
+    expect(getWarnings).toHaveBeenCalled();
   }, 10000);
 
   it('should add our scripts and dependencies to the package.json', async () => {

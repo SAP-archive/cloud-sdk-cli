@@ -6,8 +6,7 @@ import { Command, flags } from '@oclif/command';
 import cli from 'cli-ux';
 import * as Listr from 'listr';
 import { installDependencies, modifyGitIgnore, modifyPackageJson } from '../utils';
-import { getProjectNameFromManifest } from '../utils/manifest-yaml';
-import { copyFiles, findConflicts, getCopyDescriptors, getTemplatePaths } from '../utils/templates';
+import { copyFiles, findConflicts, getCopyDescriptors, getProjectNameFromManifest, getTemplatePaths } from '../utils/';
 
 export default class AddCds extends Command {
   static description = 'Setup your Cloud Foundry app to use a CDS service';
