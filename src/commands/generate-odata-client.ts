@@ -6,7 +6,7 @@ import { Command } from '@oclif/command';
 import { generate, generatorOptionsCli as generatorOptionsSDK } from '@sap/cloud-sdk-generator';
 import { BoolArgType, generatorOptionCli, StringArgType, toBooleanFlag, toGeneratorSDK, toStringFlag } from '../utils/generate-vdm-util';
 
-export default class GenerateVdm extends Command {
+export default class GenerateOdataClient extends Command {
   static description =
     'Generates a virtual data model (VDM) from a edmx service file definition. For SAP solutions, you can find these definitions at https://api.sap.com/.';
 
@@ -39,7 +39,7 @@ export default class GenerateVdm extends Command {
   };
 
   async run() {
-    const { flags } = this.parse(GenerateVdm);
+    const { flags } = this.parse(GenerateOdataClient);
 
     await generate(toGeneratorSDK(flags));
   }
