@@ -4,7 +4,7 @@
 
 import { Command } from '@oclif/command';
 import { generate, generatorOptionsCli as generatorOptionsSDK } from '@sap/cloud-sdk-generator';
-import { BoolArgType, generatorOptionCli, StringArgType, toBooleanFlag, toGeneratorSDK, toStringFlag } from '../utils/generate-vdm-util';
+import { BoolArgType, generatorOptionCli, StringArgType, toBooleanFlag, toGeneratorSDK, toStringFlag } from '../utils/generate-odata-client-util';
 
 export default class GenerateODataClient extends Command {
   static description =
