@@ -4,7 +4,6 @@ exports[`Scaffold Utils should build the scaffold 1`] = `
 Array [
   ".git",
   ".gitignore",
-  "README.md",
   "nest-cli.json",
   "package.json",
   "src",
