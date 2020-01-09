@@ -48,6 +48,7 @@ export async function buildScaffold(projectDir: string, verbose: boolean, addCds
 
   await execa('npx', ['-p', '@nestjs/cli', 'nest', 'new', '.', '--skip-install', '--package-manager', 'npm'], options);
 
+  fs.unlinkSync(path.resolve(projectDir, 'README.md'));
   modifyMainTs(path.resolve(projectDir, 'src', 'main.ts'));
   if (addCds) {
     addCatalogueModule(path.resolve(projectDir, 'src', 'app.module.ts'));
