@@ -105,7 +105,7 @@ export default class Package extends Command {
         enabled: () => !flags.skipInstall,
         task: async () =>
           execa('npm', ['install', '--production', platform() === 'win32' ? '--force' : ''], {
-            cwd: 'outputDir',
+            cwd: path.resolve(projectDir, 'outputDir'),
             stdio: flags.verbose ? 'inherit' : 'ignore'
           }).catch(e => this.error(e, { exit: 10 }))
       }
