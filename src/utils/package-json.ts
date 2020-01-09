@@ -155,7 +155,7 @@ async function addDependencyVersions(dependencies: string[] = []): Promise<{ [ke
 async function getVersionOfDependency(dependency: string): Promise<string> {
   try {
     const args = ['view', dependency, 'version'];
-    const version = dependency.includes('@sap') ? execa('npm', [...args, '--registry', 'https://npm.sap.com']) : execa('npm', args);
+    const version = dependency.includes('@sap/') ? execa('npm', [...args, '--registry', 'https://npm.sap.com']) : execa('npm', args);
 
     return `^${(await version).stdout}`;
   } catch (e) {

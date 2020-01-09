@@ -63,7 +63,6 @@ function modifyMainTs(pathToMainTs: string) {
   if (!modifiedMainTs.includes(modifiedListen)) {
     recordWarning('Could not set listening port to `process.env.PORT`', 'in file `app.module.ts`. Please adjust manually.');
   } else {
-    recordWarning('Could not set listening port to `process.env.PORT`', 'in file `app.module.ts`. Please adjust manually.');
     fs.writeFileSync(pathToMainTs, modifiedMainTs);
   }
 }
