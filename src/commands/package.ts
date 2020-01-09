@@ -7,6 +7,7 @@ import * as execa from 'execa';
 import * as glob from 'fast-glob';
 import * as fs from 'fs';
 import * as Listr from 'listr';
+import { platform } from 'os';
 import * as path from 'path';
 import * as rm from 'rimraf';
 
@@ -103,9 +104,9 @@ export default class Package extends Command {
         title: 'Install productive dependencies',
         enabled: () => !flags.skipInstall,
         task: async () =>
-          execa('npm', ['install', '--production', '--prefix', outputDir], { stdio: flags.verbose ? 'inherit' : 'ignore' }).catch(e =>
-            this.error(e, { exit: 10 })
-          )
+          execa('npm', ['install', '--production', `--prefix=${outputDir}`, ...(platform() === 'win32' ? ['--force'] : [])], {
+            stdio: flags.verbose ? 'inherit' : 'ignore'
+          }).catch(e => this.error(e, { exit: 10 }))
       }
     ]);
 
