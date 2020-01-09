@@ -139,11 +139,15 @@ export default class Init extends Command {
 
   private getTemplateNames(isScaffold: boolean, addCds: boolean): string[] {
     const templates = ['init'];
+
     if (addCds) {
       templates.push('add-cds');
       if (isScaffold) {
         templates.push('add-cds-scaffold');
       }
+    }
+    if (isScaffold) {
+      templates.push('scaffold-readme');
     }
 
     return templates;

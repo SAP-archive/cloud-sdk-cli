@@ -42,6 +42,7 @@ describe('Init', () => {
       });
 
     const reportsPath = path.resolve(projectDir, 's4hana_pipeline', 'reports');
+    expect(fs.readFileSync(path.resolve(projectDir, 'README.md'))).toMatchSnapshot();
 
     // execute the ci scripts and check if the reports are written
     await execa('npm', ['run', 'ci-backend-unit-test'], { cwd: projectDir, stdio: 'inherit' });
