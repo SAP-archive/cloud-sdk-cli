@@ -3,7 +3,7 @@
  */
 
 const url = jest.fn();
-const openSpy = jest.fn();
+const open = jest.fn();
 jest.mock('cli-ux', () => {
   // Mocking needs to happen before the command is imported
   const cli = jest.requireActual('cli-ux');
@@ -12,7 +12,7 @@ jest.mock('cli-ux', () => {
     default: {
       ...cli.default,
       url,
-      open: openSpy
+      open
     }
   };
 });
@@ -25,6 +25,6 @@ describe('Help Page', () => {
 
     const helpPageUrl = 'https://developers.sap.com/topics/cloud-sdk.html';
     expect(url).toHaveBeenCalledWith(helpPageUrl, helpPageUrl);
-    expect(openSpy).toHaveBeenCalledWith(helpPageUrl);
+    expect(open).toHaveBeenCalledWith(helpPageUrl);
   });
 });

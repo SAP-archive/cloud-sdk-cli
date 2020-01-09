@@ -13,8 +13,8 @@ export default class HelpPage extends Command {
   };
 
   async run() {
-    this.log('Visit us at: ');
-    cli.url('https://developers.sap.com/topics/cloud-sdk.html', 'https://developers.sap.com/topics/cloud-sdk.html');
-    cli.open('https://developers.sap.com/topics/cloud-sdk.html');
+    cli.log('Visit us at: ');
+    await cli.url('https://developers.sap.com/topics/cloud-sdk.html', 'https://developers.sap.com/topics/cloud-sdk.html');
+    await cli.open('https://developers.sap.com/topics/cloud-sdk.html');
   }
 }
