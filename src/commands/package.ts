@@ -104,8 +104,7 @@ export default class Package extends Command {
         title: 'Install productive dependencies',
         enabled: () => !flags.skipInstall,
         task: async () =>
-          execa('npm', ['install', '--production', platform() === 'win32' ? '--force' : ''], {
-            cwd: path.resolve(projectDir, 'outputDir'),
+          execa('npm', ['install', '--production', `--prefix=${outputDir}`, ...(platform() === 'win32' ? ['--force'] : [])], {
             stdio: flags.verbose ? 'inherit' : 'ignore'
           }).catch(e => this.error(e, { exit: 10 }))
       }
