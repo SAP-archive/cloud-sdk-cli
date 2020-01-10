@@ -1,18 +1,7 @@
 /*!
  * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
-const error = jest.fn();
-jest.mock('cli-ux', () => {
-  // Mocking needs to happen before the command is imported
-  const cli = jest.requireActual('cli-ux');
-  return {
-    ...cli,
-    default: {
-      ...cli.default,
-      error
-    }
-  };
-});
+
 jest.mock('../src/utils/warnings');
 
 import execa = require('execa');
@@ -100,12 +89,9 @@ describe('Init', () => {
     fs.copySync(nestAppDir, projectDir, { recursive: true });
     fs.createFileSync(`${projectDir}/.npmrc`);
 
-    await Init.run([projectDir, '--projectName=testingApp', '--startCommand="npm start"', '--skipInstall', '--no-analytics']);
-
-    expect(error).toHaveBeenCalledWith(
-      'A file with the name ".npmrc" already exists. If you want to overwrite it, rerun the command with `--force`.',
-      { exit: 1 }
-    );
+    await expect(
+      Init.run([projectDir, '--projectName=testingApp', '--startCommand="npm start"', '--skipInstall', '--no-analytics'])
+    ).rejects.toMatchSnapshot();
   }, 10000);
 
   it('should add to .gitignore if there is one', async () => {
