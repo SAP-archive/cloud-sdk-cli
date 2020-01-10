@@ -47,11 +47,11 @@ export default class AddCxServer extends Command {
       const tasks = new Listr([
         {
           title: 'Finding potential conflicts',
-          task: () => findConflicts(files, flags.force)
+          task: async () => findConflicts(files, flags.force).catch(e => this.error(e, { exit: 11 }))
         },
         {
           title: 'Creating files',
-          task: () => copyFiles(files, options)
+          task: async () => copyFiles(files, options)
         }
       ]);
 

@@ -2,7 +2,6 @@
  * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
-import cli from 'cli-ux';
 import * as fs from 'fs';
 import { compile } from 'handlebars';
 import * as https from 'https';
@@ -62,11 +61,10 @@ export async function findConflicts(copyDescriptors: CopyDescriptor[], force = f
       conflicts.forEach(copyDescriptor => fs.unlinkSync(copyDescriptor.fileName));
     } else {
       const listOfFiles = conflicts.map(f => path.basename(f.fileName)).join('", "');
-      cli.error(
+      throw new Error(
         conflicts.length > 1
           ? `Files with the names "${listOfFiles}" already exist. If you want to overwrite them, rerun the command with \`--force\`.`
-          : `A file with the name "${listOfFiles}" already exists. If you want to overwrite it, rerun the command with \`--force\`.`,
-        { exit: 1 }
+          : `A file with the name "${listOfFiles}" already exists. If you want to overwrite it, rerun the command with \`--force\`.`
       );
     }
   }
