@@ -52,19 +52,20 @@ export default class AddCds extends Command {
       const tasks = new Listr([
         {
           title: 'Creating files',
-          task: () => {
+          task: async () => {
             const copyDescriptors = getCopyDescriptors(projectDir, getTemplatePaths(['add-cds']));
-            findConflicts(copyDescriptors, flags.force);
-            copyFiles(copyDescriptors, options);
+            await findConflicts(copyDescriptors, flags.force).catch(e => this.error(e, { exit: 11 }));
+            await copyFiles(copyDescriptors, options);
           }
         },
         {
           title: 'Adding dependencies to package.json',
-          task: () => modifyPackageJson({ projectDir, force: flags.force, addCds: true })
+          task: async () => modifyPackageJson({ projectDir, force: flags.force, addCds: true }).catch(e => this.error(e, { exit: 12 }))
         },
         {
           title: 'Installing dependencies',
-          task: () => installDependencies(projectDir, flags.verbose).catch(e => this.error(`Error during npm install: ${e.message}`, { exit: 13 })),
+          task: async () =>
+            installDependencies(projectDir, flags.verbose).catch(e => this.error(`Error during npm install: ${e.message}`, { exit: 13 })),
           enabled: () => !flags.skipInstall
         },
         {

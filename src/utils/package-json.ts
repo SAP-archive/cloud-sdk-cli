@@ -2,7 +2,6 @@
  * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
-import cli from 'cli-ux';
 import * as execa from 'execa';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -61,7 +60,7 @@ const existingProjectPackageJson: PackageJsonChange = {
   dependencies: ['@sap/cloud-sdk-core']
 };
 
-export function parsePackageJson(projectDir: string) {
+export async function parsePackageJson(projectDir: string) {
   try {
     return JSON.parse(
       fs.readFileSync(path.resolve(projectDir, 'package.json'), {
@@ -69,7 +68,7 @@ export function parsePackageJson(projectDir: string) {
       })
     );
   } catch (error) {
-    return cli.error('Your package.json does not contain valid JSON. Please repair or delete it.', { exit: 10 });
+    throw new Error('Your package.json does not contain valid JSON. Please repair or delete it.');
   }
 }
 
@@ -131,16 +130,15 @@ export async function modifyPackageJson({
   force?: boolean;
   addCds?: boolean;
 }) {
-  const originalPackageJson = parsePackageJson(projectDir);
+  const originalPackageJson = await parsePackageJson(projectDir);
   const changes = await getPackageJsonChanges(isScaffold, frontendScripts, addCds);
   const conflicts = findScriptConflicts(originalPackageJson.scripts, changes.scripts);
 
   if (conflicts.length && !force) {
-    return cli.error(
+    throw new Error(
       conflicts.length > 1
         ? `Scripts with the names "${conflicts.join('", "')}" already exist. If you want to overwrite them, rerun the command with \`--force\`.`
-        : `A script with the name "${conflicts.join('", "')}" already exists. If you want to overwrite it, rerun the command with \`--force\`.`,
-      { exit: 12 }
+        : `A script with the name "${conflicts.join('", "')}" already exists. If you want to overwrite it, rerun the command with \`--force\`.`
     );
   }
 

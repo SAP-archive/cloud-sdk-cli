@@ -103,10 +103,10 @@ export default class Init extends Command {
       const tasks = new Listr([
         {
           title: 'Creating files',
-          task: () => {
+          task: async () => {
             const copyDescriptors = getCopyDescriptors(projectDir, getTemplatePaths(this.getTemplateNames(isScaffold, flags.addCds)));
-            findConflicts(copyDescriptors, flags.force);
-            copyFiles(copyDescriptors, options);
+            await findConflicts(copyDescriptors, flags.force).catch(e => this.error(e, { exit: 11 }));
+            await copyFiles(copyDescriptors, options);
           }
         },
         {
@@ -116,11 +116,15 @@ export default class Init extends Command {
         },
         {
           title: 'Adding dependencies to package.json',
-          task: () => modifyPackageJson({ projectDir, isScaffold, frontendScripts: flags.frontendScripts, force: flags.force, addCds: flags.addCds })
+          task: async () =>
+            modifyPackageJson({ projectDir, isScaffold, frontendScripts: flags.frontendScripts, force: flags.force, addCds: flags.addCds }).catch(e =>
+              this.error(e, { exit: 12 })
+            )
         },
         {
           title: 'Installing dependencies',
-          task: () => installDependencies(projectDir, flags.verbose).catch(e => this.error(`Error during npm install: ${e.message}`, { exit: 13 })),
+          task: async () =>
+            installDependencies(projectDir, flags.verbose).catch(e => this.error(`Error during npm install: ${e.message}`, { exit: 13 })),
           enabled: () => !flags.skipInstall
         },
         {
@@ -154,7 +158,7 @@ export default class Init extends Command {
   }
 
   private async getOptions(projectDir: string, startCommand?: string, projectName?: string) {
-    const { name, scripts } = parsePackageJson(projectDir);
+    const { name, scripts } = await parsePackageJson(projectDir).catch(err => this.error(err, { exit: 10 }));
 
     const options: { [key: string]: string } = {
       projectName:

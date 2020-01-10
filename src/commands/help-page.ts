@@ -3,7 +3,7 @@
  */
 
 import { Command } from '@oclif/command';
-import cli from 'cli-ux';
+import * as execa from 'execa';
 
 export default class HelpPage extends Command {
   static description = 'Display the product page, which contains tutorials and links to all relevant resources';
@@ -13,6 +13,6 @@ export default class HelpPage extends Command {
     this.log('  https://community.sap.com/topics/cloud-sdk');
     this.log('  https://developers.sap.com/topics/cloud-sdk.html');
 
-    await cli.open('https://community.sap.com/topics/cloud-sdk');
+    await execa('open', ['https://community.sap.com/topics/cloud-sdk']);
   }
 }
