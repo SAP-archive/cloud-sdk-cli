@@ -22,22 +22,17 @@ describe('generate-odata-client', () => {
   });
 
   it('should fail if the mandatory parameters are not there', async () => {
-    try {
-      await GenerateODataClient.run([]);
-    } catch (e) {
-      expect(e.message).toContain('-i, --inputDir INPUTDIR');
-    }
+    await expect(GenerateODataClient.run([])).rejects.toThrowError('-i, --inputDir INPUTDIR');
   });
 
   it('should parse strings and with --no- it should lead to all false.', async () => {
     const expected = getParsedInputWithAllBooleanFlagsFalse();
     delete expected.projectDir;
-    try {
-      await GenerateODataClient.run([...getCliInputWithAllBooleanFlagsFalse(), '--projectDir', getProjectDir()]);
-    } catch (e) {
-      expect(e.message).toContain('ENOENT: no such file or directory');
-      expect(spyToGeneratorSDK).toHaveReturnedWith(expected);
-    }
+
+    await expect(GenerateODataClient.run([...getCliInputWithAllBooleanFlagsFalse(), '--projectDir', getProjectDir()])).rejects.toThrowError(
+      'ENOENT: no such file or directory'
+    );
+    expect(spyToGeneratorSDK).toHaveReturnedWith(expected);
   });
 
   it('should resolve the projectdir', async () => {
@@ -45,12 +40,10 @@ describe('generate-odata-client', () => {
     if (process.platform !== 'win32') {
       const expected = getDefault(getProjectDir());
 
-      try {
-        await GenerateODataClient.run(['-i', 'input', '-o', 'output', '--projectDir', getProjectDir()]);
-      } catch (e) {
-        expect(e.message).toContain('ENOENT: no such file or directory');
-        expect(spyToGeneratorSDK).toHaveReturnedWith(expected);
-      }
+      await expect(GenerateODataClient.run(['-i', 'input', '-o', 'output', '--projectDir', getProjectDir()])).rejects.toThrowError(
+        'ENOENT: no such file or directory'
+      );
+      expect(spyToGeneratorSDK).toHaveReturnedWith(expected);
     }
   });
 
@@ -77,12 +70,8 @@ describe('generate-odata-client', () => {
       for (const key of Object.keys(generatorOptionsSDK)) {
         const argsExpected = getInputAndExpected(key as keyof GeneratorOptionsSDK);
         if (argsExpected) {
-          try {
-            await GenerateODataClient.run(argsExpected.args);
-          } catch (e) {
-            expect(e.message).toContain('ENOENT: no such file or directory');
-            expect(spyToGeneratorSDK).toHaveReturnedWith(argsExpected.expected);
-          }
+          await expect(GenerateODataClient.run(argsExpected.args)).rejects.toThrowError('ENOENT: no such file or directory');
+          expect(spyToGeneratorSDK).toHaveReturnedWith(argsExpected.expected);
         }
       }
     }
