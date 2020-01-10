@@ -105,9 +105,7 @@ describe('Init', () => {
       .split('\n')
       .filter(entry => entry !== '');
 
-    expect(gitignoreEntries).toContain('credentials.json');
-    expect(gitignoreEntries).toContain('/s4hana_pipeline');
-    expect(gitignoreEntries).toContain('/deployment');
+    expect(gitignoreEntries).toIncludeAllMembers(['credentials.json', '/s4hana_pipeline', '/deployment']);
     expect(gitignoreEntries.length).toBeGreaterThan(29);
   }, 10000);
 
@@ -145,9 +143,7 @@ describe('Init', () => {
 
     expect(dependencies).toContain('@sap/cloud-sdk-core');
     expect(devDependencies).toContain('@sap/cloud-sdk-test-util');
-    ['ci-build', 'ci-package', 'ci-backend-unit-test', 'ci-frontend-unit-test', 'ci-integration-test', 'ci-e2e'].forEach(script =>
-      expect(scripts).toContain(script)
-    );
+    expect(scripts).toIncludeAllMembers(['ci-build', 'ci-package', 'ci-backend-unit-test', 'ci-frontend-unit-test', 'ci-integration-test', 'ci-e2e']);
   }, 10000);
 
   it('should add the analytics file', async () => {
