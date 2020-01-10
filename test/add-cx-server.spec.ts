@@ -2,19 +2,6 @@
  * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
-const error = jest.fn();
-jest.mock('cli-ux', () => {
-  // Mocking needs to happen before the command is imported
-  const cli = jest.requireActual('cli-ux');
-  return {
-    ...cli,
-    default: {
-      ...cli.default,
-      error
-    }
-  };
-});
-
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import AddCxServer from '../src/commands/add-cx-server';
@@ -75,13 +62,6 @@ describe('Add CX Server', () => {
     fs.mkdirSync(path.resolve(projectDir, 'cx-server'), { recursive: true });
     fs.createFileSync(path.resolve(projectDir, 'cx-server', 'cx-server'));
 
-    await AddCxServer.run([projectDir]);
-
-    expect(error).toHaveBeenCalledWith(
-      'A file with the name "cx-server" already exists. If you want to overwrite it, rerun the command with `--force`.',
-      {
-        exit: 1
-      }
-    );
+    await expect(AddCxServer.run([projectDir])).rejects.toMatchSnapshot();
   }, 30000);
 });

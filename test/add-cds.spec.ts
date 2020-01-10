@@ -3,7 +3,6 @@
  */
 
 const prompt = jest.fn().mockResolvedValue('mock-project');
-const error = jest.fn();
 jest.mock('cli-ux', () => {
   // Mocking needs to happen before the command is imported
   const cli = jest.requireActual('cli-ux');
@@ -11,8 +10,7 @@ jest.mock('cli-ux', () => {
     ...cli,
     default: {
       ...cli.default,
-      prompt,
-      error
+      prompt
     }
   };
 });
@@ -54,13 +52,6 @@ describe('Add CDS', () => {
     fs.createFileSync(path.resolve(projectDir, 'db', 'data-model.cds'));
     fs.writeFileSync(path.resolve(projectDir, 'db', 'data-model.cds'), 'some text', 'utf8');
 
-    await AddCds.run([projectDir, '--skipInstall']);
-
-    expect(error).toHaveBeenCalledWith(
-      'A file with the name "data-model.cds" already exists. If you want to overwrite it, rerun the command with `--force`.',
-      {
-        exit: 1
-      }
-    );
+    await expect(AddCds.run([projectDir, '--skipInstall'])).rejects.toMatchSnapshot();
   }, 10000);
 });

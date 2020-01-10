@@ -3,20 +3,16 @@
  */
 
 const prompt = jest.fn().mockResolvedValue('mock-project');
-const error = jest.fn();
 jest.mock('cli-ux', () => {
-  // Mocking needs to happen before the command is imported
   const cli = jest.requireActual('cli-ux');
   return {
     ...cli,
     default: {
       ...cli.default,
-      prompt,
-      error
+      prompt
     }
   };
 });
-
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import AddApprouter from '../src/commands/add-approuter';
@@ -71,13 +67,6 @@ describe('Add Approuter', () => {
     fs.createFileSync(path.resolve(projectDir, 'approuter', 'xs-security.json'));
     fs.writeFileSync(path.resolve(projectDir, 'approuter', 'xs-security.json'), JSON.stringify({ 'tenant-mode': 'shared' }), 'utf8');
 
-    await AddApprouter.run([projectDir]);
-
-    expect(error).toHaveBeenCalledWith(
-      'A file with the name "xs-security.json" already exists. If you want to overwrite it, rerun the command with `--force`.',
-      {
-        exit: 1
-      }
-    );
+    await expect(AddApprouter.run([projectDir])).rejects.toMatchSnapshot();
   });
 });
