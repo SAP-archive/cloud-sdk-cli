@@ -90,7 +90,8 @@
     "prepack": "rm -rf lib && tsc -b && cp -R src/templates lib/ && oclif-dev manifest && oclif-dev readme",
     "postpack": "rm -f oclif.manifest.json",
     "pretest": "rm -rf test/test-output/*-spec/ && npm run lint && tsc -b",
-    "test": "jest",
+    "test": "jest --testNamePattern=\"^((?!\\[SLOW\\]).)*$\"",
+    "test:full": "jest",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "test:watch-debug": "node --inspect-brk node_modules/.bin/jest --watch --runInBand",
     "version": "oclif-dev readme && git add README.md"

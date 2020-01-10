@@ -20,7 +20,7 @@ describe('Init', () => {
     fs.removeSync(testOutputDir);
   });
 
-  it('should create a new project with the necessary files', async () => {
+  it('[SLOW] should create a new project with the necessary files', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'full-init');
     await Init.run([projectDir, '--projectName=testingApp', '--buildScaffold', '--no-analytics']);
 
@@ -43,7 +43,7 @@ describe('Init', () => {
     expect(fs.readdirSync(path.resolve(reportsPath, 'coverage-reports', 'backend-integration')).length).toBeGreaterThan(1);
   }, 240000);
 
-  it('should create a new project with the necessary files when adding cds', async () => {
+  it('[SLOW] should create a new project with the necessary files when adding cds', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'full-init-cds');
     await Init.run([projectDir, '--projectName=testingApp', '--buildScaffold', '--no-analytics', '--addCds']);
 

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Scaffold Utils should build the scaffold 1`] = `
+exports[`Scaffold Utils [SLOW] should build the scaffold 1`] = `
 Array [
   ".git",
   ".gitignore",
