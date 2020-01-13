@@ -507,7 +507,7 @@
     uuid "3.3.2"
     voca "1.4.0"
 
-"@sap/cloud-sdk-generator@>=1.14.0":
+"@sap/cloud-sdk-generator@>=1.15.1":
   version "1.15.0"
   resolved "https://npm.sap.com/@sap/cloud-sdk-generator/-/cloud-sdk-generator-1.15.0.tgz#e3fa09637e815bdc9341a70b733dd6c0cf35678f"
   integrity sha512-G904iqxzY4RLj5plY13KfRvGFzu3D9sJsZUiPXTEdXnYXjkKvRvyWdrX7Ut/KzCmNT11Lg4QwlFlvSONxxcA6A==

@@ -36,15 +36,12 @@ describe('generate-odata-client', () => {
   });
 
   it('should resolve the projectdir', async () => {
-    // TODO there was a issue in the SDK for the service-mapping.json file and windows. Onve the fix is out put this test back int.
-    if (process.platform !== 'win32') {
       const expected = getDefault(getProjectDir());
 
       await expect(GenerateODataClient.run(['-i', 'input', '-o', 'output', '--projectDir', getProjectDir()])).rejects.toThrowError(
         'ENOENT: no such file or directory'
       );
       expect(spyToGeneratorSDK).toHaveReturnedWith(expected);
-    }
   });
 
   function getProjectDir() {
@@ -65,8 +62,6 @@ describe('generate-odata-client', () => {
   }
 
   it('should pass each boolean flags correctly', async () => {
-    // TODO there was a issue in the SDK for the service-mapping.json file and windows. Onve the fix is out put this test back int.
-    if (process.platform !== 'win32') {
       for (const key of Object.keys(generatorOptionsSDK)) {
         const argsExpected = getInputAndExpected(key as keyof GeneratorOptionsSDK);
         if (argsExpected) {
@@ -74,7 +69,6 @@ describe('generate-odata-client', () => {
           expect(spyToGeneratorSDK).toHaveReturnedWith(argsExpected.expected);
         }
       }
-    }
   }, 10000);
 
   function getDefault(projectDir: string): GeneratorOptionsSDK {
