@@ -54,18 +54,20 @@ export default class AddCds extends Command {
           title: 'Creating files',
           task: async () => {
             const copyDescriptors = getCopyDescriptors(projectDir, getTemplatePaths(['add-cds']));
-            await findConflicts(copyDescriptors, flags.force).catch(e => this.error(e, { exit: 11 }));
+            await findConflicts(copyDescriptors, flags.force).catch(e => this.error(flags.verbose ? e.stack : e.message, { exit: 11 }));
             await copyFiles(copyDescriptors, options);
           }
         },
         {
           title: 'Adding dependencies to package.json',
-          task: async () => modifyPackageJson({ projectDir, force: flags.force, addCds: true }).catch(e => this.error(e, { exit: 12 }))
+          task: async () =>
+            modifyPackageJson({ projectDir, force: flags.force, addCds: true }).catch(e =>
+              this.error(flags.verbose ? e.stack : e.message, { exit: 12 })
+            )
         },
         {
           title: 'Installing dependencies',
-          task: async () =>
-            installDependencies(projectDir, flags.verbose).catch(e => this.error(`Error during npm install: ${e.message}`, { exit: 13 })),
+          task: async () => installDependencies(projectDir, flags.verbose).catch(e => this.error(flags.verbose ? e.stack : e.message, { exit: 13 })),
           enabled: () => !flags.skipInstall
         },
         {
@@ -77,8 +79,8 @@ export default class AddCds extends Command {
       await tasks.run();
 
       this.printSuccessMessage();
-    } catch (error) {
-      this.error(error, { exit: 1 });
+    } catch (e) {
+      this.error(flags.verbose ? e.stack : e.message, { exit: 1 });
     }
   }
 

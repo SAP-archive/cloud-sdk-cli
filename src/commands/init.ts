@@ -96,7 +96,9 @@ export default class Init extends Command {
       if (isScaffold) {
         await buildScaffold(projectDir, flags.verbose, flags.addCds);
       }
-      const options = await this.getOptions(projectDir, isScaffold ? 'npm run start:prod' : flags.startCommand, flags.projectName);
+      const options = await this.getOptions(projectDir, isScaffold ? 'npm run start:prod' : flags.startCommand, flags.projectName).catch(e =>
+        this.error(flags.verbose ? e.stack : e.message, { exit: 10 })
+      );
 
       await usageAnalytics(projectDir, flags.analytics, flags.analyticsSalt);
 
@@ -105,7 +107,7 @@ export default class Init extends Command {
           title: 'Creating files',
           task: async () => {
             const copyDescriptors = getCopyDescriptors(projectDir, getTemplatePaths(this.getTemplateNames(isScaffold, flags.addCds)));
-            await findConflicts(copyDescriptors, flags.force).catch(e => this.error(e, { exit: 11 }));
+            await findConflicts(copyDescriptors, flags.force).catch(e => this.error(flags.verbose ? e.stack : e.message, { exit: 11 }));
             await copyFiles(copyDescriptors, options);
           }
         },
@@ -118,13 +120,12 @@ export default class Init extends Command {
           title: 'Adding dependencies to package.json',
           task: async () =>
             modifyPackageJson({ projectDir, isScaffold, frontendScripts: flags.frontendScripts, force: flags.force, addCds: flags.addCds }).catch(e =>
-              this.error(e, { exit: 12 })
+              this.error(flags.verbose ? e.stack : e.message, { exit: 12 })
             )
         },
         {
           title: 'Installing dependencies',
-          task: async () =>
-            installDependencies(projectDir, flags.verbose).catch(e => this.error(`Error during npm install: ${e.message}`, { exit: 13 })),
+          task: async () => installDependencies(projectDir, flags.verbose).catch(e => this.error(flags.verbose ? e.stack : e.message, { exit: 13 })),
           enabled: () => !flags.skipInstall
         },
         {
@@ -137,7 +138,7 @@ export default class Init extends Command {
 
       this.printSuccessMessage(isScaffold, flags.addCds);
     } catch (error) {
-      this.error(error, { exit: 1 });
+      this.error(flags.verbose ? error.stack : error.message, { exit: 1 });
     }
   }
 
@@ -158,7 +159,7 @@ export default class Init extends Command {
   }
 
   private async getOptions(projectDir: string, startCommand?: string, projectName?: string) {
-    const { name, scripts } = await parsePackageJson(projectDir).catch(err => this.error(err, { exit: 10 }));
+    const { name, scripts } = await parsePackageJson(projectDir);
 
     const options: { [key: string]: string } = {
       projectName:
