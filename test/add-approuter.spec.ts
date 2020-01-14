@@ -34,11 +34,7 @@ describe('Add Approuter', () => {
     expect(files).toContain('approuter');
 
     const approuterFiles = fs.readdirSync(path.resolve(projectDir, 'approuter'));
-    expect(approuterFiles).toContain('.npmrc');
-    expect(approuterFiles).toContain('manifest.yml');
-    expect(approuterFiles).toContain('package.json');
-    expect(approuterFiles).toContain('xs-app.json');
-    expect(approuterFiles).toContain('xs-security.json');
+    expect(approuterFiles).toIncludeAllMembers(['.npmrc', 'manifest.yml', 'package.json', 'xs-app.json', 'xs-security.json']);
   });
 
   it('should add necessary files to an existing project', async () => {
@@ -52,11 +48,7 @@ describe('Add Approuter', () => {
     expect(files).toContain('approuter');
 
     const approuterFiles = fs.readdirSync(path.resolve(projectDir, 'approuter'));
-    expect(approuterFiles).toContain('.npmrc');
-    expect(approuterFiles).toContain('manifest.yml');
-    expect(approuterFiles).toContain('package.json');
-    expect(approuterFiles).toContain('xs-app.json');
-    expect(approuterFiles).toContain('xs-security.json');
+    expect(approuterFiles).toIncludeAllMembers(['.npmrc', 'manifest.yml', 'package.json', 'xs-app.json', 'xs-security.json']);
   });
 
   it('should detect and fail if there are conflicts', async () => {

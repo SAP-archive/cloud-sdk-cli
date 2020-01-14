@@ -36,6 +36,6 @@ jobs:
       - name: Install Dependencies
         run: yarn install --frozen-lockfile --ignore-engines
       - name: Run tests
-        run: yarn test
+        run: yarn run test:full
         env:
           CI: true

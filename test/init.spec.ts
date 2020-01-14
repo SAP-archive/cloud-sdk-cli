@@ -20,7 +20,7 @@ describe('Init', () => {
     fs.removeSync(testOutputDir);
   });
 
-  it('should create a new project with the necessary files', async () => {
+  it('[E2E] should create a new project with the necessary files', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'full-init');
     await Init.run([projectDir, '--projectName=testingApp', '--buildScaffold', '--no-analytics']);
 
@@ -43,7 +43,7 @@ describe('Init', () => {
     expect(fs.readdirSync(path.resolve(reportsPath, 'coverage-reports', 'backend-integration')).length).toBeGreaterThan(1);
   }, 240000);
 
-  it('should create a new project with the necessary files when adding cds', async () => {
+  it('[E2E] should create a new project with the necessary files when adding cds', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'full-init-cds');
     await Init.run([projectDir, '--projectName=testingApp', '--buildScaffold', '--no-analytics', '--addCds']);
 
@@ -69,7 +69,7 @@ describe('Init', () => {
         expect(fs.existsSync(path)).toBe(true);
       });
     expect(fs.existsSync(path.resolve(projectDir, 'test'))).toBe(false);
-  }, 10000);
+  });
 
   it('should add necessary files to an existing project when adding cds', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'add-to-existing');
@@ -82,7 +82,7 @@ describe('Init', () => {
       .forEach(path => {
         expect(fs.existsSync(path)).toBe(true);
       });
-  }, 10000);
+  });
 
   it('init should detect and fail if there are conflicts', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'detect-conflicts');
@@ -92,7 +92,7 @@ describe('Init', () => {
     await expect(
       Init.run([projectDir, '--projectName=testingApp', '--startCommand="npm start"', '--skipInstall', '--no-analytics'])
     ).rejects.toMatchSnapshot();
-  }, 10000);
+  });
 
   it('should add to .gitignore if there is one', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'add-to-gitignore');
@@ -105,11 +105,9 @@ describe('Init', () => {
       .split('\n')
       .filter(entry => entry !== '');
 
-    expect(gitignoreEntries).toContain('credentials.json');
-    expect(gitignoreEntries).toContain('/s4hana_pipeline');
-    expect(gitignoreEntries).toContain('/deployment');
+    expect(gitignoreEntries).toIncludeAllMembers(['credentials.json', '/s4hana_pipeline', '/deployment']);
     expect(gitignoreEntries.length).toBeGreaterThan(29);
-  }, 10000);
+  });
 
   it('should show a warning if the project is not using git', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'warn-on-no-git');
@@ -128,7 +126,7 @@ describe('Init', () => {
       '  /deployment'
     );
     expect(getWarnings).toHaveBeenCalled();
-  }, 10000);
+  });
 
   it('should add our scripts and dependencies to the package.json', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'add-scripts-and-dependencies');
@@ -145,10 +143,8 @@ describe('Init', () => {
 
     expect(dependencies).toContain('@sap/cloud-sdk-core');
     expect(devDependencies).toContain('@sap/cloud-sdk-test-util');
-    ['ci-build', 'ci-package', 'ci-backend-unit-test', 'ci-frontend-unit-test', 'ci-integration-test', 'ci-e2e'].forEach(script =>
-      expect(scripts).toContain(script)
-    );
-  }, 10000);
+    expect(scripts).toIncludeAllMembers(['ci-build', 'ci-package', 'ci-backend-unit-test', 'ci-frontend-unit-test', 'ci-integration-test', 'ci-e2e']);
+  });
 
   it('should add the analytics file', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'add-to-gitignore');
@@ -173,5 +169,5 @@ describe('Init', () => {
     await Init.run([projectDir, '--projectName=testingApp', '--startCommand="npm start"', '--skipInstall', '--no-analytics']);
 
     expect(JSON.parse(fs.readFileSync(`${projectDir}/sap-cloud-sdk-analytics.json`, 'utf8'))).toEqual({ enabled: false });
-  }, 10000);
+  });
 });
