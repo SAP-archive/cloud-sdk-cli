@@ -3,7 +3,7 @@
  */
 const execa = jest
   .fn()
-  .mockResolvedValueOnce({ exitCode: 1 })
+  .mockRejectedValueOnce({ exitCode: 1 })
   .mockResolvedValueOnce('installed')
   .mockResolvedValueOnce('generated');
 jest.mock('execa', () => execa);
