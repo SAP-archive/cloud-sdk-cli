@@ -47,13 +47,15 @@ export default class GenerateODataClient extends Command {
       .filter(([key, value]) => typeof value !== 'undefined' && generatorOptionsSDK.hasOwnProperty(key))
       .map(([key, value]) => `--${key}=${value}`);
 
-    const { exitCode } = await execa('npm', ['ls', '-g', '@sap/cloud-sdk-generator']);
-
-    if (exitCode === 1) {
-      if (await cli.confirm('Do you want to install the @sap/cloud-sdk-generator globally? (y|n)')) {
-        await execa('npm', ['install', '--global', '--@sap:registry=https://npm.sap.com', '@sap/cloud-sdk-generator']);
-      } else {
-        this.exit(1);
+    try {
+      await execa('npm', ['ls', '-g', '@sap/cloud-sdk-generator']);
+    } catch ({ exitCode }) {
+      if (exitCode === 1) {
+        if (await cli.confirm('Do you want to install the @sap/cloud-sdk-generator globally? (y|n)')) {
+          await execa('npm', ['install', '--global', '--@sap:registry=https://npm.sap.com', '@sap/cloud-sdk-generator']);
+        } else {
+          this.exit(1);
+        }
       }
     }
 
