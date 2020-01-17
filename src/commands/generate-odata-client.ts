@@ -51,10 +51,15 @@ export default class GenerateODataClient extends Command {
       await execa('npm', ['ls', '-g', '@sap/cloud-sdk-generator']);
     } catch ({ exitCode }) {
       if (exitCode === 1) {
+        this.log('');
+        this.log('To generate an OData client, it is necessary to install the @sap/cloud-sdk-generator.');
+        this.log('For now, the CLI expects the generator to be installed globally.');
+        this.log('');
+
         if (await cli.confirm('Do you want to install the @sap/cloud-sdk-generator globally? (y|n)')) {
           await execa('npm', ['install', '--global', '--@sap:registry=https://npm.sap.com', '@sap/cloud-sdk-generator']);
         } else {
-          this.exit(1);
+          this.error('It is required to have the @sap/cloud-sdk-generator installed globally. Please install and rerun.', { exit: 1 });
         }
       }
     }
