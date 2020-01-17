@@ -3,8 +3,10 @@
  */
 
 import { Command } from '@oclif/command';
-import { generate, generatorOptionsCli as generatorOptionsSDK } from '@sap/cloud-sdk-generator';
-import { BoolArgType, generatorOptionCli, StringArgType, toBooleanFlag, toGeneratorSDK, toStringFlag } from '../utils/generate-odata-client-util';
+import cli from 'cli-ux';
+import * as execa from 'execa';
+import { generatorOptionsSDK } from '../utils';
+import { BoolArgType, generatorOptionCli, StringArgType, toBooleanFlag, toStringFlag } from '../utils/generate-odata-client-util';
 
 export default class GenerateODataClient extends Command {
   static description =
@@ -41,6 +43,29 @@ export default class GenerateODataClient extends Command {
   async run() {
     const { flags } = this.parse(GenerateODataClient);
 
-    await generate(toGeneratorSDK(flags));
+    const yargsFlags = Object.entries(flags)
+      .filter(([key, value]) => typeof value !== 'undefined' && generatorOptionsSDK.hasOwnProperty(key))
+      .map(([key, value]) => `--${key}=${value}`);
+
+    try {
+      await execa('npm', ['ls', '-g', '@sap/cloud-sdk-generator']);
+    } catch ({ exitCode }) {
+      if (exitCode === 1) {
+        this.log('');
+        this.log('To generate an OData client, it is necessary to install the @sap/cloud-sdk-generator.');
+        this.log('For now, the CLI expects the generator to be installed globally.');
+        this.log('');
+
+        if (await cli.confirm('Do you want to install the @sap/cloud-sdk-generator globally? (y|n)')) {
+          await execa('npm', ['install', '--global', '--@sap:registry=https://npm.sap.com', '@sap/cloud-sdk-generator']);
+        } else {
+          this.error('It is required to have the @sap/cloud-sdk-generator installed globally. Please install and rerun.', { exit: 1 });
+        }
+      }
+    }
+
+    await execa('generate-odata-client', yargsFlags, {
+      cwd: flags.projectDir || '.'
+    });
   }
 }

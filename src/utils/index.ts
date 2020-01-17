@@ -4,6 +4,7 @@
 
 export * from './copy-list';
 export * from './generate-odata-client-util';
+export * from './generator-options';
 export * from './git-ignore';
 export * from './jest-config';
 export * from './manifest-yaml';
