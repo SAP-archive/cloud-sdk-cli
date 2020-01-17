@@ -36,5 +36,5 @@ describe('generate-odata-client', () => {
     ).toResolve();
 
     expect(fs.readdirSync(path.resolve(pathForTests, 'output'))).toHaveLength(1);
-  }, 60000);
+  }, 120000);
 });
