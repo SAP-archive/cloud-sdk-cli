@@ -5,15 +5,19 @@
 import { flags } from '@oclif/command';
 import { AlphabetLowercase, AlphabetUppercase } from '@oclif/parser/lib/alphabet';
 import { IBooleanFlag, IOptionFlag } from '@oclif/parser/lib/flags';
-import { GeneratorOptions as GeneratorOptionsSDK, generatorOptionsCli as generatorOptionsSDK } from '@sap/cloud-sdk-generator';
 import * as path from 'path';
 import { Options } from 'yargs';
+import { GeneratorOptionsSDK } from './generator-options';
 
 interface GeneratorOptionCli {
-  projectDir: Options;
+  projectDir: string;
 }
 
-export const generatorOptionCli: GeneratorOptionCli = {
+type KeysToOptions = {
+  [optionName in keyof GeneratorOptionCli]: Options;
+};
+
+export const generatorOptionCli: KeysToOptions = {
   projectDir: {
     default: '.',
     describe: 'Path to the folder in which the VDM should be created. The input and output dir are relative to this directory.',
@@ -41,12 +45,6 @@ export type StringArgType = {
 export type FlagsParsed = {
   [Key in keyof AllOptions]: AllOptions[Key] extends boolean ? boolean : string | undefined;
 };
-
-export function toGeneratorSDK(cliFlags: FlagsParsed): GeneratorOptionsSDK {
-  return Object.entries(cliFlags)
-    .filter(([key, value]) => typeof value !== 'undefined' && generatorOptionsSDK.hasOwnProperty(key))
-    .reduce((prev, [key, value]) => ({ ...prev, [key]: value }), {}) as GeneratorOptionsSDK;
-}
 
 export function toBooleanFlag(yargsBool: Options): IBooleanFlag<boolean> {
   const extendedDescription = `${yargsBool.describe} [default: ${yargsBool.default}].`;
