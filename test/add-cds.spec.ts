@@ -53,5 +53,5 @@ describe('Add CDS', () => {
     fs.writeFileSync(path.resolve(projectDir, 'db', 'data-model.cds'), 'some text', 'utf8');
 
     await expect(AddCds.run([projectDir, '--skipInstall'])).rejects.toMatchSnapshot();
-  }, 10000);
+  });
 });

@@ -43,7 +43,7 @@ describe('Package', () => {
     expect(fs.readdirSync(path.resolve(projectDir, 'deployment'))).toEqual(['README.md']);
   });
 
-  it('should install productive dependencies only', async () => {
+  it('[E2E] should install productive dependencies only', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'productive-dependencies');
     fs.copySync(nestAppDir, projectDir, { recursive: true });
     await Package.run([projectDir]);

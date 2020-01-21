@@ -23,9 +23,8 @@ describe('Add CX Server', () => {
     expect(files).toContain('cx-server');
 
     const approuterFiles = fs.readdirSync(path.resolve(projectDir, 'cx-server'));
-    expect(approuterFiles).toContain('cx-server');
-    expect(approuterFiles).toContain('server.cfg');
-  }, 30000);
+    expect(approuterFiles).toIncludeAllMembers(['cx-server', 'server.cfg']);
+  });
 
   it('should add the necessary files on windows', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'add-cx-server');
@@ -36,10 +35,8 @@ describe('Add CX Server', () => {
     expect(files).toContain('cx-server');
 
     const approuterFiles = fs.readdirSync(path.resolve(projectDir, 'cx-server'));
-    expect(approuterFiles).toContain('cx-server');
-    expect(approuterFiles).toContain('cx-server.bat');
-    expect(approuterFiles).toContain('server.cfg');
-  }, 30000);
+    expect(approuterFiles).toIncludeAllMembers(['cx-server', 'cx-server.bat', 'server.cfg']);
+  });
 
   it('should add necessary files to an existing project', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'add-cx-server-to-existing-project');
@@ -52,9 +49,8 @@ describe('Add CX Server', () => {
     expect(files).toContain('cx-server');
 
     const approuterFiles = fs.readdirSync(path.resolve(projectDir, 'cx-server'));
-    expect(approuterFiles).toContain('cx-server');
-    expect(approuterFiles).toContain('server.cfg');
-  }, 30000);
+    expect(approuterFiles).toIncludeAllMembers(['cx-server', 'server.cfg']);
+  });
 
   it('should detect and fail if there are conflicts', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'add-cx-server-conflicts');
@@ -63,5 +59,5 @@ describe('Add CX Server', () => {
     fs.createFileSync(path.resolve(projectDir, 'cx-server', 'cx-server'));
 
     await expect(AddCxServer.run([projectDir])).rejects.toMatchSnapshot();
-  }, 30000);
+  });
 });
