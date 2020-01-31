@@ -50,7 +50,7 @@ describe('Add CX Server', () => {
 
     const approuterFiles = fs.readdirSync(path.resolve(projectDir, 'cx-server'));
     expect(approuterFiles).toIncludeAllMembers(['cx-server', 'server.cfg']);
-  });
+  }, 10000);
 
   it('should detect and fail if there are conflicts', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'add-cx-server-conflicts');
