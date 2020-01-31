@@ -23,7 +23,7 @@ describe('Package', () => {
     const copiedFiles = fs.readdirSync(path.resolve(projectDir, 'deployment'));
     expect(copiedFiles).toIncludeAllMembers(['package.json', 'package-lock.json']);
     expect(copiedFiles).toHaveLength(2);
-  });
+  }, 10000);
 
   it('should copy files correctly with custom globs', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'globs');
