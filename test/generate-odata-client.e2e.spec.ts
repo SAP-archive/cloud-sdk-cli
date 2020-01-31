@@ -27,9 +27,9 @@ describe('generate-odata-client', () => {
     expect(
       await GenerateODataClient.run([
         '-i',
-        path.resolve(pathForTests, 'edmxSource'),
+        'edmxSource',
         '-o',
-        path.resolve(pathForTests, 'output'),
+        'output',
         '--projectDir',
         pathForTests
       ])
