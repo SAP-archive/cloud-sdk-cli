@@ -81,7 +81,10 @@
   "np": {
     "publish": false
   },
-  "repository": "https://github.com/SAP/cloud-sdk-cli",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SAP/cloud-sdk-cli"
+  },
   "scripts": {
     "lint": "tslint -p . -t stylish && tslint -p test -t stylish && prettier -c \"**/*.ts\"",
     "fix:formatting": "tslint -p . -t stylish --fix && tslint -p test -t stylish --fix && prettier --write \"**/*.ts\"",
