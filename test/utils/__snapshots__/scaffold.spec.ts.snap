@@ -2,8 +2,10 @@
 
 exports[`Scaffold Utils [E2E] should build the scaffold 1`] = `
 Array [
+  ".eslintrc.js",
   ".git",
   ".gitignore",
+  ".prettierrc",
   "nest-cli.json",
   "package.json",
   "src",
