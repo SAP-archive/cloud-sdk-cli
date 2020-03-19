@@ -2,10 +2,13 @@
  * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
+jest.mock('../src/utils/warnings');
+
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import Package from '../src/commands/package';
 import { getCleanProjectDir, getTestOutputDir } from './test-utils';
+import { getWarnings, recordWarning } from '../src/utils';
 
 const testOutputDir = getTestOutputDir(__filename);
 const nestAppDir = path.resolve('test', 'nest');
@@ -51,4 +54,15 @@ describe('Package', () => {
     expect(fs.readdirSync(path.resolve(projectDir, 'deployment'))).toIncludeAllMembers(['package.json', 'package-lock.json', 'node_modules']);
     expect(fs.readdirSync(path.resolve(projectDir, 'deployment', 'node_modules', '@nestjs'))).not.toContain('cli');
   }, 60000);
+
+  it('should show warning messages when old dependencies are used', async () => {
+    const projectDir = getCleanProjectDir(testOutputDir, 'no-params');
+    fs.copySync(nestAppDir, projectDir, { recursive: true });
+    await Package.run([projectDir, '--skipInstall']);
+
+    expect(recordWarning).toHaveBeenCalledWith(
+      'Old SAP Cloud SDK: @sap/cloud-sdk-core is detected.'
+    );
+    expect(getWarnings).toHaveBeenCalled();
+  }, 10000);
 });
