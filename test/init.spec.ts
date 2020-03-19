@@ -141,8 +141,8 @@ describe('Init', () => {
     const devDependencies = Object.keys(packageJson.devDependencies);
     const scripts = Object.keys(packageJson.scripts);
 
-    expect(dependencies).toContain('@sap/cloud-sdk-core');
-    expect(devDependencies).toContain('@sap/cloud-sdk-test-util');
+    expect(dependencies).toContain('@sap-cloud-sdk/core');
+    expect(devDependencies).toContain('@sap-cloud-sdk/test-util');
     expect(scripts).toIncludeAllMembers(['ci-build', 'ci-package', 'ci-backend-unit-test', 'ci-frontend-unit-test', 'ci-integration-test', 'ci-e2e']);
   });
 
