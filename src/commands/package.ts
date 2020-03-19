@@ -123,13 +123,9 @@ export default class Package extends Command {
     this.printSuccessMessage();
   }
 
-  private printSuccessMessage(){
+  private printSuccessMessage() {
     const warnings = getWarnings();
-    const body = [
-      '🚀 Please migrate to new packages.',
-      'Please find how to migrate here:',
-      'MISSING LINK'
-    ];
+    const body = ['🚀 Please migrate to new packages.', 'Please find how to migrate here:', 'MISSING LINK'];
     if (warnings) {
       this.log(boxMessage(['⚠️ Package finished with warnings:', ...warnings, '', ...body]));
     } else {

@@ -2,7 +2,7 @@
  * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
-export * from './check-old-dependencies'
+export * from './check-old-dependencies';
 export * from './copy-list';
 export * from './generate-odata-client-util';
 export * from './generator-options';

@@ -60,9 +60,7 @@ describe('Package', () => {
     fs.copySync(nestAppDir, projectDir, { recursive: true });
     await Package.run([projectDir, '--skipInstall']);
 
-    expect(recordWarning).toHaveBeenCalledWith(
-      'Old SAP Cloud SDK: @sap/cloud-sdk-core is detected.'
-    );
+    expect(recordWarning).toHaveBeenCalledWith('Old SAP Cloud SDK: @sap/cloud-sdk-core is detected.');
     expect(getWarnings).toHaveBeenCalled();
   }, 10000);
 });

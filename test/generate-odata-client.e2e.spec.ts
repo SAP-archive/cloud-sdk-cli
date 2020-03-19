@@ -24,16 +24,7 @@ describe('generate-odata-client', () => {
   });
 
   it('[E2E] should generate a OData client', async () => {
-    expect(
-      await GenerateODataClient.run([
-        '-i',
-        'edmxSource',
-        '-o',
-        'output',
-        '--projectDir',
-        pathForTests
-      ])
-    ).toResolve();
+    expect(await GenerateODataClient.run(['-i', 'edmxSource', '-o', 'output', '--projectDir', pathForTests])).toResolve();
 
     expect(fs.readdirSync(path.resolve(pathForTests, 'output'))).toHaveLength(1);
   }, 120000);
