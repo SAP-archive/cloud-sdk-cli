@@ -125,7 +125,7 @@ export default class Package extends Command {
 
   private printSuccessMessage() {
     const warnings = getWarnings();
-    const body = ['🚀 Please migrate to new packages.', 'Please find how to migrate here:', 'MISSING LINK'];
+    const body = ['🚀 Please migrate to new packages.', 'Please find how to migrate here:', 'https://github.com/SAP/cloud-sdk/blob/master/docs/how-to-switch-to-os-cloud-sdk.md'];
     if (warnings) {
       this.log(boxMessage(['⚠️ Package finished with warnings:', ...warnings, '', ...body]));
     } else {
