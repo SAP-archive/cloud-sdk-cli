@@ -111,6 +111,7 @@ export default class Package extends Command {
       },
       {
         title: 'Check the SAP Cloud SDK dependencies',
+        enabled: () => !flags.skipInstall,
         task: async () => {
           const { dependencies, devDependencies } = await parsePackageJson(outputDir);
           checkOldDependencies(dependencies);
