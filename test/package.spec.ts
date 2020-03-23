@@ -46,15 +46,6 @@ describe('Package', () => {
     expect(fs.readdirSync(path.resolve(projectDir, 'deployment'))).toEqual(['README.md']);
   });
 
-  it('[E2E] should install productive dependencies only', async () => {
-    const projectDir = getCleanProjectDir(testOutputDir, 'productive-dependencies');
-    fs.copySync(nestAppDir, projectDir, { recursive: true });
-    await Package.run([projectDir]);
-
-    expect(fs.readdirSync(path.resolve(projectDir, 'deployment'))).toIncludeAllMembers(['package.json', 'package-lock.json', 'node_modules']);
-    expect(fs.readdirSync(path.resolve(projectDir, 'deployment', 'node_modules', '@nestjs'))).not.toContain('cli');
-  }, 60000);
-
   it('should show warning messages when old dependencies are used', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'productive-dependencies');
     fs.copySync(nestAppDir, projectDir, { recursive: true });
