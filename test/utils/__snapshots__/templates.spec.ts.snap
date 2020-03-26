@@ -7,7 +7,7 @@ Array [
   "credentials.json",
   "deployment",
   "manifest.yml",
-  "pipeline_config.yml",
+  ".pipeline/config.yml",
   "s4hana_pipeline",
   "systems.json",
 ]
@@ -24,7 +24,7 @@ Array [
   "Jenkinsfile",
   "credentials.json",
   "manifest.yml",
-  "pipeline_config.yml",
+  ".pipeline/config.yml",
   "systems.json",
 ]
 `;
