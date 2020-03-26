@@ -16,10 +16,10 @@ describe('Templates Utils', () => {
 
   it('should return information which files to copy where', () => {
     const initCopyInfo = getCopyDescriptors('targetDir', getTemplatePaths(['init']));
-    expect(initCopyInfo.map(copyInfo => path.basename(copyInfo.fileName)).sort()).toMatchSnapshot();
+    expect(initCopyInfo.map(copyInfo => copyInfo.fileName.split('/targetDir/')[1]).sort()).toMatchSnapshot();
 
     const appRouterCopyInfo = getCopyDescriptors('targetDir', getTemplatePaths(['add-approuter']));
-    expect(appRouterCopyInfo.map(copyInfo => path.basename(copyInfo.fileName)).sort()).toMatchSnapshot();
+    expect(appRouterCopyInfo.map(copyInfo => copyInfo.fileName.split('/targetDir/')[1]).sort()).toMatchSnapshot();
   });
 
   it('should find conflicts', async () => {
