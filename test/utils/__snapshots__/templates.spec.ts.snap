@@ -15,26 +15,79 @@ Array [
 
 exports[`Templates Utils should return information which files to copy where 1`] = `
 Array [
-  ".npmrc",
-  ".pipeline/config.yml",
-  "Jenkinsfile",
-  "credentials.json",
-  "deployment/.gitkeep",
-  "manifest.yml",
-  "s4hana_pipeline/reports/backend-integration/.gitkeep",
-  "s4hana_pipeline/reports/backend-unit/.gitkeep",
-  "s4hana_pipeline/reports/coverage-reports/backend-integration/.gitkeep",
-  "s4hana_pipeline/reports/coverage-reports/backend-unit/.gitkeep",
-  "systems.json",
+  Array [
+    ".npmrc",
+  ],
+  Array [
+    ".pipeline",
+    "config.yml",
+  ],
+  Array [
+    "Jenkinsfile",
+  ],
+  Array [
+    "credentials.json",
+  ],
+  Array [
+    "deployment",
+    ".gitkeep",
+  ],
+  Array [
+    "manifest.yml",
+  ],
+  Array [
+    "s4hana_pipeline",
+    "reports",
+    "backend-integration",
+    ".gitkeep",
+  ],
+  Array [
+    "s4hana_pipeline",
+    "reports",
+    "backend-unit",
+    ".gitkeep",
+  ],
+  Array [
+    "s4hana_pipeline",
+    "reports",
+    "coverage-reports",
+    "backend-integration",
+    ".gitkeep",
+  ],
+  Array [
+    "s4hana_pipeline",
+    "reports",
+    "coverage-reports",
+    "backend-unit",
+    ".gitkeep",
+  ],
+  Array [
+    "systems.json",
+  ],
 ]
 `;
 
 exports[`Templates Utils should return information which files to copy where 2`] = `
 Array [
-  "approuter/.npmrc",
-  "approuter/manifest.yml",
-  "approuter/package.json",
-  "approuter/xs-app.json",
-  "approuter/xs-security.json",
+  Array [
+    "approuter",
+    ".npmrc",
+  ],
+  Array [
+    "approuter",
+    "manifest.yml",
+  ],
+  Array [
+    "approuter",
+    "package.json",
+  ],
+  Array [
+    "approuter",
+    "xs-app.json",
+  ],
+  Array [
+    "approuter",
+    "xs-security.json",
+  ],
 ]
 `;

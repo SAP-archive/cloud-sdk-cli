@@ -16,16 +16,20 @@ describe('Templates Utils', () => {
 
   it('should return information which files to copy where', () => {
     const initCopyInfo = getCopyDescriptors('targetDir', getTemplatePaths(['init']));
-	expect(initCopyInfo
-		.map(copyInfo => copyInfo.fileName.split('targetDir' + path.sep)[1])
-		.sort()
-		.map(fileName => fileName.split(path.sep))).toMatchSnapshot();
+    expect(
+      initCopyInfo
+        .map(copyInfo => copyInfo.fileName.split('targetDir' + path.sep)[1])
+        .sort()
+        .map(fileName => fileName.split(path.sep))
+    ).toMatchSnapshot();
 
     const appRouterCopyInfo = getCopyDescriptors('targetDir', getTemplatePaths(['add-approuter']));
-	expect(appRouterCopyInfo
-		.map(copyInfo => copyInfo.fileName.split('targetDir' + path.sep)[1])
-		.sort()
-		.map(fileName => fileName.split(path.sep))).toMatchSnapshot();
+    expect(
+      appRouterCopyInfo
+        .map(copyInfo => copyInfo.fileName.split('targetDir' + path.sep)[1])
+        .sort()
+        .map(fileName => fileName.split(path.sep))
+    ).toMatchSnapshot();
   });
 
   it('should find conflicts', async () => {
