@@ -4,7 +4,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as rm from 'rimraf';
-import { copyFiles, findConflicts, getCopyDescriptors, getTemplatePaths } from '../../src/utils';
+import { copyFiles, findConflicts, getCopyDescriptors, getTemplatePaths, CopyDescriptor } from '../../src/utils';
 import { getCleanProjectDir, getTestOutputDir } from '../test-utils';
 
 const testOutputDir = getTestOutputDir(__filename);
@@ -16,12 +16,7 @@ describe('Templates Utils', () => {
 
   it('should return information which files to copy where', () => {
     const initCopyInfo = getCopyDescriptors('targetDir', getTemplatePaths(['init']));
-    expect(
-      initCopyInfo
-        .map(copyInfo => copyInfo.fileName.split('targetDir' + path.sep)[1])
-        .sort()
-        .map(fileName => fileName.split(path.sep))
-    ).toMatchSnapshot();
+    expect(initCopyInfo.map(copyInfo => copyInfoToPathArray(copyInfo)).sort()).toMatchSnapshot();
 
     const appRouterCopyInfo = getCopyDescriptors('targetDir', getTemplatePaths(['add-approuter']));
     expect(
@@ -49,4 +44,10 @@ describe('Templates Utils', () => {
   // it('should copy files remotely', async () => {
   //   const projectDir = getCleanProjectDir(testOutputDir, 'copy-files-remotely');
   // });
+
+  function copyInfoToPathArray(copyInfo: CopyDescriptor): string[] {
+    const filePathBeginnginFromTargetDir = path.relative(path.resolve('targetDir'), copyInfo.fileName);
+    const filePathAsList = filePathBeginnginFromTargetDir.split(path.sep);
+    return filePathAsList;
+  }
 });
