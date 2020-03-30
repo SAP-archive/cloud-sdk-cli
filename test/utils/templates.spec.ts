@@ -43,12 +43,6 @@ describe('Templates Utils', () => {
   function copyInfoToPathArray(copyInfo: CopyDescriptor): string[] {
     const filePathBeginnginFromTargetDir = path.relative(path.resolve('targetDir'), copyInfo.fileName);
 	const filePathAsList = filePathBeginnginFromTargetDir.split(path.sep);
-	if(filePathAsList.includes("approuter")) {
-		console.log(filePathAsList)
-		console.log(filePathAsList.sort())
-		console.log(copyInfo.fileName)
-		console.log(copyInfo.sourcePath)
-	}
     return filePathAsList;
   }
 });
