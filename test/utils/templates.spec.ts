@@ -19,12 +19,7 @@ describe('Templates Utils', () => {
     expect(initCopyInfo.map(copyInfo => copyInfoToPathArray(copyInfo)).sort()).toMatchSnapshot();
 
     const appRouterCopyInfo = getCopyDescriptors('targetDir', getTemplatePaths(['add-approuter']));
-    expect(
-      appRouterCopyInfo
-        .map(copyInfo => copyInfo.fileName.split('targetDir' + path.sep)[1])
-        .sort()
-        .map(fileName => fileName.split(path.sep))
-    ).toMatchSnapshot();
+    expect(appRouterCopyInfo.map(appRouterCopyInfo => copyInfoToPathArray(appRouterCopyInfo).sort())).toMatchSnapshot();
   });
 
   it('should find conflicts', async () => {
@@ -47,7 +42,13 @@ describe('Templates Utils', () => {
 
   function copyInfoToPathArray(copyInfo: CopyDescriptor): string[] {
     const filePathBeginnginFromTargetDir = path.relative(path.resolve('targetDir'), copyInfo.fileName);
-    const filePathAsList = filePathBeginnginFromTargetDir.split(path.sep);
+	const filePathAsList = filePathBeginnginFromTargetDir.split(path.sep);
+	if(filePathAsList.includes("approuter")) {
+		console.log(filePathAsList)
+		console.log(filePathAsList.sort())
+		console.log(copyInfo.fileName)
+		console.log(copyInfo.sourcePath)
+	}
     return filePathAsList;
   }
 });
