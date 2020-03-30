@@ -71,7 +71,7 @@ exports[`Templates Utils should return information which files to copy where 2`]
 Array [
   Array [
     ".npmrc",
-	"approuter",
+    "approuter",
   ],
   Array [
     "approuter",
