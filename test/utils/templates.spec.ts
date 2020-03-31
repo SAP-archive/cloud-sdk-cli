@@ -42,7 +42,7 @@ describe('Templates Utils', () => {
 
   function copyInfoToPathArray(copyInfo: CopyDescriptor): string[] {
     const filePathBeginnginFromTargetDir = path.relative(path.resolve('targetDir'), copyInfo.fileName);
-	const filePathAsList = filePathBeginnginFromTargetDir.split(path.sep);
+    const filePathAsList = filePathBeginnginFromTargetDir.split(path.sep);
     return filePathAsList;
   }
 });
