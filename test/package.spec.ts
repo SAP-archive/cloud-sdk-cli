@@ -55,7 +55,7 @@ describe('Package', () => {
     expect(fs.readdirSync(path.resolve(projectDir, 'deployment', 'node_modules', '@nestjs'))).not.toContain('cli');
   }, 60000);
 
-  it('should show warning messages when old dependencies are used', async () => {
+  xit('should show warning messages when old dependencies are used', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'productive-dependencies');
     fs.copySync(nestAppDir, projectDir, { recursive: true });
     await Package.run([projectDir]);
