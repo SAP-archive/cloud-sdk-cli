@@ -68,4 +68,14 @@ describe('Package', () => {
     expect(recordWarning).toHaveBeenCalledWith('Old SAP Cloud SDK: @sap/cloud-sdk-core is detected.');
     expect(getWarnings).toHaveBeenCalled();
   });
+
+  it('should not show warning messages when old dependencies are not used', async () => {
+    const projectDir = getCleanProjectDir(testOutputDir, 'without-dependencies');
+    fs.copySync(nestAppDir, projectDir, { recursive: true });
+
+    await Package.run([projectDir, '--skipInstall']);
+
+    expect(recordWarning).not.toHaveBeenCalled();
+    expect(getWarnings).toHaveBeenCalled();
+  });
 });
