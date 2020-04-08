@@ -131,9 +131,9 @@ export default class Package extends Command {
       'https://github.com/SAP/cloud-sdk/blob/master/docs/how-to-switch-to-os-cloud-sdk.md'
     ];
     if (warnings) {
-      if(this.hasOldSDKWarnings(warnings)) {
+      if (this.hasOldSDKWarnings(warnings)) {
         this.log(boxMessage(['⚠️ Package finished with warnings:', ...warnings, '', ...body]));
-      } else{
+      } else {
         this.log(boxMessage(['⚠️ Package finished with warnings:', ...warnings]));
       }
     } else {
@@ -141,7 +141,7 @@ export default class Package extends Command {
     }
   }
 
-  private hasOldSDKWarnings(warnings: string[]){
+  private hasOldSDKWarnings(warnings: string[]) {
     const regex = RegExp('Old SAP Cloud SDK: * is detected.');
     return warnings.map(warning => regex.test(warning)).filter(value => value).length > 0;
   }
