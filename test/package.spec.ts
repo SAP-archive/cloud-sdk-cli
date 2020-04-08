@@ -74,6 +74,8 @@ describe('Package', () => {
 
     await Package.run([projectDir, '--skipInstall']);
 
-    expect(boxMessage).toBeCalledWith(expect.arrayContaining(['- Old SAP Cloud SDK: @sap/cloud-sdk-core is detected.', 'Please find how to migrate here:']));
+    expect(boxMessage).toBeCalledWith(
+      expect.arrayContaining(['- Old SAP Cloud SDK: @sap/cloud-sdk-core is detected.', 'Please find how to migrate here:'])
+    );
   });
 });
