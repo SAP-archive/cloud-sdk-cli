@@ -19,9 +19,9 @@ export async function shouldBuildScaffold(projectDir: string, buildScaffold: boo
     return false;
   }
 
-  cli.log('This folder does not contain a `package.json`.');
+  cli.log('The target folder (' + projectDir + ') does not contain a `package.json`.');
 
-  if (await cli.confirm('Should a new `nest.js` project be initialized in this folder? (y|n)')) {
+  if (await cli.confirm('Should a new `nest.js` project be initialized in the target folder? (y|n)')) {
     await checkForEmptyDir(projectDir, force);
     return true;
   }
