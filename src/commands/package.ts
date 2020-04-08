@@ -142,7 +142,7 @@ export default class Package extends Command {
   }
 
   private hasOldSDKWarnings(warnings: string[]) {
-    const regex = RegExp('Old SAP Cloud SDK: * is detected.');
+    const regex = RegExp('Old SAP Cloud SDK: .* is detected.');
     return warnings.map(warning => regex.test(warning)).filter(value => value).length > 0;
   }
 }
