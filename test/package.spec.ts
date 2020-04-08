@@ -55,12 +55,17 @@ describe('Package', () => {
     expect(fs.readdirSync(path.resolve(projectDir, 'deployment', 'node_modules', '@nestjs'))).not.toContain('cli');
   }, 60000);
 
-  xit('should show warning messages when old dependencies are used', async () => {
-    const projectDir = getCleanProjectDir(testOutputDir, 'productive-dependencies');
+  it('should show warning messages when old dependencies are used', async () => {
+    const projectDir = getCleanProjectDir(testOutputDir, 'old-dependencies');
     fs.copySync(nestAppDir, projectDir, { recursive: true });
-    await Package.run([projectDir]);
+
+    const packageJson = JSON.parse(fs.readFileSync(path.resolve(projectDir, 'package.json'), { encoding: 'utf8' }));
+    packageJson.dependencies["@sap/cloud-sdk-core"] = "^1.17.2";
+    fs.writeFileSync(path.resolve(projectDir, 'package.json'), JSON.stringify(packageJson), { encoding: 'utf8' });
+
+    await Package.run([projectDir, '--skipInstall']);
 
     expect(recordWarning).toHaveBeenCalledWith('Old SAP Cloud SDK: @sap/cloud-sdk-core is detected.');
     expect(getWarnings).toHaveBeenCalled();
-  }, 60000);
+  });
 });

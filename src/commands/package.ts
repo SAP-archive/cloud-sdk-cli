@@ -108,17 +108,15 @@ export default class Package extends Command {
           execa('npm', ['install', '--production', `--prefix=${outputDir}`, ...(platform() === 'win32' ? ['--force'] : [])], {
             stdio: flags.verbose ? 'inherit' : 'ignore'
           }).catch(e => this.error(e, { exit: 10 }))
+      },
+      {
+        title: 'Check the SAP Cloud SDK dependencies',
+        task: async () => {
+          const { dependencies, devDependencies } = await parsePackageJson(projectDir);
+          checkOldDependencies(dependencies);
+          checkOldDependencies(devDependencies);
+        }
       }
-      // ,
-      // {
-      //   title: 'Check the SAP Cloud SDK dependencies',
-      //   enabled: () => !flags.skipInstall,
-      //   task: async () => {
-      //     const { dependencies, devDependencies } = await parsePackageJson(outputDir);
-      //     checkOldDependencies(dependencies);
-      //     checkOldDependencies(devDependencies);
-      //   }
-      // }
     ]);
 
     await tasks.run();
