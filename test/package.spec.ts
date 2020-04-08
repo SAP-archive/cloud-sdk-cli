@@ -60,7 +60,7 @@ describe('Package', () => {
     fs.copySync(nestAppDir, projectDir, { recursive: true });
 
     const packageJson = JSON.parse(fs.readFileSync(path.resolve(projectDir, 'package.json'), { encoding: 'utf8' }));
-    packageJson.dependencies["@sap/cloud-sdk-core"] = "^1.17.2";
+    packageJson.dependencies['@sap/cloud-sdk-core'] = '^1.17.2';
     fs.writeFileSync(path.resolve(projectDir, 'package.json'), JSON.stringify(packageJson), { encoding: 'utf8' });
 
     await Package.run([projectDir, '--skipInstall']);
