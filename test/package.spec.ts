@@ -14,6 +14,10 @@ const testOutputDir = getTestOutputDir(__filename);
 const nestAppDir = path.resolve('test', 'nest');
 
 describe('Package', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   afterAll(() => {
     fs.removeSync(testOutputDir);
   });
