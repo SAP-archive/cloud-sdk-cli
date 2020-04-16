@@ -62,6 +62,9 @@ describe('Package', () => {
     await Package.run([projectDir, '--skipInstall']);
 
     expect(boxMessage).toBeCalledWith(expect.arrayContaining(['✅ Package finished successfully.']));
+    expect(boxMessage).not.toBeCalledWith(
+      expect.arrayContaining(['- Old SAP Cloud SDK: @sap/cloud-sdk-core is detected.', 'Please find how to migrate here:'])
+    );
   });
 
   it('should show warning messages when old dependencies are used', async () => {
@@ -77,5 +80,6 @@ describe('Package', () => {
     expect(boxMessage).toBeCalledWith(
       expect.arrayContaining(['- Old SAP Cloud SDK: @sap/cloud-sdk-core is detected.', 'Please find how to migrate here:'])
     );
+    expect(boxMessage).not.toBeCalledWith(expect.arrayContaining(['✅ Package finished successfully.']));
   });
 });
