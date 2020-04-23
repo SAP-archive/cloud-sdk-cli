@@ -6,6 +6,7 @@ jest.mock('cli-ux', () => ({
     confirm: jest.fn().mockResolvedValue(true)
   }
 }));
+jest.retryTimes(3);
 
 import * as fs from 'fs-extra';
 import * as path from 'path';
@@ -23,7 +24,7 @@ describe('generate-odata-client', () => {
     fs.removeSync(pathForTests);
   });
 
-  it('[E2E] should generate a OData client', async () => {
+  test('[E2E] should generate a OData client', async () => {
     expect(
       await GenerateODataClient.run([
         '-i',

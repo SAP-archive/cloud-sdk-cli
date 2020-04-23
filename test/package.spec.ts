@@ -10,6 +10,8 @@ import { getCleanProjectDir, getTestOutputDir } from './test-utils';
 const testOutputDir = getTestOutputDir(__filename);
 const nestAppDir = path.resolve('test', 'nest');
 
+jest.retryTimes(3);
+
 describe('Package', () => {
   afterAll(() => {
     fs.removeSync(testOutputDir);
@@ -43,7 +45,7 @@ describe('Package', () => {
     expect(fs.readdirSync(path.resolve(projectDir, 'deployment'))).toEqual(['README.md']);
   });
 
-  it('[E2E] should install productive dependencies only', async () => {
+  test('[E2E] should install productive dependencies only', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'productive-dependencies');
     fs.copySync(nestAppDir, projectDir, { recursive: true });
     await Package.run([projectDir]);

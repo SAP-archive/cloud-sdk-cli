@@ -15,12 +15,14 @@ const testOutputDir = getTestOutputDir(__filename);
 const expressAppDir = path.resolve('test', 'express');
 const nestAppDir = path.resolve('test', 'nest');
 
+jest.retryTimes(3);
+
 describe('Init', () => {
   afterAll(() => {
     fs.removeSync(testOutputDir);
   });
 
-  it('[E2E] should create a new project with the necessary files', async () => {
+  test('[E2E] should create a new project with the necessary files', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'full-init');
     await Init.run([projectDir, '--projectName=testingApp', '--buildScaffold', '--no-analytics']);
 
@@ -43,7 +45,7 @@ describe('Init', () => {
     expect(fs.readdirSync(path.resolve(reportsPath, 'coverage-reports', 'backend-integration')).length).toBeGreaterThan(1);
   }, 240000);
 
-  it('[E2E] should create a new project with the necessary files when adding cds', async () => {
+  test('[E2E] should create a new project with the necessary files when adding cds', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'full-init-cds');
     await Init.run([projectDir, '--projectName=testingApp', '--buildScaffold', '--no-analytics', '--addCds']);
 

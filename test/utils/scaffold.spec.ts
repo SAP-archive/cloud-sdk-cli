@@ -13,6 +13,7 @@ jest.mock('cli-ux', () => {
     }
   };
 });
+jest.retryTimes(3);
 
 import * as fs from 'fs';
 import * as path from 'path';
@@ -38,7 +39,7 @@ describe('Scaffold Utils', () => {
     expect(await shouldBuildScaffold(projectDir, false)).toBe(false);
   });
 
-  it('[E2E] should build the scaffold', async () => {
+  test('[E2E] should build the scaffold', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'build-scaffold');
 
     await buildScaffold(projectDir, false, false);
