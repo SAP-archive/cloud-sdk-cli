@@ -55,7 +55,7 @@ describe('Init', () => {
 
     await execa('npm', ['run', 'cds-deploy'], { cwd: projectDir, stdio: 'inherit' });
     expect(fs.existsSync(path.resolve(projectDir, 'testingApp.db'))).toBeTrue();
-  }, 240000);
+  }, 600000);
 
   it('should add necessary files to an existing project', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'add-to-existing');
