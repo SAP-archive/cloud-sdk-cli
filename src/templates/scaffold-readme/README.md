@@ -50,7 +50,7 @@ $ ./cx-server start
 ```
 
 Point the new Jenkins to your repository and it will automatically run the pipeline. 
-If the pipeline should deploy your application as well, you need to modify the `pipeline_config.yml`.
+If the pipeline should deploy your application as well, you need to modify the `.pipeline/config.yml`.
 
 ## NestJS
 

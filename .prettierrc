@@ -3,5 +3,7 @@
   "singleQuote": true,
   "printWidth": 150,
   "quoteProps": "consistent",
+  "trailingComma": "none",
+  "arrowParens": "avoid",
   "filepath": "**/*.ts"
 }

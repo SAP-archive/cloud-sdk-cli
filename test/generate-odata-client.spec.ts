@@ -1,11 +1,7 @@
 /*!
  * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
-const execa = jest
-  .fn()
-  .mockRejectedValueOnce({ exitCode: 1 })
-  .mockResolvedValueOnce('installed')
-  .mockResolvedValueOnce('generated');
+const execa = jest.fn().mockRejectedValueOnce({ exitCode: 1 }).mockResolvedValueOnce('installed').mockResolvedValueOnce('generated');
 jest.mock('execa', () => execa);
 jest.mock('cli-ux', () => ({
   default: {
