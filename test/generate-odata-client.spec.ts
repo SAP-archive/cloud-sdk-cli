@@ -1,11 +1,7 @@
 /*!
  * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
-const execa = jest
-  .fn()
-  .mockRejectedValueOnce({ exitCode: 1 })
-  .mockResolvedValueOnce('installed')
-  .mockResolvedValueOnce('generated');
+const execa = jest.fn().mockRejectedValueOnce({ exitCode: 1 }).mockResolvedValueOnce('installed').mockResolvedValueOnce('generated');
 jest.mock('execa', () => execa);
 jest.mock('cli-ux', () => ({
   default: {
@@ -38,7 +34,7 @@ describe('generate-odata-client', () => {
     await GenerateODataClient.run(['-i=input', '-o=output', '--projectDir', pathForTests]);
 
     expect(execa).toHaveBeenCalledTimes(3);
-    expect(execa.mock.calls[1][1].sort()).toContain('@sap/cloud-sdk-generator');
+    expect(execa.mock.calls[1][1].sort()).toContain('@sap-cloud-sdk/generator');
     expect(execa.mock.calls[2][1].sort()).toEqual(getDefault(pathForTests).sort());
   });
 });
