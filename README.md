@@ -360,14 +360,9 @@ Projects that use the CLI are free to use any package manager as long as a `pack
 
 ### Release
 
-The easiest way to create a new release is running
-
-``` sh-session
-$ npx np
-```
-
-This will test the code, run any pre-publish steps, increase the version as selected by the user and create a draft release in github.
-Afterwards fill in the release notes and press "Publish release".
+If you want to release, increase the version and create a PR for that branch.
+Once merged and if the tests are green, you can create a new GitHub release based on the master branch.
+Fill in the release notes and press "Publish release".
 This will trigger the github action and a new release will be published on `npm` automatically.
 
 ## License
