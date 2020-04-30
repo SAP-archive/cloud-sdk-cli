@@ -38,7 +38,6 @@
     "jest": "^25.4.0",
     "jest-circus": "^25.4.0",
     "jest-extended": "^0.11.2",
-    "np": "^6.2.0",
     "prettier": "^2.0.2",
     "ts-jest": "^25.3.0",
     "ts-node": "^8.8.1",
@@ -78,9 +77,6 @@
       "@oclif/plugin-not-found",
       "@oclif/plugin-warn-if-update-available"
     ]
-  },
-  "np": {
-    "publish": false
   },
   "repository": {
     "type": "git",
