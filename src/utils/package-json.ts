@@ -68,7 +68,7 @@ export async function parsePackageJson(projectDir: string) {
       })
     );
   } catch (error) {
-    throw new Error('Your package.json does not contain valid JSON. Please repair or delete it.');
+    throw new Error(`Your package.json does not contain valid JSON. Please repair or delete it. ${error}`);
   }
 }
 

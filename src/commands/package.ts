@@ -10,6 +10,7 @@ import * as Listr from 'listr';
 import { platform } from 'os';
 import * as path from 'path';
 import * as rm from 'rimraf';
+import { boxMessage, checkOldDependencies, getWarnings, parsePackageJson } from '../utils';
 
 export default class Package extends Command {
   static description = 'Copies the specified files to the deployment folder';
@@ -107,9 +108,41 @@ export default class Package extends Command {
           execa('npm', ['install', '--production', `--prefix=${outputDir}`, ...(platform() === 'win32' ? ['--force'] : [])], {
             stdio: flags.verbose ? 'inherit' : 'ignore'
           }).catch(e => this.error(e, { exit: 10 }))
+      },
+      {
+        title: 'Check the SAP Cloud SDK dependencies',
+        task: async () => {
+          const { dependencies, devDependencies } = await parsePackageJson(projectDir);
+          checkOldDependencies(dependencies);
+          checkOldDependencies(devDependencies);
+        }
       }
     ]);
 
     await tasks.run();
+    this.printSuccessMessage();
+  }
+
+  private printSuccessMessage() {
+    const warnings = getWarnings();
+    const body = [
+      '🚀 Please migrate to new packages.',
+      'Please find how to migrate here:',
+      'https://github.com/SAP/cloud-sdk/blob/master/knowledge-base/how-to-switch-to-os-cloud-sdk.md'
+    ];
+    if (warnings) {
+      if (this.hasOldSDKWarnings(warnings)) {
+        this.log(boxMessage(['⚠️ Package finished with warnings:', ...warnings, '', ...body]));
+      } else {
+        this.log(boxMessage(['⚠️ Package finished with warnings:', ...warnings]));
+      }
+    } else {
+      this.log(boxMessage(['✅ Package finished successfully.']));
+    }
+  }
+
+  private hasOldSDKWarnings(warnings: string[]) {
+    const regex = RegExp('Old SAP Cloud SDK: .* is detected.');
+    return warnings.map(warning => regex.test(warning)).filter(value => value).length > 0;
   }
 }
