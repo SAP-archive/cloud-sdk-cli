@@ -36,7 +36,7 @@ const cdsChanges = {
 
 const scaffoldProjectPackageJson: PackageJsonChange = {
   scripts: {
-    'deploy': 'npm run ci-build && npm run ci-package && cf push',
+    'deploy': 'npm run build && sap-cloud-sdk package --exclude "node_modules/**/*" && cf push',
     'ci-build': 'npm run build',
     'ci-package': 'sap-cloud-sdk package',
     'ci-integration-test': 'jest --ci --config ./test/jest-e2e.json',

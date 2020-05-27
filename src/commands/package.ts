@@ -3,11 +3,9 @@
  */
 
 import { Command, flags } from '@oclif/command';
-import * as execa from 'execa';
 import * as glob from 'fast-glob';
 import * as fs from 'fs';
 import * as Listr from 'listr';
-import { platform } from 'os';
 import * as path from 'path';
 import * as rm from 'rimraf';
 import { boxMessage, checkOldDependencies, getWarnings, parsePackageJson } from '../utils';
@@ -31,19 +29,15 @@ export default class Package extends Command {
       default: 'deployment',
       description: 'Output and deployment folder'
     }),
-    skipInstall: flags.boolean({
-      default: false,
-      description: 'Skip `npm i --production` during packaging'
-    }),
     include: flags.string({
       char: 'i',
-      default: 'package.json,package-lock.json,index.js,dist/**/*',
+      default: 'package.json,package-lock.json,index.js,dist/**/*,node_modules/**/*',
       description: 'Comma seperated list of files or globs to include'
     }),
     exclude: flags.string({
       char: 'e',
       default: '',
-      description: 'Comma seperated list of files or globs to exclude'
+      description: 'Comma separated list of files or globs to exclude'
     }),
     verbose: flags.boolean({
       char: 'v',
@@ -100,14 +94,6 @@ export default class Package extends Command {
             fs.copyFileSync(filepath, outputFilePath);
           });
         }
-      },
-      {
-        title: 'Install productive dependencies',
-        enabled: () => !flags.skipInstall,
-        task: async () =>
-          execa('npm', ['install', '--production', `--prefix=${outputDir}`, ...(platform() === 'win32' ? ['--force'] : [])], {
-            stdio: flags.verbose ? 'inherit' : 'ignore'
-          }).catch(e => this.error(e, { exit: 10 }))
       },
       {
         title: 'Check the SAP Cloud SDK dependencies',
