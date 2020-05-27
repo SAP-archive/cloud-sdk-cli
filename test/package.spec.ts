@@ -7,8 +7,8 @@ jest.mock('../src/utils/message-formatter');
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import Package from '../src/commands/package';
-import { getCleanProjectDir, getTestOutputDir } from './test-utils';
 import { boxMessage } from '../src/utils';
+import { getCleanProjectDir, getTestOutputDir } from './test-utils';
 
 const testOutputDir = getTestOutputDir(__filename);
 const nestAppDir = path.resolve('test', 'nest');

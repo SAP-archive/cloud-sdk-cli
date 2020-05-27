@@ -8,7 +8,10 @@ import { testDir, testOutputRootDir } from './test-output';
 
 export function getTestOutputDir(file: string): string {
   const relativeDirPath = path.relative(testDir, path.dirname(file));
-  const outputDirName = path.basename(file, '.ts').split('.').join('-');
+  const outputDirName = path
+    .basename(file, '.ts')
+    .split('.')
+    .join('-');
 
   return path.resolve(testOutputRootDir, relativeDirPath, outputDirName);
 }

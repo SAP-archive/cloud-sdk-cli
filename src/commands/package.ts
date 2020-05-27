@@ -3,11 +3,9 @@
  */
 
 import { Command, flags } from '@oclif/command';
-import * as execa from 'execa';
 import * as glob from 'fast-glob';
 import * as fs from 'fs';
 import * as Listr from 'listr';
-import { platform } from 'os';
 import * as path from 'path';
 import * as rm from 'rimraf';
 import { boxMessage, checkOldDependencies, getWarnings, parsePackageJson } from '../utils';

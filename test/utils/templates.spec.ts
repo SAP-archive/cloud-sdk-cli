@@ -4,7 +4,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as rm from 'rimraf';
-import { copyFiles, findConflicts, getCopyDescriptors, getTemplatePaths, CopyDescriptor } from '../../src/utils';
+import { CopyDescriptor, copyFiles, findConflicts, getCopyDescriptors, getTemplatePaths } from '../../src/utils';
 import { getCleanProjectDir, getTestOutputDir } from '../test-utils';
 
 const testOutputDir = getTestOutputDir(__filename);
