@@ -27,7 +27,7 @@ describe('Package', () => {
   it('should copy files correctly without parameters', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'no-params');
     fs.copySync(nestAppDir, projectDir, { recursive: true });
-    await Package.run([projectDir, '--skipInstall']);
+    await Package.run([projectDir]);
 
     const copiedFiles = fs.readdirSync(path.resolve(projectDir, 'deployment'));
     expect(copiedFiles).toIncludeAllMembers(['package.json', 'package-lock.json']);
@@ -37,7 +37,7 @@ describe('Package', () => {
   it('should copy files correctly with custom globs', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'globs');
     fs.copySync(nestAppDir, projectDir, { recursive: true });
-    await Package.run([projectDir, '--include=*.json', '--exclude=package*,tsconfig*', '--skipInstall']);
+    await Package.run([projectDir, '--include=*.json', '--exclude=package*,tsconfig*']);
 
     expect(fs.readdirSync(path.resolve(projectDir, 'deployment'))).toIncludeAllMembers(['nest-cli.json']);
     expect(fs.readdirSync(path.resolve(projectDir, 'deployment'))).not.toIncludeAnyMembers(['package.json', 'package-lock.json', 'tsconfig.json']);
@@ -46,16 +46,16 @@ describe('Package', () => {
   it('should overwrite output folder', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'folder-overwrite');
     fs.copySync(nestAppDir, projectDir, { recursive: true });
-    await Package.run([projectDir, '--include=.gitignore', '--skipInstall']);
-    await Package.run([projectDir, '--include=README.md', '--skipInstall']);
+    await Package.run([projectDir, '--include=.gitignore']);
+    await Package.run([projectDir, '--include=README.md']);
 
     expect(fs.readdirSync(path.resolve(projectDir, 'deployment'))).toEqual(['README.md']);
   });
 
-  test('[E2E] should install productive dependencies only', async () => {
+  test('[E2E] should copy dependencies when --ci is set', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'productive-dependencies');
     fs.copySync(nestAppDir, projectDir, { recursive: true });
-    await Package.run([projectDir]);
+    await Package.run([projectDir, '--ci']);
 
     expect(fs.readdirSync(path.resolve(projectDir, 'deployment'))).toIncludeAllMembers(['package.json', 'package-lock.json', 'node_modules']);
     expect(fs.readdirSync(path.resolve(projectDir, 'deployment', 'node_modules', '@nestjs'))).not.toContain('cli');
@@ -65,7 +65,7 @@ describe('Package', () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'without-dependencies');
     fs.copySync(nestAppDir, projectDir, { recursive: true });
 
-    await Package.run([projectDir, '--skipInstall']);
+    await Package.run([projectDir]);
 
     expect(boxMessage).toBeCalledWith(expect.arrayContaining(['✅ Package finished successfully.']));
     expect(boxMessage).not.toBeCalledWith(
@@ -81,7 +81,7 @@ describe('Package', () => {
     packageJson.dependencies['@sap/cloud-sdk-core'] = '^1.17.2';
     fs.writeFileSync(path.resolve(projectDir, 'package.json'), JSON.stringify(packageJson), { encoding: 'utf8' });
 
-    await Package.run([projectDir, '--skipInstall']);
+    await Package.run([projectDir]);
 
     expect(boxMessage).toBeCalledWith(
       expect.arrayContaining(['- Old SAP Cloud SDK: @sap/cloud-sdk-core is detected.', 'Please find how to migrate here:'])
