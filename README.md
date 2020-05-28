@@ -37,7 +37,7 @@ $ npm install -g @sap-cloud-sdk/cli
 $ sap-cloud-sdk COMMAND
 running command...
 $ sap-cloud-sdk (-v|--version|version)
-@sap-cloud-sdk/cli/0.1.8 darwin-x64 node-v13.11.0
+@sap-cloud-sdk/cli/0.1.8 darwin-x64 node-v14.2.0
 $ sap-cloud-sdk --help [COMMAND]
 USAGE
   $ sap-cloud-sdk COMMAND
@@ -325,7 +325,7 @@ ARGUMENTS
   PROJECTDIR  Path to the project directory that shall be packaged.
 
 OPTIONS
-  -e, --exclude=exclude  Comma seperated list of files or globs to exclude
+  -e, --exclude=exclude  Comma separated list of files or globs to exclude
   -h, --help             Show help for the package command.
 
   -i, --include=include  [default: package.json,package-lock.json,index.js,dist/**/*] Comma seperated list of files or
@@ -335,7 +335,7 @@ OPTIONS
 
   -v, --verbose          Show more detailed output.
 
-  --skipInstall          Skip `npm i --production` during packaging
+  --ci                   Add node_modules in production environments to respect the `build once` principle.
 
 EXAMPLES
   $ sap-cloud-sdk package
