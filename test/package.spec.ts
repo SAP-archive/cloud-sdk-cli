@@ -58,7 +58,6 @@ describe('Package', () => {
     await Package.run([projectDir, '--ci']);
 
     expect(fs.readdirSync(path.resolve(projectDir, 'deployment'))).toIncludeAllMembers(['package.json', 'package-lock.json', 'node_modules']);
-    expect(fs.readdirSync(path.resolve(projectDir, 'deployment', 'node_modules', '@nestjs'))).not.toContain('cli');
   }, 60000);
 
   it('should not show warning messages when old dependencies are not used', async () => {
