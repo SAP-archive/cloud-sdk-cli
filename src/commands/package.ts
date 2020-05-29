@@ -3,11 +3,9 @@
  */
 
 import { Command, flags } from '@oclif/command';
-import * as execa from 'execa';
 import * as glob from 'fast-glob';
 import * as fs from 'fs';
 import * as Listr from 'listr';
-import { platform } from 'os';
 import * as path from 'path';
 import * as rm from 'rimraf';
 import { boxMessage, checkOldDependencies, getWarnings, parsePackageJson } from '../utils';
@@ -31,9 +29,9 @@ export default class Package extends Command {
       default: 'deployment',
       description: 'Output and deployment folder'
     }),
-    skipInstall: flags.boolean({
+    ci: flags.boolean({
       default: false,
-      description: 'Skip `npm i --production` during packaging'
+      description: 'Add node_modules in production environments to respect the `build once` principle.'
     }),
     include: flags.string({
       char: 'i',
@@ -43,7 +41,7 @@ export default class Package extends Command {
     exclude: flags.string({
       char: 'e',
       default: '',
-      description: 'Comma seperated list of files or globs to exclude'
+      description: 'Comma separated list of files or globs to exclude'
     }),
     verbose: flags.boolean({
       char: 'v',
@@ -62,6 +60,14 @@ export default class Package extends Command {
     const { flags, args } = this.parse(Package);
     const projectDir = args.projectDir || '.';
     const outputDir = path.resolve(projectDir, flags.output);
+
+    function copyFiles(filePaths: string[]): void {
+      filePaths.forEach(filepath => {
+        const outputFilePath = path.resolve(outputDir, path.relative(projectDir, filepath));
+        fs.mkdirSync(path.dirname(outputFilePath), { recursive: true });
+        fs.copyFileSync(filepath, outputFilePath);
+      });
+    }
 
     const tasks = new Listr([
       {
@@ -94,20 +100,21 @@ export default class Package extends Command {
             : [];
           const filtered = include.filter(filepath => !exclude.includes(filepath));
 
-          filtered.forEach(filepath => {
-            const outputFilePath = path.resolve(outputDir, path.relative(projectDir, filepath));
-            fs.mkdirSync(path.dirname(outputFilePath), { recursive: true });
-            fs.copyFileSync(filepath, outputFilePath);
-          });
+          copyFiles(filtered);
         }
       },
       {
-        title: 'Install productive dependencies',
-        enabled: () => !flags.skipInstall,
-        task: async () =>
-          execa('npm', ['install', '--production', `--prefix=${outputDir}`, ...(platform() === 'win32' ? ['--force'] : [])], {
-            stdio: flags.verbose ? 'inherit' : 'ignore'
-          }).catch(e => this.error(e, { exit: 10 }))
+        title: 'Copying node_modules for ci',
+        enabled: () => flags.ci,
+        task: async () => {
+          const nodeModuleFiles = await glob('node_modules/**/*', {
+            dot: true,
+            absolute: true,
+            cwd: projectDir
+          });
+
+          copyFiles(nodeModuleFiles);
+        }
       },
       {
         title: 'Check the SAP Cloud SDK dependencies',
