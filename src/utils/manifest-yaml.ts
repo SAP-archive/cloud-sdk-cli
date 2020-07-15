@@ -21,6 +21,9 @@ export function getProjectNameFromManifest(command: Command): string | undefined
         command.warn(`Could not read name from 'manifest.yml'. Please ensure you ran 'sap-cloud-sdk init' before calling ${command.id}.`)
     });
 
+    if(typeof manifest !== 'object'){
+      throw new Error('Yaml file not an object');
+    }
     if (manifest['applications'].length > 1) {
       command.warn('There were multiple apps in the `manifest.yml`. Project name will be retrieved from the first app.');
     }
