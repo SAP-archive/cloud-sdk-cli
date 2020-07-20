@@ -2,6 +2,8 @@
  * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
+import exp = require('constants');
+
 const prompt = jest.fn().mockResolvedValue('mock-project');
 jest.mock('cli-ux', () => {
   const cli = jest.requireActual('cli-ux');
@@ -64,6 +66,10 @@ describe('Add Approuter', () => {
     fs.createFileSync(path.resolve(projectDir, 'approuter', 'xs-security.json'));
     fs.writeFileSync(path.resolve(projectDir, 'approuter', 'xs-security.json'), JSON.stringify({ 'tenant-mode': 'shared' }), 'utf8');
 
-    await expect(AddApprouter.run([projectDir])).rejects.toMatchSnapshot();
+    try {
+      await AddApprouter.run([projectDir]);
+    } catch (e) {
+      expect(e.message).toMatch(/A file with the name .* already exists\./);
+    }
   }, 10000);
 });

@@ -52,6 +52,10 @@ describe('Add CDS', () => {
     fs.createFileSync(path.resolve(projectDir, 'db', 'data-model.cds'));
     fs.writeFileSync(path.resolve(projectDir, 'db', 'data-model.cds'), 'some text', 'utf8');
 
-    await expect(AddCds.run([projectDir, '--skipInstall'])).rejects.toMatchSnapshot();
+    try {
+      await AddCds.run([projectDir, '--skipInstall']);
+    } catch (e) {
+      expect(e.message).toMatch(/A file with the name .* already exists\./);
+    }
   });
 });
