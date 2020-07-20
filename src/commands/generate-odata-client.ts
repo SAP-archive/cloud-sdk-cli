@@ -64,8 +64,10 @@ export default class GenerateODataClient extends Command {
       }
     }
 
-    execa('generate-odata-client', yargsFlags, {
+    const promise = execa('generate-odata-client', yargsFlags, {
       cwd: flags.projectDir || '.'
-    }).stdout?.pipe(process.stdout);
+    })
+    promise.stdout?.pipe(process.stdout);
+    return promise;
   }
 }
