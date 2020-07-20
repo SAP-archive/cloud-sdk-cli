@@ -29,7 +29,7 @@ describe('Add CX Server', () => {
 
     const approuterFiles = fs.readdirSync(path.resolve(projectDir, 'cx-server'));
     expect(approuterFiles).toIncludeAllMembers(['cx-server', 'server.cfg']);
-  },10000);
+  }, 10000);
 
   it('should add the necessary files on windows', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'add-cx-server');
@@ -41,7 +41,7 @@ describe('Add CX Server', () => {
 
     const approuterFiles = fs.readdirSync(path.resolve(projectDir, 'cx-server'));
     expect(approuterFiles).toIncludeAllMembers(['cx-server', 'cx-server.bat', 'server.cfg']);
-  },10000);
+  }, 10000);
 
   it('should add necessary files to an existing project', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'add-cx-server-to-existing-project');
@@ -63,10 +63,10 @@ describe('Add CX Server', () => {
     fs.mkdirSync(path.resolve(projectDir, 'cx-server'), { recursive: true });
     fs.createFileSync(path.resolve(projectDir, 'cx-server', 'cx-server'));
 
-    try{
-      await AddCxServer.run([projectDir])
-    }catch (e) {
-      expect(e.message).toContain("A file with the name \"cx-server\" already exists.")
+    try {
+      await AddCxServer.run([projectDir]);
+    } catch (e) {
+      expect(e.message).toContain('A file with the name "cx-server" already exists.');
     }
-  },10000);
+  }, 10000);
 });

@@ -40,7 +40,7 @@ describe('Add Approuter', () => {
 
     const approuterFiles = fs.readdirSync(path.resolve(projectDir, 'approuter'));
     expect(approuterFiles).toIncludeAllMembers(['.npmrc', 'manifest.yml', 'package.json', 'xs-app.json', 'xs-security.json']);
-  },10000);
+  }, 10000);
 
   it('should add necessary files to an existing project', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'add-approuter-to-existing-project');
@@ -54,7 +54,7 @@ describe('Add Approuter', () => {
 
     const approuterFiles = fs.readdirSync(path.resolve(projectDir, 'approuter'));
     expect(approuterFiles).toIncludeAllMembers(['.npmrc', 'manifest.yml', 'package.json', 'xs-app.json', 'xs-security.json']);
-  },10000);
+  }, 10000);
 
   it('should detect and fail if there are conflicts', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'add-approuter-conflicts');
@@ -65,5 +65,5 @@ describe('Add Approuter', () => {
     fs.writeFileSync(path.resolve(projectDir, 'approuter', 'xs-security.json'), JSON.stringify({ 'tenant-mode': 'shared' }), 'utf8');
 
     await expect(AddApprouter.run([projectDir])).rejects.toMatchSnapshot();
-  },10000);
+  }, 10000);
 });

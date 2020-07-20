@@ -92,9 +92,9 @@ describe('Init', () => {
     fs.createFileSync(`${projectDir}/.npmrc`);
 
     try {
-      await Init.run([projectDir, '--projectName=testingApp', '--startCommand="npm start"', '--skipInstall', '--no-analytics'])
-    }catch(e){
-      expect(e.message).toMatch(/A file with the name .* already exists\./)
+      await Init.run([projectDir, '--projectName=testingApp', '--startCommand="npm start"', '--skipInstall', '--no-analytics']);
+    } catch (e) {
+      expect(e.message).toMatch(/A file with the name .* already exists\./);
     }
   });
 

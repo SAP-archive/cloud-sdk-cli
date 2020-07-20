@@ -27,7 +27,11 @@ describe('generate-odata-client', () => {
   });
 
   it('should fail if the mandatory parameters are not there', async () => {
-    await expect(GenerateODataClient.run([])).rejects.toThrowError('-i, --inputDir INPUTDIR');
+    try {
+      await GenerateODataClient.run([]);
+    } catch (e) {
+      expect(e.message).toMatch('-i, --inputDir INPUTDIR');
+    }
   });
 
   it('should install and generate', async () => {
