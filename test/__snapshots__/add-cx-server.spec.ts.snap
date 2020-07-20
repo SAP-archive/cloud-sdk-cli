@@ -1,3 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`Add CX Server should detect and fail if there are conflicts 1`] = `[Error: A file with the name "cx-server" already exists. If you want to overwrite it, rerun the command with \`--force\`.]`;
