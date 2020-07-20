@@ -17,14 +17,19 @@ jest.mock('cli-ux', () => {
 
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import * as rm from 'rimraf';
 import AddCds from '../src/commands/add-cds';
 import { getCleanProjectDir, getTestOutputDir } from './test-utils';
 
 describe('Add CDS', () => {
   const testOutputDir = getTestOutputDir(__filename);
 
+  beforeAll(() => {
+    rm.sync(testOutputDir);
+  });
+
   afterAll(() => {
-    fs.removeSync(testOutputDir);
+    rm.sync(testOutputDir);
   });
 
   it('should add necessary files to an existing project', async () => {

@@ -6,6 +6,7 @@ jest.mock('../src/utils/warnings');
 
 import execa = require('execa');
 import * as fs from 'fs-extra';
+import * as rm from 'rimraf';
 import * as path from 'path';
 import Init from '../src/commands/init';
 import { getWarnings, recordWarning } from '../src/utils/warnings';
@@ -18,8 +19,12 @@ const nestAppDir = path.resolve('test', 'nest');
 jest.retryTimes(3);
 
 describe('Init', () => {
+  beforeAll(() => {
+    rm.sync(testOutputDir);
+  });
+
   afterAll(() => {
-    fs.removeSync(testOutputDir);
+    rm.sync(testOutputDir);
   });
 
   test('[E2E] should create a new project with the necessary files', async () => {
