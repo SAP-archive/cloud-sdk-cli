@@ -63,6 +63,10 @@ describe('Add CX Server', () => {
     fs.mkdirSync(path.resolve(projectDir, 'cx-server'), { recursive: true });
     fs.createFileSync(path.resolve(projectDir, 'cx-server', 'cx-server'));
 
-    await expect(AddCxServer.run([projectDir])).rejects.toMatchSnapshot();
+    try{
+      await AddCxServer.run([projectDir])
+    }catch (e) {
+      expect(e.message).toContain("A file with the name \"cx-server\" already exists.")
+    }
   },10000);
 });
