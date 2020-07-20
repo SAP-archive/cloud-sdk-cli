@@ -91,9 +91,11 @@ describe('Init', () => {
     fs.copySync(nestAppDir, projectDir, { recursive: true });
     fs.createFileSync(`${projectDir}/.npmrc`);
 
-    await expect(
-      Init.run([projectDir, '--projectName=testingApp', '--startCommand="npm start"', '--skipInstall', '--no-analytics'])
-    ).rejects.toMatchSnapshot();
+    try {
+      await Init.run([projectDir, '--projectName=testingApp', '--startCommand="npm start"', '--skipInstall', '--no-analytics'])
+    }catch(e){
+      expect(e.message).toMatch(/A file with the name .* already exists\./)
+    }
   });
 
   it('should add to .gitignore if there is one', async () => {
