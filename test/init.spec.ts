@@ -6,7 +6,6 @@ jest.mock('../src/utils/warnings');
 
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import * as rm from 'rimraf';
 import Init from '../src/commands/init';
 import { getWarnings, recordWarning } from '../src/utils/warnings';
 import { deleteAsync, getCleanProjectDir, getTestOutputDir } from './test-utils';
