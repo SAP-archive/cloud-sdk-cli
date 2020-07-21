@@ -24,6 +24,10 @@ import { getCleanProjectDir, getTestOutputDir } from '../test-utils';
 const testOutputDir = getTestOutputDir(__filename);
 
 describe('Scaffold Utils', () => {
+  beforeAll(() => {
+    rm.sync(testOutputDir);
+  });
+
   afterAll(() => {
     rm.sync(testOutputDir);
   });

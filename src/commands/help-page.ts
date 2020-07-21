@@ -13,6 +13,11 @@ export default class HelpPage extends Command {
     this.log('  https://community.sap.com/topics/cloud-sdk');
     this.log('  https://developers.sap.com/topics/cloud-sdk.html');
 
-    await execa('open', ['https://community.sap.com/topics/cloud-sdk']);
+    const os = process.platform;
+    if (os === 'win32') {
+      await execa('start', ['https://community.sap.com/topics/cloud-sdk']);
+    } else {
+      await execa('open', ['https://community.sap.com/topics/cloud-sdk']);
+    }
   }
 }

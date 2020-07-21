@@ -17,14 +17,19 @@ jest.mock('cli-ux', () => {
 
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import * as rm from 'rimraf';
 import AddCds from '../src/commands/add-cds';
 import { getCleanProjectDir, getTestOutputDir } from './test-utils';
 
 describe('Add CDS', () => {
   const testOutputDir = getTestOutputDir(__filename);
 
+  beforeAll(() => {
+    rm.sync(testOutputDir);
+  });
+
   afterAll(() => {
-    fs.removeSync(testOutputDir);
+    rm.sync(testOutputDir);
   });
 
   it('should add necessary files to an existing project', async () => {
@@ -52,6 +57,10 @@ describe('Add CDS', () => {
     fs.createFileSync(path.resolve(projectDir, 'db', 'data-model.cds'));
     fs.writeFileSync(path.resolve(projectDir, 'db', 'data-model.cds'), 'some text', 'utf8');
 
-    await expect(AddCds.run([projectDir, '--skipInstall'])).rejects.toMatchSnapshot();
+    try {
+      await AddCds.run([projectDir, '--skipInstall']);
+    } catch (e) {
+      expect(e.message).toMatch(/A file with the name .* already exists\./);
+    }
   });
 });

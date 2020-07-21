@@ -6,6 +6,7 @@ jest.mock('../src/utils/warnings');
 
 import execa = require('execa');
 import * as fs from 'fs-extra';
+import * as rm from 'rimraf';
 import * as path from 'path';
 import Init from '../src/commands/init';
 import { getWarnings, recordWarning } from '../src/utils/warnings';
@@ -18,8 +19,12 @@ const nestAppDir = path.resolve('test', 'nest');
 jest.retryTimes(3);
 
 describe('Init', () => {
+  beforeAll(() => {
+    rm.sync(testOutputDir);
+  });
+
   afterAll(() => {
-    fs.removeSync(testOutputDir);
+    rm.sync(testOutputDir);
   });
 
   test('[E2E] should create a new project with the necessary files', async () => {
@@ -91,9 +96,11 @@ describe('Init', () => {
     fs.copySync(nestAppDir, projectDir, { recursive: true });
     fs.createFileSync(`${projectDir}/.npmrc`);
 
-    await expect(
-      Init.run([projectDir, '--projectName=testingApp', '--startCommand="npm start"', '--skipInstall', '--no-analytics'])
-    ).rejects.toMatchSnapshot();
+    try {
+      await Init.run([projectDir, '--projectName=testingApp', '--startCommand="npm start"', '--skipInstall', '--no-analytics']);
+    } catch (e) {
+      expect(e.message).toMatch(/A file with the name .* already exists\./);
+    }
   });
 
   it('should add to .gitignore if there is one', async () => {

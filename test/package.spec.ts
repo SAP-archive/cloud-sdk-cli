@@ -5,6 +5,7 @@
 jest.mock('../src/utils/message-formatter');
 
 import * as fs from 'fs-extra';
+import * as rm from 'rimraf';
 import * as path from 'path';
 import Package from '../src/commands/package';
 import { boxMessage } from '../src/utils';
@@ -16,12 +17,16 @@ const nestAppDir = path.resolve('test', 'nest');
 jest.retryTimes(3);
 
 describe('Package', () => {
+  beforeAll(() => {
+    rm.sync(testOutputDir);
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   afterAll(() => {
-    fs.removeSync(testOutputDir);
+    rm.sync(testOutputDir);
   });
 
   it('should copy files correctly without parameters', async () => {

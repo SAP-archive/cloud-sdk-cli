@@ -10,6 +10,7 @@ jest.mock('cli-ux', () => ({
 }));
 
 import * as fs from 'fs-extra';
+import * as rm from 'rimraf';
 import * as path from 'path';
 import GenerateODataClient from '../src/commands/generate-odata-client';
 import { generatorOptionsSDK, GeneratorOptionsSDK } from '../src/utils';
@@ -18,16 +19,21 @@ describe('generate-odata-client', () => {
   const pathForTests = path.resolve(__dirname, __filename.replace(/\./g, '-')).replace('-ts', '');
 
   beforeAll(() => {
+    rm.sync(pathForTests);
     const pathForResources = path.resolve(__dirname, 'resources', 'template-generator-odata-client');
     fs.copySync(pathForResources, pathForTests);
   });
 
   afterAll(() => {
-    fs.removeSync(pathForTests);
+    rm.sync(pathForTests);
   });
 
   it('should fail if the mandatory parameters are not there', async () => {
-    await expect(GenerateODataClient.run([])).rejects.toThrowError('-i, --inputDir INPUTDIR');
+    try {
+      await GenerateODataClient.run([]);
+    } catch (e) {
+      expect(e.message).toMatch('-i, --inputDir INPUTDIR');
+    }
   });
 
   it('should install and generate', async () => {
