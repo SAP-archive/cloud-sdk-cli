@@ -12,7 +12,7 @@ export interface GeneratorOptionsSDK {
   serviceMapping?: PathLike;
   useSwagger: boolean;
   writeReadme: boolean;
-  changelogFile?: PathLike;
+  additionalFiles?: string;
   forceOverwrite: boolean;
   clearOutputDir: boolean;
   aggregatorNpmPackageName?: string;
@@ -71,12 +71,11 @@ export const generatorOptionsSDK: KeysToOptions = {
     default: false,
     hidden: true
   },
-  changelogFile: {
-    describe: 'Path to file that will be copied into the generated packages under the filename CHANGELOG.md.',
+  additionalFiles: {
+    describe: 'Glob describing additional files to be added to the each generated service directory.',
     type: 'string',
-    coerce: resolve,
-    normalize: true,
-    hidden: true
+    normalize: false,
+    hidden: false
   },
   forceOverwrite: {
     describe:

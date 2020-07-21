@@ -5,8 +5,8 @@
 jest.mock('../src/utils/message-formatter');
 
 import * as fs from 'fs-extra';
-import * as rm from 'rimraf';
 import * as path from 'path';
+import * as rm from 'rimraf';
 import Package from '../src/commands/package';
 import { boxMessage } from '../src/utils';
 import { getCleanProjectDir, getTestOutputDir } from './test-utils';

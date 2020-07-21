@@ -29,7 +29,7 @@ export default class GenerateODataClient extends Command {
     useSwagger: toBooleanFlag(generatorOptionsSDK.useSwagger),
     serviceMapping: toStringFlag(generatorOptionsSDK.serviceMapping!),
     writeReadme: toBooleanFlag(generatorOptionsSDK.writeReadme),
-    changelogFile: toStringFlag(generatorOptionsSDK.changelogFile!),
+    additionalFiles: toStringFlag(generatorOptionsSDK.additionalFiles!),
     clearOutputDir: toBooleanFlag(generatorOptionsSDK.clearOutputDir),
     aggregatorDirectoryName: toStringFlag(generatorOptionsSDK.aggregatorDirectoryName!),
     aggregatorNpmPackageName: toStringFlag(generatorOptionsSDK.aggregatorNpmPackageName!),

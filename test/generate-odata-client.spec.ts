@@ -1,7 +1,11 @@
 /*!
  * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
-const execa = jest.fn().mockRejectedValueOnce({ exitCode: 1 }).mockResolvedValueOnce('installed').mockResolvedValueOnce('generated');
+const execa = jest
+  .fn()
+  .mockRejectedValueOnce({ exitCode: 1 })
+  .mockResolvedValueOnce('installed')
+  .mockResolvedValueOnce('generated');
 jest.mock('execa', () => execa);
 jest.mock('cli-ux', () => ({
   default: {
@@ -10,8 +14,8 @@ jest.mock('cli-ux', () => ({
 }));
 
 import * as fs from 'fs-extra';
-import * as rm from 'rimraf';
 import * as path from 'path';
+import * as rm from 'rimraf';
 import GenerateODataClient from '../src/commands/generate-odata-client';
 import { generatorOptionsSDK, GeneratorOptionsSDK } from '../src/utils';
 

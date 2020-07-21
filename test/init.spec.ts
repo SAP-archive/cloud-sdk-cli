@@ -6,11 +6,10 @@ jest.mock('../src/utils/warnings');
 
 import execa = require('execa');
 import * as fs from 'fs-extra';
-import * as rm from 'rimraf';
 import * as path from 'path';
 import Init from '../src/commands/init';
 import { getWarnings, recordWarning } from '../src/utils/warnings';
-import { getCleanProjectDir, getTestOutputDir } from './test-utils';
+import { deleteAsync, getCleanProjectDir, getTestOutputDir } from './test-utils';
 
 const testOutputDir = getTestOutputDir(__filename);
 const expressAppDir = path.resolve('test', 'express');
@@ -19,13 +18,13 @@ const nestAppDir = path.resolve('test', 'nest');
 jest.retryTimes(3);
 
 describe('Init', () => {
-  beforeAll(() => {
-    rm.sync(testOutputDir);
-  });
+  beforeAll(async () => {
+   return deleteAsync(testOutputDir,6);
+  },60000);
 
-  afterAll(() => {
-    rm.sync(testOutputDir);
-  });
+  afterAll(async () => {
+    await deleteAsync(testOutputDir,6);
+  },60000);
 
   test('[E2E] should create a new project with the necessary files', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'full-init');

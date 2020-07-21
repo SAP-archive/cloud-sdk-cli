@@ -9,8 +9,8 @@ jest.mock('cli-ux', () => ({
 jest.retryTimes(3);
 
 import * as fs from 'fs-extra';
-import * as rm from 'rimraf';
 import * as path from 'path';
+import * as rm from 'rimraf';
 import GenerateODataClient from '../src/commands/generate-odata-client';
 
 describe('generate-odata-client', () => {
