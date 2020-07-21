@@ -23,6 +23,19 @@ export function getCleanProjectDir(pathPrefix: string, name: string): string {
 }
 
 export async function deleteAsync(path: string, busyRetries: number): Promise<string> {
+  const nodeVersion = process.version.match(/v(\d+)\./);
+  if (nodeVersion && typeof nodeVersion[1] === 'number' && nodeVersion[1] >= 12) {
+    return new Promise<string>((resolve, reject) =>
+      fs.rmdir(path, { maxRetries: busyRetries, recursive: true }, err => {
+        if (err) {
+          reject(`Error in deleting: ${path} with ${err.message}`);
+        } else {
+          resolve(`Deletion of ${path} finished.`);
+        }
+      })
+    );
+  }
+
   return new Promise<string>((resolve, reject) => {
     rm(path, { maxBusyTries: busyRetries }, err => {
       if (err) {
