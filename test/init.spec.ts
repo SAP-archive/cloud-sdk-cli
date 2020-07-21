@@ -19,12 +19,12 @@ jest.retryTimes(3);
 
 describe('Init', () => {
   beforeAll(async () => {
-   return deleteAsync(testOutputDir,6);
-  },60000);
+    return deleteAsync(testOutputDir, 6);
+  }, 60000);
 
   afterAll(async () => {
-    await deleteAsync(testOutputDir,6);
-  },60000);
+    await deleteAsync(testOutputDir, 6);
+  }, 60000);
 
   test('[E2E] should create a new project with the necessary files', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'full-init');

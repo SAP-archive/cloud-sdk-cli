@@ -8,10 +8,7 @@ import { testDir, testOutputRootDir } from './test-output';
 
 export function getTestOutputDir(file: string): string {
   const relativeDirPath = path.relative(testDir, path.dirname(file));
-  const outputDirName = path
-    .basename(file, '.ts')
-    .split('.')
-    .join('-');
+  const outputDirName = path.basename(file, '.ts').split('.').join('-');
 
   return path.resolve(testOutputRootDir, relativeDirPath, outputDirName);
 }
@@ -25,14 +22,14 @@ export function getCleanProjectDir(pathPrefix: string, name: string): string {
   return projectDir;
 }
 
-export async function deleteAsync(path:string,busyRetries:number):Promise<string>{
-  return new Promise<string>((resolve,reject)=>{
+export async function deleteAsync(path: string, busyRetries: number): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
     rm(path, { maxBusyTries: busyRetries }, err => {
       if (err) {
-        reject(`Error in deleting: ${path} with ${err.message}`)
-      }else {
-        resolve(`Deletion of ${path} finished.`)
+        reject(`Error in deleting: ${path} with ${err.message}`);
+      } else {
+        resolve(`Deletion of ${path} finished.`);
       }
     });
-  })
+  });
 }
