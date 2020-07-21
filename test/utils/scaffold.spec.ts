@@ -17,20 +17,19 @@ jest.retryTimes(3);
 
 import * as fs from 'fs';
 import * as path from 'path';
-import * as rm from 'rimraf';
 import { buildScaffold, shouldBuildScaffold } from '../../src/utils';
-import { getCleanProjectDir, getTestOutputDir } from '../test-utils';
+import { deleteAsync, getCleanProjectDir, getTestOutputDir } from '../test-utils';
 
 const testOutputDir = getTestOutputDir(__filename);
 
 describe('Scaffold Utils', () => {
-  beforeAll(() => {
-    rm.sync(testOutputDir);
-  });
+  beforeAll(async () => {
+    return deleteAsync(testOutputDir, 6);
+  }, 80000);
 
-  afterAll(() => {
-    rm.sync(testOutputDir);
-  });
+  afterAll(async () => {
+    return deleteAsync(testOutputDir, 6);
+  }, 80000);
 
   it('should determine if scaffold is needed', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'should-build-scaffold');

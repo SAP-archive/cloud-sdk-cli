@@ -4,9 +4,9 @@
 
 jest.mock('../src/utils/warnings');
 
-import execa = require('execa');
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import * as rm from 'rimraf';
 import Init from '../src/commands/init';
 import { getWarnings, recordWarning } from '../src/utils/warnings';
 import { deleteAsync, getCleanProjectDir, getTestOutputDir } from './test-utils';
@@ -18,13 +18,13 @@ const nestAppDir = path.resolve('test', 'nest');
 jest.retryTimes(3);
 
 describe('Init', () => {
-  beforeAll(() => {
-    rm.sync(testOutputDir);
-  });
+  beforeAll(async () => {
+    return deleteAsync(testOutputDir, 6);
+  }, 80000);
 
-  afterAll(() => {
-    rm.sync(testOutputDir);
-  });
+  afterAll(async () => {
+    return deleteAsync(testOutputDir, 6);
+  }, 80000);
 
   it('should add necessary files to an existing project', async () => {
     const projectDir = getCleanProjectDir(testOutputDir, 'add-to-existing');
