@@ -22,9 +22,17 @@ export function getCleanProjectDir(pathPrefix: string, name: string): string {
   return projectDir;
 }
 
-export async function deleteAsync(path: string, busyRetries: number): Promise<string> {
+function getMajorNodeVersion(): number {
   const nodeVersion = process.version.match(/v(\d+)\./);
-  if (nodeVersion && typeof nodeVersion[1] === 'number' && nodeVersion[1] >= 12) {
+  if (nodeVersion && typeof nodeVersion[1] === 'number') {
+    return nodeVersion[1];
+  }
+  return -1;
+}
+
+export async function deleteAsync(path: string, busyRetries: number): Promise<string> {
+  // Node 12 and greater supports recursive rmdir
+  if (getMajorNodeVersion() >= 12) {
     return new Promise<string>((resolve, reject) =>
       fs.rmdir(path, { maxRetries: busyRetries, recursive: true }, err => {
         if (err) {
