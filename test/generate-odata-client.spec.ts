@@ -29,20 +29,22 @@ describe('generate-odata-client', () => {
     await deleteAsync(pathForTests, 3);
   }, 80000);
 
-  it('should fail if the mandatory parameters are not there', async () => {
+  it('should fail if the mandatory parameters are not there', async done => {
     try {
       await GenerateODataClient.run([]);
     } catch (e) {
       expect(e.message).toMatch('-i, --inputDir INPUTDIR');
+      done();
     }
   });
 
-  it('should install and generate', async () => {
+  it('should install and generate', async done => {
     await GenerateODataClient.run(['-i=input', '-o=output', '--projectDir', pathForTests]);
 
     expect(execa).toHaveBeenCalledTimes(3);
     expect(execa.mock.calls[1][1].sort()).toContain('@sap-cloud-sdk/generator');
     expect(execa.mock.calls[2][1].sort()).toEqual(getDefault(pathForTests).sort());
+    done();
   });
 });
 
