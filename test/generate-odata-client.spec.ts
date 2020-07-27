@@ -22,12 +22,12 @@ describe('generate-odata-client', () => {
   beforeAll(async () => {
     await deleteAsync(pathForTests, 3);
     const pathForResources = path.resolve(__dirname, 'resources', 'template-generator-odata-client');
-    return fs.copy(pathForResources, pathForTests);
-  });
+    await fs.copy(pathForResources, pathForTests);
+  }, 80000);
 
   afterAll(async () => {
     await deleteAsync(pathForTests, 3);
-  });
+  }, 80000);
 
   it('should fail if the mandatory parameters are not there', async () => {
     try {
