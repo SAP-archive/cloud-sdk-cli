@@ -31,6 +31,6 @@ describe('generate-odata-client', () => {
     const result = await GenerateODataClient.run(['-i', 'edmxSource', '-o', 'output', '--projectDir', pathForTests]);
     expect(result.exitCode).toBe(0);
 
-    fs.readdir(path.resolve(pathForTests, 'output')).then(file => expect(file).toHaveLength(1));
+    return fs.readdir(path.resolve(pathForTests, 'output')).then(file => expect(file).toHaveLength(1));
   }, 120000);
 });
