@@ -15,37 +15,36 @@ jest.mock('cli-ux', () => {
   };
 });
 
-import * as fs from 'fs';
+import * as fs from 'fs-extra';
 import * as path from 'path';
-import * as rm from 'rimraf';
 import { usageAnalytics } from '../../src/utils';
-import { getCleanProjectDir, getTestOutputDir } from '../test-utils';
+import { deleteAsync, getCleanProjectDir, getTestOutputDir } from '../test-utils';
 
 const testOutputDir = getTestOutputDir(__filename);
 
-function readConsentFile(projectDir: string) {
+async function readConsentFile(projectDir: string) {
   const filePath = path.resolve(projectDir, 'sap-cloud-sdk-analytics.json');
-  return JSON.parse(fs.readFileSync(filePath, { encoding: 'utf8' }));
+  return fs.readFile(filePath, { encoding: 'utf8' }).then(value => JSON.parse(value));
 }
 
 describe('Usage Analytics Utils', () => {
-  afterAll(() => {
-    rm.sync(testOutputDir);
+  afterAll(async () => {
+    await deleteAsync(testOutputDir, 3);
   });
 
   it('Create usage analytics consent file', async () => {
-    const projectDir = getCleanProjectDir(testOutputDir, 'usage-analytics');
+    const projectDir = await getCleanProjectDir(testOutputDir, 'usage-analytics');
 
     await usageAnalytics(projectDir, true);
-    expect(readConsentFile(projectDir).enabled).toBe(true);
+    expect((await readConsentFile(projectDir)).enabled).toBe(true);
 
     await usageAnalytics(projectDir, true, 'TEST');
-    expect(readConsentFile(projectDir)).toEqual({ enabled: true, salt: 'TEST' });
+    expect(await readConsentFile(projectDir)).toEqual({ enabled: true, salt: 'TEST' });
 
     await usageAnalytics(projectDir, undefined);
-    expect(readConsentFile(projectDir).enabled).toBe(false);
+    expect((await readConsentFile(projectDir)).enabled).toBe(false);
 
     await usageAnalytics(projectDir, false);
-    expect(readConsentFile(projectDir).enabled).toBe(false);
+    expect((await readConsentFile(projectDir)).enabled).toBe(false);
   });
 });

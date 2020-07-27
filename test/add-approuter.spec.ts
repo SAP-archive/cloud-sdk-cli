@@ -16,55 +16,58 @@ jest.mock('cli-ux', () => {
   };
 });
 import * as fs from 'fs-extra';
-import * as rm from 'rimraf';
 import * as path from 'path';
 import AddApprouter from '../src/commands/add-approuter';
-import { getCleanProjectDir, getTestOutputDir } from './test-utils';
+import { deleteAsync, getCleanProjectDir, getTestOutputDir } from './test-utils';
 
 describe('Add Approuter', () => {
   const testOutputDir = getTestOutputDir(__filename);
 
-  beforeAll(() => {
-    rm.sync(testOutputDir);
+  beforeAll(async () => {
+    await deleteAsync(testOutputDir, 3);
   });
 
-  afterAll(() => {
-    rm.sync(testOutputDir);
+  afterAll(async () => {
+    await deleteAsync(testOutputDir, 3);
   });
 
   it('should add preconfigured files', async () => {
-    const projectDir = getCleanProjectDir(testOutputDir, 'add-approuter');
+    const projectDir = await getCleanProjectDir(testOutputDir, 'add-approuter');
 
     await AddApprouter.run([projectDir]);
 
-    const files = fs.readdirSync(projectDir);
-    expect(files).toContain('approuter');
+    const files = fs.readdir(projectDir);
+    const approuterFiles = fs.readdir(path.resolve(projectDir, 'approuter'));
 
-    const approuterFiles = fs.readdirSync(path.resolve(projectDir, 'approuter'));
-    expect(approuterFiles).toIncludeAllMembers(['.npmrc', 'manifest.yml', 'package.json', 'xs-app.json', 'xs-security.json']);
+    return Promise.all([files, approuterFiles]).then(values => {
+      expect(values[0]).toContain('approuter');
+      expect(values[1]).toIncludeAllMembers(['.npmrc', 'manifest.yml', 'package.json', 'xs-app.json', 'xs-security.json']);
+    });
   }, 10000);
 
   it('should add necessary files to an existing project', async () => {
-    const projectDir = getCleanProjectDir(testOutputDir, 'add-approuter-to-existing-project');
+    const projectDir = await getCleanProjectDir(testOutputDir, 'add-approuter-to-existing-project');
 
-    fs.copySync(path.resolve(__dirname, 'express'), projectDir, { recursive: true });
+    await fs.copy(path.resolve(__dirname, 'express'), projectDir, { recursive: true });
 
     await AddApprouter.run([projectDir]);
 
-    const files = fs.readdirSync(projectDir);
-    expect(files).toContain('approuter');
+    const files = fs.readdir(projectDir);
+    const approuterFiles = fs.readdir(path.resolve(projectDir, 'approuter'));
 
-    const approuterFiles = fs.readdirSync(path.resolve(projectDir, 'approuter'));
-    expect(approuterFiles).toIncludeAllMembers(['.npmrc', 'manifest.yml', 'package.json', 'xs-app.json', 'xs-security.json']);
+    return Promise.all([files, approuterFiles]).then(values => {
+      expect(values[0]).toContain('approuter');
+      expect(values[1]).toIncludeAllMembers(['.npmrc', 'manifest.yml', 'package.json', 'xs-app.json', 'xs-security.json']);
+    });
   }, 10000);
 
   it('should detect and fail if there are conflicts', async () => {
-    const projectDir = getCleanProjectDir(testOutputDir, 'add-approuter-conflicts');
+    const projectDir = await getCleanProjectDir(testOutputDir, 'add-approuter-conflicts');
 
-    fs.copySync(path.resolve(__dirname, 'express'), projectDir, { recursive: true });
-    fs.mkdirSync(path.resolve(projectDir, 'approuter'));
-    fs.createFileSync(path.resolve(projectDir, 'approuter', 'xs-security.json'));
-    fs.writeFileSync(path.resolve(projectDir, 'approuter', 'xs-security.json'), JSON.stringify({ 'tenant-mode': 'shared' }), 'utf8');
+    await fs.copy(path.resolve(__dirname, 'express'), projectDir, { recursive: true });
+    await fs.mkdir(path.resolve(projectDir, 'approuter'));
+    await fs.createFile(path.resolve(projectDir, 'approuter', 'xs-security.json'));
+    await fs.writeFile(path.resolve(projectDir, 'approuter', 'xs-security.json'), JSON.stringify({ 'tenant-mode': 'shared' }), 'utf8');
 
     try {
       await AddApprouter.run([projectDir]);

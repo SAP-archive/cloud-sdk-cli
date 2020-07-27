@@ -4,18 +4,17 @@
 jest.mock('execa', () => jest.fn().mockResolvedValue('1.0.0'));
 
 import * as execa from 'execa';
-import * as fs from 'fs';
+import * as fs from 'fs-extra';
 import * as path from 'path';
-import * as rm from 'rimraf';
 import { installDependencies, modifyPackageJson, parsePackageJson } from '../../src/utils';
-import { getCleanProjectDir, getTestOutputDir } from '../test-utils';
+import { deleteAsync, getCleanProjectDir, getTestOutputDir } from '../test-utils';
 
 const testOutputDir = getTestOutputDir(__filename);
 
 describe('Package Json Utils', () => {
-  afterAll(() => {
-    rm.sync(testOutputDir);
-  });
+  afterAll(async () => {
+    await deleteAsync(testOutputDir, 3);
+  }, 80000);
 
   it('should call `npm install`', () => {
     installDependencies('', true);
@@ -23,17 +22,17 @@ describe('Package Json Utils', () => {
   });
 
   it('should parse the package.json', async () => {
-    const projectDir = getCleanProjectDir(testOutputDir, 'parse-package-json');
+    const projectDir = await getCleanProjectDir(testOutputDir, 'parse-package-json');
     const packageJsonPath = path.resolve(projectDir, 'package.json');
-    fs.copyFileSync(path.resolve('test', 'nest', 'package.json'), packageJsonPath);
+    await fs.copyFile(path.resolve('test', 'nest', 'package.json'), packageJsonPath);
 
     expect(Object.keys(await parsePackageJson(projectDir)).sort()).toMatchSnapshot();
   });
 
   it('add scripts, dependencies and test config for existing project', async () => {
-    const projectDir = getCleanProjectDir(testOutputDir, 'modify-package-json-existing');
+    const projectDir = await getCleanProjectDir(testOutputDir, 'modify-package-json-existing');
     const packageJsonPath = path.resolve(projectDir, 'package.json');
-    fs.copyFileSync(path.resolve('test', 'nest', 'package.json'), packageJsonPath);
+    await fs.copyFile(path.resolve('test', 'nest', 'package.json'), packageJsonPath);
 
     await modifyPackageJson({
       projectDir,
@@ -46,9 +45,9 @@ describe('Package Json Utils', () => {
   });
 
   it('add scripts, dependencies and test config for scaffolded project', async () => {
-    const projectDir = getCleanProjectDir(testOutputDir, 'modify-package-json-existing');
+    const projectDir = await getCleanProjectDir(testOutputDir, 'modify-package-json-existing');
     const packageJsonPath = path.resolve(projectDir, 'package.json');
-    fs.copyFileSync(path.resolve('test', 'nest', 'package.json'), packageJsonPath);
+    await fs.copyFile(path.resolve('test', 'nest', 'package.json'), packageJsonPath);
 
     await modifyPackageJson({
       projectDir,
