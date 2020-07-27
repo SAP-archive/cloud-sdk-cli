@@ -1,6 +1,8 @@
 /*!
  * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
+import { deleteAsync } from './test-utils';
+
 const execa = jest.fn().mockRejectedValueOnce({ exitCode: 1 }).mockResolvedValueOnce('installed').mockResolvedValueOnce('generated');
 jest.mock('execa', () => execa);
 jest.mock('cli-ux', () => ({
@@ -11,21 +13,20 @@ jest.mock('cli-ux', () => ({
 
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import * as rm from 'rimraf';
 import GenerateODataClient from '../src/commands/generate-odata-client';
 import { generatorOptionsSDK, GeneratorOptionsSDK } from '../src/utils';
 
 describe('generate-odata-client', () => {
   const pathForTests = path.resolve(__dirname, __filename.replace(/\./g, '-')).replace('-ts', '');
 
-  beforeAll(() => {
-    rm.sync(pathForTests);
+  beforeAll(async () => {
+    await deleteAsync(pathForTests, 3);
     const pathForResources = path.resolve(__dirname, 'resources', 'template-generator-odata-client');
-    fs.copySync(pathForResources, pathForTests);
+    return fs.copy(pathForResources, pathForTests);
   });
 
-  afterAll(() => {
-    rm.sync(pathForTests);
+  afterAll(async () => {
+    await deleteAsync(pathForTests, 3);
   });
 
   it('should fail if the mandatory parameters are not there', async () => {

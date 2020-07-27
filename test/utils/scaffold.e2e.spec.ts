@@ -3,8 +3,7 @@
  */
 jest.retryTimes(3);
 
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from 'fs-extra';
 import { buildScaffold, shouldBuildScaffold } from '../../src/utils';
 import { deleteAsync, getCleanProjectDir, getTestOutputDir } from '../test-utils';
 
@@ -12,18 +11,18 @@ const testOutputDir = getTestOutputDir(__filename);
 
 describe('Scaffold Utils', () => {
   beforeAll(async () => {
-    return deleteAsync(testOutputDir, 6);
+    await deleteAsync(testOutputDir, 6);
   }, 80000);
 
   afterAll(async () => {
-    return deleteAsync(testOutputDir, 6);
+    await deleteAsync(testOutputDir, 6);
   }, 80000);
 
   test('[E2E] should build the scaffold', async () => {
-    const projectDir = getCleanProjectDir(testOutputDir, 'build-scaffold');
+    const projectDir = await getCleanProjectDir(testOutputDir, 'build-scaffold');
 
     await buildScaffold(projectDir, false, false);
 
-    expect(fs.readdirSync(projectDir).sort()).toMatchSnapshot();
+    return fs.readdir(projectDir).then(files => expect(files.sort()).toMatchSnapshot());
   }, 80000);
 });

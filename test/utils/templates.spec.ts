@@ -1,17 +1,16 @@
 /*!
  * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
-import * as fs from 'fs';
+import * as fs from 'fs-extra';
 import * as path from 'path';
-import * as rm from 'rimraf';
 import { CopyDescriptor, copyFiles, findConflicts, getCopyDescriptors, getTemplatePaths } from '../../src/utils';
-import { getCleanProjectDir, getTestOutputDir } from '../test-utils';
+import { deleteAsync, getCleanProjectDir, getTestOutputDir } from '../test-utils';
 
 const testOutputDir = getTestOutputDir(__filename);
 
 describe('Templates Utils', () => {
-  afterAll(() => {
-    rm.sync(testOutputDir);
+  afterAll(async () => {
+    deleteAsync(testOutputDir, 3);
   });
 
   it('should return information which files to copy where', () => {
@@ -23,16 +22,20 @@ describe('Templates Utils', () => {
   });
 
   it('should find conflicts', async () => {
-    const projectDir = getCleanProjectDir(testOutputDir, 'find-conflicts');
-    fs.writeFileSync(path.resolve(projectDir, '.npmrc'), 'foobar');
+    const projectDir = await getCleanProjectDir(testOutputDir, 'find-conflicts');
+    await fs.writeFile(path.resolve(projectDir, '.npmrc'), 'foobar');
     findConflicts(getCopyDescriptors(projectDir, getTemplatePaths(['init'])), true);
-    expect(fs.existsSync(path.resolve(projectDir, '.npmrc'))).toBe(false);
+    try {
+      await fs.stat(path.resolve(projectDir, '.npmrc'));
+    } catch (e) {
+      expect(e.message).toMatch(/no such file or directory.*npmrc/);
+    }
   });
 
   it('should copy files locally', async () => {
-    const projectDir = getCleanProjectDir(testOutputDir, 'copy-files-locally');
-    copyFiles(getCopyDescriptors(projectDir, getTemplatePaths(['init'])), {});
-    expect(fs.readdirSync(projectDir).sort()).toMatchSnapshot();
+    const projectDir = await getCleanProjectDir(testOutputDir, 'copy-files-locally');
+    await copyFiles(getCopyDescriptors(projectDir, getTemplatePaths(['init'])), {});
+    return fs.readdir(projectDir).then(value => expect(value).toMatchSnapshot);
   });
 
   // TODO:

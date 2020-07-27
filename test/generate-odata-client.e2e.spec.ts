@@ -20,17 +20,17 @@ describe('generate-odata-client', () => {
   beforeAll(async () => {
     await deleteAsync(pathForTests, 6);
     const pathForResources = path.resolve(__dirname, 'resources', 'template-generator-odata-client');
-    fs.copySync(pathForResources, pathForTests);
+    await fs.copy(pathForResources, pathForTests);
   }, 80000);
 
   afterAll(async () => {
-    return deleteAsync(pathForTests, 6);
+    await deleteAsync(pathForTests, 6);
   }, 80000);
 
   test('[E2E] should generate a OData client', async () => {
     const result = await GenerateODataClient.run(['-i', 'edmxSource', '-o', 'output', '--projectDir', pathForTests]);
     expect(result.exitCode).toBe(0);
 
-    expect(fs.readdirSync(path.resolve(pathForTests, 'output'))).toHaveLength(1);
+    expect(await fs.readdir(path.resolve(pathForTests, 'output'))).toHaveLength(1);
   }, 120000);
 });

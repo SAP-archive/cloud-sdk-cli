@@ -1,18 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Templates Utils should copy files locally 1`] = `
-Array [
-  ".npmrc",
-  ".pipeline",
-  "Jenkinsfile",
-  "credentials.json",
-  "deployment",
-  "manifest.yml",
-  "s4hana_pipeline",
-  "systems.json",
-]
-`;
-
 exports[`Templates Utils should return information which files to copy where 1`] = `
 Array [
   Array [
