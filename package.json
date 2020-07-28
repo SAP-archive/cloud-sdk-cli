@@ -89,7 +89,7 @@
     "postpack": "rimraf oclif.manifest.json",
     "pretest": "npm run lint && tsc -b",
     "test": "jest --testNamePattern=\"^((?!\\[E2E\\]).)*$\"",
-    "test:full": "tsc -b && jest --no-cache",
+    "test:full": "tsc -b && jest --no-cache --runInBand",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "test:watch-debug": "node --inspect-brk node_modules/.bin/jest --watch --runInBand",
     "version": "oclif-dev readme && git add README.md"
