@@ -17,7 +17,7 @@ jest.retryTimes(3);
 describe('Init', () => {
   beforeAll(async () => {
     await deleteAsync(testOutputDir, 6);
-  }, TimeThresholds.EXTRAO_LONG);
+  }, TimeThresholds.EXTRA_LONG);
 
   test(
     '[E2E] should create a new project with the necessary files when adding cds',
@@ -34,6 +34,6 @@ describe('Init', () => {
       await execa('npm', ['run', 'cds-deploy'], { cwd: projectDir, stdio: 'inherit' });
       return fs.access(path.resolve(projectDir, 'testingApp.db'));
     },
-    TimeThresholds.EXTRAO_LONG
+    TimeThresholds.EXTRA_LONG
   );
 });

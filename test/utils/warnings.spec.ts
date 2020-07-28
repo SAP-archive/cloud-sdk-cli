@@ -12,7 +12,7 @@ describe('warnings', () => {
       recordWarning('test warning');
       expect(getWarnings()).toEqual(['- test warning']);
     },
-    TimeThresholds.DEFAULT
+    TimeThresholds.EXTRA_SHORT
   );
 
   it(
@@ -22,7 +22,7 @@ describe('warnings', () => {
       recordWarning('test2');
       expect(getWarnings()).toEqual(['- test1', '- test2']);
     },
-    TimeThresholds.DEFAULT
+    TimeThresholds.EXTRA_SHORT
   );
 
   it(
@@ -31,6 +31,6 @@ describe('warnings', () => {
       recordWarning('line1', 'line2', 'line3');
       expect(getWarnings()).toEqual(['- line1\n  line2\n  line3']);
     },
-    TimeThresholds.DEFAULT
+    TimeThresholds.EXTRA_SHORT
   );
 });

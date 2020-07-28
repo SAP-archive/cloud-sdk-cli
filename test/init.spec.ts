@@ -19,7 +19,7 @@ jest.retryTimes(3);
 describe('Init', () => {
   beforeAll(async () => {
     await deleteAsync(testOutputDir, 6);
-  }, TimeThresholds.EXTRAO_LONG);
+  }, TimeThresholds.EXTRA_LONG);
 
   it(
     'should add necessary files to an existing project',

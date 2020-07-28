@@ -11,7 +11,7 @@ const testOutputDir = getTestOutputDir(__filename);
 describe('Jest Config Utils', () => {
   beforeAll(async () => {
     await deleteAsync(testOutputDir, 3);
-  }, TimeThresholds.DEFAULT);
+  }, TimeThresholds.EXTRA_SHORT);
 
   it(
     'returns jest config object for tests',
@@ -19,7 +19,7 @@ describe('Jest Config Utils', () => {
       expect(getJestConfig(true)).toMatchSnapshot();
       expect(getJestConfig(false)).toMatchSnapshot();
     },
-    TimeThresholds.DEFAULT
+    TimeThresholds.EXTRA_SHORT
   );
 
   it(
@@ -33,6 +33,6 @@ describe('Jest Config Utils', () => {
 
       expect(JSON.parse(await fs.readFile(jestConfigPath, { encoding: 'utf8' }))).toMatchObject(getJestConfig(false));
     },
-    TimeThresholds.DEFAULT
+    TimeThresholds.EXTRA_SHORT
   );
 });

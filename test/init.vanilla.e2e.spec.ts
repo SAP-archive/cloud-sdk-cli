@@ -17,7 +17,7 @@ jest.retryTimes(3);
 describe('Init', () => {
   beforeAll(async () => {
     await deleteAsync(testOutputDir, 6);
-  }, TimeThresholds.EXTRAO_LONG);
+  }, TimeThresholds.EXTRA_LONG);
 
   test(
     '[E2E] should create a new project with the necessary files',
@@ -45,6 +45,6 @@ describe('Init', () => {
         return Promise.resolve();
       });
     },
-    TimeThresholds.EXTRAO_LONG
+    TimeThresholds.EXTRA_LONG
   );
 });

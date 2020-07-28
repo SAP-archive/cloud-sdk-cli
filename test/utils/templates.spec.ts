@@ -11,7 +11,7 @@ const testOutputDir = getTestOutputDir(__filename);
 describe('Templates Utils', () => {
   beforeAll(async () => {
     deleteAsync(testOutputDir, 3);
-  }, TimeThresholds.DEFAULT);
+  }, TimeThresholds.EXTRA_SHORT);
 
   it(
     'should return information which files to copy where',
@@ -22,7 +22,7 @@ describe('Templates Utils', () => {
       const appRouterCopyInfo = getCopyDescriptors('targetDir', getTemplatePaths(['add-approuter']));
       expect(appRouterCopyInfo.map(appRouterCopyInfo => copyInfoToPathArray(appRouterCopyInfo).sort())).toMatchSnapshot();
     },
-    TimeThresholds.DEFAULT
+    TimeThresholds.EXTRA_SHORT
   );
 
   it(
@@ -37,7 +37,7 @@ describe('Templates Utils', () => {
         expect(e.message).toMatch(/no such file or directory.*npmrc/);
       }
     },
-    TimeThresholds.DEFAULT
+    TimeThresholds.EXTRA_SHORT
   );
 
   it(
@@ -47,7 +47,7 @@ describe('Templates Utils', () => {
       await copyFiles(getCopyDescriptors(projectDir, getTemplatePaths(['init'])), {});
       return fs.readdir(projectDir).then(value => expect(value).toMatchSnapshot);
     },
-    TimeThresholds.DEFAULT
+    TimeThresholds.EXTRA_SHORT
   );
 
   // TODO:

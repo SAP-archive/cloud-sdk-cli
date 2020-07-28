@@ -11,7 +11,7 @@ const testOutputDir = getTestOutputDir(__filename);
 describe('Git Ignore Utils', () => {
   beforeAll(async () => {
     await deleteAsync(testOutputDir, 3);
-  }, TimeThresholds.DEFAULT);
+  }, TimeThresholds.EXTRA_SHORT);
 
   it(
     'should add paths to empty git ignore',
@@ -24,7 +24,7 @@ describe('Git Ignore Utils', () => {
       const gitIgnoreContent = (await fs.readFile(`${projectDir}/.gitignore`, { encoding: 'utf8' })).split('\n');
       expect(gitIgnoreContent).toIncludeAllMembers(['/s4hana_pipeline', 'credentials.json']);
     },
-    TimeThresholds.DEFAULT
+    TimeThresholds.EXTRA_SHORT
   );
 
   it(
@@ -38,7 +38,7 @@ describe('Git Ignore Utils', () => {
       const gitIgnoreContent = (await fs.readFile(`${projectDir}/.gitignore`, { encoding: 'utf8' })).split('\n');
       expect(gitIgnoreContent).toIncludeAllMembers(['gen/', '*.db']);
     },
-    TimeThresholds.DEFAULT
+    TimeThresholds.EXTRA_SHORT
   );
 
   it(
@@ -58,7 +58,7 @@ describe('Git Ignore Utils', () => {
       const gitIgnoreContent = (await fs.readFile(`${projectDir}/.gitignore`, { encoding: 'utf8' })).split('\n');
       expect(gitIgnoreContent).toIncludeAllMembers(['/s4hana_pipeline', 'myPath', 'credentials.json']);
     },
-    TimeThresholds.DEFAULT
+    TimeThresholds.EXTRA_SHORT
   );
 
   it(
@@ -77,6 +77,6 @@ describe('Git Ignore Utils', () => {
         '  /deployment'
       );
     },
-    TimeThresholds.DEFAULT
+    TimeThresholds.EXTRA_SHORT
   );
 });

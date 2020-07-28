@@ -16,7 +16,7 @@ describe('Generate OData Client Utils', () => {
       yargsOption = { describe: 'expectedDescription', default: true };
       expect(toBooleanFlag(yargsOption).description).toBe('expectedDescription [default: true].');
     },
-    TimeThresholds.DEFAULT
+    TimeThresholds.EXTRA_SHORT
   );
 
   it(
@@ -25,7 +25,7 @@ describe('Generate OData Client Utils', () => {
       const yargsOption: Options = { alias: 'expectedAlias' };
       expect(toBooleanFlag(yargsOption).char).toBe(yargsOption.alias);
     },
-    TimeThresholds.DEFAULT
+    TimeThresholds.EXTRA_SHORT
   );
 
   it(
@@ -37,7 +37,7 @@ describe('Generate OData Client Utils', () => {
       yargsOption = { requiresArg: true };
       expect(toBooleanFlag(yargsOption).required).toBe(yargsOption.requiresArg);
     },
-    TimeThresholds.DEFAULT
+    TimeThresholds.EXTRA_SHORT
   );
 
   it(
@@ -51,7 +51,7 @@ describe('Generate OData Client Utils', () => {
       expect(toBooleanFlag(yargsOption).default).toBe(yargsOption.default);
       expect(toBooleanFlag(yargsOption).allowNo).toBe(yargsOption.default);
     },
-    TimeThresholds.DEFAULT
+    TimeThresholds.EXTRA_SHORT
   );
 
   it('should translate all string arguments correctly.', () => {
@@ -69,7 +69,7 @@ describe('Generate OData Client Utils', () => {
       yargsOption = { default: true };
       expect(toStringFlag(yargsOption).default).toBe(yargsOption.default);
     },
-    TimeThresholds.DEFAULT
+    TimeThresholds.EXTRA_SHORT
   );
 
   it(
@@ -81,6 +81,6 @@ describe('Generate OData Client Utils', () => {
       yargsOption = { requiresArg: true };
       expect(toStringFlag(yargsOption).required).toBe(yargsOption.requiresArg);
     },
-    TimeThresholds.DEFAULT
+    TimeThresholds.EXTRA_SHORT
   );
 });

@@ -30,7 +30,7 @@ async function readConsentFile(projectDir: string) {
 describe('Usage Analytics Utils', () => {
   beforeAll(async () => {
     await deleteAsync(testOutputDir, 3);
-  }, TimeThresholds.DEFAULT);
+  }, TimeThresholds.EXTRA_SHORT);
 
   it(
     'Create usage analytics consent file',
@@ -49,6 +49,6 @@ describe('Usage Analytics Utils', () => {
       await usageAnalytics(projectDir, false);
       expect((await readConsentFile(projectDir)).enabled).toBe(false);
     },
-    TimeThresholds.DEFAULT
+    TimeThresholds.EXTRA_SHORT
   );
 });
