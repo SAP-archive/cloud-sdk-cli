@@ -6,7 +6,9 @@
 ==== add change in try catch for generator test =====
 4 win, node 12, test finished asyunc open  generator test
 ==== changed output dir  =====
-2 win, node 10, test finished asyunc open generator test
-2 win, node 10, test finished asyunc open generator test
+5 win, node 10, test finished asyunc open generator test
+6 win, node 10, test finished asyunc open generator test
 ==== remove rimraf before  =====
-3 all green
+7 all green
+==== increase timeouts for local windows run  =====
+8 win, node 10, test finished asyunc open generator test

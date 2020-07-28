@@ -54,9 +54,9 @@ export async function deleteAsync(path: string, busyRetries: number): Promise<vo
 }
 
 export enum TimeThresholds {
-  DEFAULT = 5000,
-  SHORT = 30000,
-  MEDIUM = 60000,
-  LONG = 120000,
-  EXTRAO_LONG = 240000
+  DEFAULT = 50000,
+  SHORT = 300000,
+  MEDIUM = 600000,
+  LONG = 1200000,
+  EXTRAO_LONG = 2400000
 }
