@@ -14,6 +14,10 @@ describe('Scaffold Utils', () => {
     await deleteAsync(testOutputDir, 6);
   }, TimeThresholds.LONG);
 
+  afterAll(async () => {
+    await deleteAsync(`${testOutputDir}/build-scaffold/src/app.controller.spec.ts`, 6);
+  }, TimeThresholds.EXTRA_SHORT);
+
   test(
     '[E2E] should build the scaffold',
     async () => {

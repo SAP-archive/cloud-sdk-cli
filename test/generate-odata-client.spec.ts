@@ -15,10 +15,10 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import GenerateODataClient from '../src/commands/generate-odata-client';
 import { generatorOptionsSDK, GeneratorOptionsSDK } from '../src/utils';
-import { deleteAsync, TimeThresholds } from './test-utils';
+import { deleteAsync, getTestOutputDir, TimeThresholds } from './test-utils';
 
 describe('generate-odata-client', () => {
-  const pathForTests = path.resolve(__dirname, __filename.replace(/\./g, '-')).replace('-ts', '');
+  const pathForTests = getTestOutputDir(__filename);
 
   beforeAll(async () => {
     await deleteAsync(pathForTests, 3);
