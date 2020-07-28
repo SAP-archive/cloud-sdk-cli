@@ -1,6 +1,7 @@
-1 win, node 10, test finished asyunc open
-2 win, node 10, test finished asyunc open
+1 win, node 10, test finished asyunc open generator test
+2 win, node 10, test finished asyunc open generator test
 3 all green
-4 win, node 12, test finished asyunc open
-5 win, node 12 and 10, test finished asyunc open
+4 win, node 12, test finished asyunc open  generator test
+5 win, node 12 and 10, test finished asyunc open  generator test
 ==== add change in try catch for generator test =====
+4 win, node 12, test finished asyunc open  generator test
