@@ -10,6 +10,7 @@ jest.mock('cli-ux', () => ({
     confirm: jest.fn().mockResolvedValue(true)
   }
 }));
+jest.retryTimes(3);
 
 import * as fs from 'fs-extra';
 import * as path from 'path';
