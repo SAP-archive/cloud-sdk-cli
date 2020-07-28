@@ -18,18 +18,18 @@ jest.mock('cli-ux', () => {
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import AddCds from '../src/commands/add-cds';
-import { deleteAsync, getCleanProjectDir, getTestOutputDir } from './test-utils';
+import { deleteAsync, getCleanProjectDir, getTestOutputDir, TimeThresholds } from './test-utils';
 
 describe('Add CDS', () => {
   const testOutputDir = getTestOutputDir(__filename);
 
   beforeAll(async () => {
     await deleteAsync(testOutputDir, 6);
-  }, 80000);
+  }, TimeThresholds.LONG);
 
   afterAll(async () => {
     await deleteAsync(testOutputDir, 6);
-  }, 80000);
+  }, TimeThresholds.LONG);
 
   it('should add necessary files to an existing project', async () => {
     const projectDir = await getCleanProjectDir(testOutputDir, 'add-cds-to-existing-project');
@@ -48,7 +48,7 @@ describe('Add CDS', () => {
     });
   }, 15000);
 
-  it('should detect and fail if there are conflicts', async () => {
+  it('should detect and fail if there are conflicts', async done => {
     const projectDir = await getCleanProjectDir(testOutputDir, 'add-cds-conflicts');
 
     await fs.copy(path.resolve(__dirname, 'express'), projectDir, { recursive: true });
@@ -60,6 +60,7 @@ describe('Add CDS', () => {
       await AddCds.run([projectDir, '--skipInstall']);
     } catch (e) {
       expect(e.message).toMatch(/A file with the name .* already exists\./);
+      done();
     }
   });
 });
