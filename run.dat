@@ -18,5 +18,7 @@
 ==== delete only before not after  =====
 11 all green
 ==== reduce time to resonable value  =====
-11 all green
+12 all green
 ==== remove in band no cache typo and proper folder for generation test ====
+13 all green
+==== add back macOS ====
