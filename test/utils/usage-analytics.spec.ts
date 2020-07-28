@@ -18,7 +18,7 @@ jest.mock('cli-ux', () => {
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { usageAnalytics } from '../../src/utils';
-import { deleteAsync, getCleanProjectDir, getTestOutputDir } from '../test-utils';
+import { deleteAsync, getCleanProjectDir, getTestOutputDir, TimeThresholds } from '../test-utils';
 
 const testOutputDir = getTestOutputDir(__filename);
 
@@ -30,21 +30,25 @@ async function readConsentFile(projectDir: string) {
 describe('Usage Analytics Utils', () => {
   afterAll(async () => {
     await deleteAsync(testOutputDir, 3);
-  });
+  }, TimeThresholds.DEFAULT);
 
-  it('Create usage analytics consent file', async () => {
-    const projectDir = await getCleanProjectDir(testOutputDir, 'usage-analytics');
+  it(
+    'Create usage analytics consent file',
+    async () => {
+      const projectDir = await getCleanProjectDir(testOutputDir, 'usage-analytics');
 
-    await usageAnalytics(projectDir, true);
-    expect((await readConsentFile(projectDir)).enabled).toBe(true);
+      await usageAnalytics(projectDir, true);
+      expect((await readConsentFile(projectDir)).enabled).toBe(true);
 
-    await usageAnalytics(projectDir, true, 'TEST');
-    expect(await readConsentFile(projectDir)).toEqual({ enabled: true, salt: 'TEST' });
+      await usageAnalytics(projectDir, true, 'TEST');
+      expect(await readConsentFile(projectDir)).toEqual({ enabled: true, salt: 'TEST' });
 
-    await usageAnalytics(projectDir, undefined);
-    expect((await readConsentFile(projectDir)).enabled).toBe(false);
+      await usageAnalytics(projectDir, undefined);
+      expect((await readConsentFile(projectDir)).enabled).toBe(false);
 
-    await usageAnalytics(projectDir, false);
-    expect((await readConsentFile(projectDir)).enabled).toBe(false);
-  });
+      await usageAnalytics(projectDir, false);
+      expect((await readConsentFile(projectDir)).enabled).toBe(false);
+    },
+    TimeThresholds.DEFAULT
+  );
 });

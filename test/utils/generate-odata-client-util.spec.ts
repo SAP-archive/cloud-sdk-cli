@@ -4,38 +4,55 @@
 
 import { Options } from 'yargs';
 import { toBooleanFlag, toStringFlag } from '../../src/utils/generate-odata-client-util';
+import { TimeThresholds } from '../test-utils';
 
 describe('Generate OData Client Utils', () => {
-  it('should translate the description correctly', () => {
-    let yargsOption: Options = { describe: 'expectedDescription', default: false };
-    expect(toBooleanFlag(yargsOption).description).toBe('expectedDescription [default: false].');
+  it(
+    'should translate the description correctly',
+    () => {
+      let yargsOption: Options = { describe: 'expectedDescription', default: false };
+      expect(toBooleanFlag(yargsOption).description).toBe('expectedDescription [default: false].');
 
-    yargsOption = { describe: 'expectedDescription', default: true };
-    expect(toBooleanFlag(yargsOption).description).toBe('expectedDescription [default: true].');
-  });
+      yargsOption = { describe: 'expectedDescription', default: true };
+      expect(toBooleanFlag(yargsOption).description).toBe('expectedDescription [default: true].');
+    },
+    TimeThresholds.DEFAULT
+  );
 
-  it('should translate the alias correctly.', () => {
-    const yargsOption: Options = { alias: 'expectedAlias' };
-    expect(toBooleanFlag(yargsOption).char).toBe(yargsOption.alias);
-  });
+  it(
+    'should translate the alias correctly.',
+    () => {
+      const yargsOption: Options = { alias: 'expectedAlias' };
+      expect(toBooleanFlag(yargsOption).char).toBe(yargsOption.alias);
+    },
+    TimeThresholds.DEFAULT
+  );
 
-  it('should translate the required option correctly.', () => {
-    let yargsOption: Options = { requiresArg: false };
-    expect(toBooleanFlag(yargsOption).required).toBe(yargsOption.requiresArg);
+  it(
+    'should translate the required option correctly.',
+    () => {
+      let yargsOption: Options = { requiresArg: false };
+      expect(toBooleanFlag(yargsOption).required).toBe(yargsOption.requiresArg);
 
-    yargsOption = { requiresArg: true };
-    expect(toBooleanFlag(yargsOption).required).toBe(yargsOption.requiresArg);
-  });
+      yargsOption = { requiresArg: true };
+      expect(toBooleanFlag(yargsOption).required).toBe(yargsOption.requiresArg);
+    },
+    TimeThresholds.DEFAULT
+  );
 
-  it('should translate the default and allowNo option correctly.', () => {
-    let yargsOption: Options = { default: false };
-    expect(toBooleanFlag(yargsOption).default).toBe(yargsOption.default);
-    expect(toBooleanFlag(yargsOption).allowNo).toBe(yargsOption.default);
+  it(
+    'should translate the default and allowNo option correctly.',
+    () => {
+      let yargsOption: Options = { default: false };
+      expect(toBooleanFlag(yargsOption).default).toBe(yargsOption.default);
+      expect(toBooleanFlag(yargsOption).allowNo).toBe(yargsOption.default);
 
-    yargsOption = { default: true };
-    expect(toBooleanFlag(yargsOption).default).toBe(yargsOption.default);
-    expect(toBooleanFlag(yargsOption).allowNo).toBe(yargsOption.default);
-  });
+      yargsOption = { default: true };
+      expect(toBooleanFlag(yargsOption).default).toBe(yargsOption.default);
+      expect(toBooleanFlag(yargsOption).allowNo).toBe(yargsOption.default);
+    },
+    TimeThresholds.DEFAULT
+  );
 
   it('should translate all string arguments correctly.', () => {
     const yargsOption: Options = { alias: 'expectedAlias', description: 'expectedDescription' };
@@ -43,19 +60,27 @@ describe('Generate OData Client Utils', () => {
     expect(toStringFlag(yargsOption).description).toBe(yargsOption.describe);
   });
 
-  it('should translate the default option correctly.', () => {
-    let yargsOption: Options = { default: false };
-    expect(toStringFlag(yargsOption).default).toBe(yargsOption.default);
+  it(
+    'should translate the default option correctly.',
+    () => {
+      let yargsOption: Options = { default: false };
+      expect(toStringFlag(yargsOption).default).toBe(yargsOption.default);
 
-    yargsOption = { default: true };
-    expect(toStringFlag(yargsOption).default).toBe(yargsOption.default);
-  });
+      yargsOption = { default: true };
+      expect(toStringFlag(yargsOption).default).toBe(yargsOption.default);
+    },
+    TimeThresholds.DEFAULT
+  );
 
-  it('should translate the required option correctly.', () => {
-    let yargsOption: Options = { requiresArg: false };
-    expect(toStringFlag(yargsOption).required).toBe(yargsOption.requiresArg);
+  it(
+    'should translate the required option correctly.',
+    () => {
+      let yargsOption: Options = { requiresArg: false };
+      expect(toStringFlag(yargsOption).required).toBe(yargsOption.requiresArg);
 
-    yargsOption = { requiresArg: true };
-    expect(toStringFlag(yargsOption).required).toBe(yargsOption.requiresArg);
-  });
+      yargsOption = { requiresArg: true };
+      expect(toStringFlag(yargsOption).required).toBe(yargsOption.requiresArg);
+    },
+    TimeThresholds.DEFAULT
+  );
 });

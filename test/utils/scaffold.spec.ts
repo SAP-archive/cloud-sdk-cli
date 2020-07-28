@@ -18,27 +18,31 @@ jest.retryTimes(3);
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { shouldBuildScaffold } from '../../src/utils';
-import { deleteAsync, getCleanProjectDir, getTestOutputDir } from '../test-utils';
+import { deleteAsync, getCleanProjectDir, getTestOutputDir, TimeThresholds } from '../test-utils';
 
 const testOutputDir = getTestOutputDir(__filename);
 
 describe('Scaffold Utils', () => {
   beforeAll(async () => {
     await deleteAsync(testOutputDir, 6);
-  }, 120000);
+  }, TimeThresholds.LONG);
 
   afterAll(async () => {
     await deleteAsync(testOutputDir, 6);
-  }, 120000);
+  }, TimeThresholds.LONG);
 
-  it('should determine if scaffold is needed', async () => {
-    const projectDir = await getCleanProjectDir(testOutputDir, 'should-build-scaffold');
+  it(
+    'should determine if scaffold is needed',
+    async () => {
+      const projectDir = await getCleanProjectDir(testOutputDir, 'should-build-scaffold');
 
-    expect(await shouldBuildScaffold(projectDir, false)).toBe(true);
-    expect(await shouldBuildScaffold(projectDir, true)).toBe(true);
+      expect(await shouldBuildScaffold(projectDir, false)).toBe(true);
+      expect(await shouldBuildScaffold(projectDir, true)).toBe(true);
 
-    const packageJsonPath = path.resolve(projectDir, 'package.json');
-    await fs.copyFile(path.resolve('test', 'nest', 'package.json'), packageJsonPath);
-    expect(await shouldBuildScaffold(projectDir, false)).toBe(false);
-  });
+      const packageJsonPath = path.resolve(projectDir, 'package.json');
+      await fs.copyFile(path.resolve('test', 'nest', 'package.json'), packageJsonPath);
+      expect(await shouldBuildScaffold(projectDir, false)).toBe(false);
+    },
+    TimeThresholds.SHORT
+  );
 });

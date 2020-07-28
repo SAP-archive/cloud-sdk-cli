@@ -37,7 +37,7 @@ describe('generate-odata-client', () => {
         .then(() => {
           throw new Error('Should not resolve.');
         })
-        .catch((err:Error) => {
+        .catch((err: Error) => {
           expect(err.message).toMatch('-i, --inputDir INPUTDIR');
           done();
         });

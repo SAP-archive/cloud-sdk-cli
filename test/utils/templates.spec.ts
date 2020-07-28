@@ -4,39 +4,51 @@
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { CopyDescriptor, copyFiles, findConflicts, getCopyDescriptors, getTemplatePaths } from '../../src/utils';
-import { deleteAsync, getCleanProjectDir, getTestOutputDir } from '../test-utils';
+import { deleteAsync, getCleanProjectDir, getTestOutputDir, TimeThresholds } from '../test-utils';
 
 const testOutputDir = getTestOutputDir(__filename);
 
 describe('Templates Utils', () => {
   afterAll(async () => {
     deleteAsync(testOutputDir, 3);
-  });
+  }, TimeThresholds.DEFAULT);
 
-  it('should return information which files to copy where', () => {
-    const initCopyInfo = getCopyDescriptors('targetDir', getTemplatePaths(['init']));
-    expect(initCopyInfo.map(copyInfo => copyInfoToPathArray(copyInfo)).sort()).toMatchSnapshot();
+  it(
+    'should return information which files to copy where',
+    () => {
+      const initCopyInfo = getCopyDescriptors('targetDir', getTemplatePaths(['init']));
+      expect(initCopyInfo.map(copyInfo => copyInfoToPathArray(copyInfo)).sort()).toMatchSnapshot();
 
-    const appRouterCopyInfo = getCopyDescriptors('targetDir', getTemplatePaths(['add-approuter']));
-    expect(appRouterCopyInfo.map(appRouterCopyInfo => copyInfoToPathArray(appRouterCopyInfo).sort())).toMatchSnapshot();
-  });
+      const appRouterCopyInfo = getCopyDescriptors('targetDir', getTemplatePaths(['add-approuter']));
+      expect(appRouterCopyInfo.map(appRouterCopyInfo => copyInfoToPathArray(appRouterCopyInfo).sort())).toMatchSnapshot();
+    },
+    TimeThresholds.DEFAULT
+  );
 
-  it('should find conflicts', async () => {
-    const projectDir = await getCleanProjectDir(testOutputDir, 'find-conflicts');
-    await fs.writeFile(path.resolve(projectDir, '.npmrc'), 'foobar');
-    findConflicts(getCopyDescriptors(projectDir, getTemplatePaths(['init'])), true);
-    try {
-      await fs.stat(path.resolve(projectDir, '.npmrc'));
-    } catch (e) {
-      expect(e.message).toMatch(/no such file or directory.*npmrc/);
-    }
-  });
+  it(
+    'should find conflicts',
+    async () => {
+      const projectDir = await getCleanProjectDir(testOutputDir, 'find-conflicts');
+      await fs.writeFile(path.resolve(projectDir, '.npmrc'), 'foobar');
+      findConflicts(getCopyDescriptors(projectDir, getTemplatePaths(['init'])), true);
+      try {
+        await fs.stat(path.resolve(projectDir, '.npmrc'));
+      } catch (e) {
+        expect(e.message).toMatch(/no such file or directory.*npmrc/);
+      }
+    },
+    TimeThresholds.DEFAULT
+  );
 
-  it('should copy files locally', async () => {
-    const projectDir = await getCleanProjectDir(testOutputDir, 'copy-files-locally');
-    await copyFiles(getCopyDescriptors(projectDir, getTemplatePaths(['init'])), {});
-    return fs.readdir(projectDir).then(value => expect(value).toMatchSnapshot);
-  });
+  it(
+    'should copy files locally',
+    async () => {
+      const projectDir = await getCleanProjectDir(testOutputDir, 'copy-files-locally');
+      await copyFiles(getCopyDescriptors(projectDir, getTemplatePaths(['init'])), {});
+      return fs.readdir(projectDir).then(value => expect(value).toMatchSnapshot);
+    },
+    TimeThresholds.DEFAULT
+  );
 
   // TODO:
   // it('should copy files remotely', async () => {
