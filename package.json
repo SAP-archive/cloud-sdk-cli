@@ -84,7 +84,7 @@
   },
   "scripts": {
     "lint": "tslint -p . -t stylish && tslint -p test -t stylish && prettier -c \"**/*.ts\"",
-    "fix:formatting": "tslint -p . -t stylish --fix && tslint -p test -t stylish --fix && prettier --write \"**/*.ts\"",
+    "lint:fix": "tslint -p . -t stylish --fix && tslint -p test -t stylish --fix && prettier --write \"**/*.ts\"",
     "prepack": "rimraf lib && tsc -b && cp -R src/templates lib/ && oclif-dev manifest && oclif-dev readme",
     "postpack": "rimraf oclif.manifest.json",
     "pretest": "npm run lint && tsc -b",
