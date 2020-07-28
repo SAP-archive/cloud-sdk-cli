@@ -9,7 +9,7 @@ import { deleteAsync, getCleanProjectDir, getTestOutputDir, TimeThresholds } fro
 const testOutputDir = getTestOutputDir(__filename);
 
 describe('Jest Config Utils', () => {
-  afterAll(async () => {
+  beforeAll(async () => {
     await deleteAsync(testOutputDir, 3);
   }, TimeThresholds.DEFAULT);
 

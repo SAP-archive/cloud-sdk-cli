@@ -12,7 +12,7 @@ import { deleteAsync, getCleanProjectDir, getTestOutputDir, TimeThresholds } fro
 const testOutputDir = getTestOutputDir(__filename);
 
 describe('Package Json Utils', () => {
-  afterAll(async () => {
+  beforeAll(async () => {
     await deleteAsync(testOutputDir, 3);
   }, TimeThresholds.LONG);
 

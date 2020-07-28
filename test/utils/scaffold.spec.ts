@@ -27,10 +27,6 @@ describe('Scaffold Utils', () => {
     await deleteAsync(testOutputDir, 6);
   }, TimeThresholds.LONG);
 
-  afterAll(async () => {
-    await deleteAsync(testOutputDir, 6);
-  }, TimeThresholds.LONG);
-
   it(
     'should determine if scaffold is needed',
     async () => {

@@ -27,10 +27,6 @@ describe('Add CDS', () => {
     await deleteAsync(testOutputDir, 6);
   }, TimeThresholds.LONG);
 
-  afterAll(async () => {
-    await deleteAsync(testOutputDir, 6);
-  }, TimeThresholds.LONG);
-
   it(
     'should add necessary files to an existing project',
     async () => {

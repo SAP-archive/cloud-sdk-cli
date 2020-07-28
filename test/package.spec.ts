@@ -24,10 +24,6 @@ describe('Package', () => {
     jest.clearAllMocks();
   }, TimeThresholds.SHORT);
 
-  afterAll(async () => {
-    await deleteAsync(testOutputDir, 3);
-  }, TimeThresholds.SHORT);
-
   it(
     'should copy files correctly without parameters',
     async () => {

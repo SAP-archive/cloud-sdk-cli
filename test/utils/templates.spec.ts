@@ -9,7 +9,7 @@ import { deleteAsync, getCleanProjectDir, getTestOutputDir, TimeThresholds } fro
 const testOutputDir = getTestOutputDir(__filename);
 
 describe('Templates Utils', () => {
-  afterAll(async () => {
+  beforeAll(async () => {
     deleteAsync(testOutputDir, 3);
   }, TimeThresholds.DEFAULT);
 

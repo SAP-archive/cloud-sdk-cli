@@ -28,7 +28,7 @@ async function readConsentFile(projectDir: string) {
 }
 
 describe('Usage Analytics Utils', () => {
-  afterAll(async () => {
+  beforeAll(async () => {
     await deleteAsync(testOutputDir, 3);
   }, TimeThresholds.DEFAULT);
 

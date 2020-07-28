@@ -26,10 +26,6 @@ describe('generate-odata-client', () => {
     await fs.copy(pathForResources, pathForTests);
   }, TimeThresholds.LONG);
 
-  afterAll(async () => {
-    await deleteAsync(pathForTests, 3);
-  }, TimeThresholds.LONG);
-
   it(
     'should fail if the mandatory parameters are not there',
     async done => {

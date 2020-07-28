@@ -12,3 +12,6 @@
 7 all green
 ==== increase timeouts for local windows run  =====
 8 win, node 10, test finished asyunc open generator test
+==== time out super long  =====
+9 all green
+10 all green

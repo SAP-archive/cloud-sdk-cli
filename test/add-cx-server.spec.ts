@@ -14,10 +14,6 @@ describe('Add CX Server', () => {
     await deleteAsync(testOutputDir, 3);
   }, TimeThresholds.SHORT);
 
-  afterAll(async () => {
-    await deleteAsync(testOutputDir, 3);
-  }, TimeThresholds.SHORT);
-
   it(
     'should add the necessary files',
     async () => {

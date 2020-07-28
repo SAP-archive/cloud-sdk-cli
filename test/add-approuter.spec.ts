@@ -2,8 +2,6 @@
  * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
-import exp = require('constants');
-
 const prompt = jest.fn().mockResolvedValue('mock-project');
 jest.mock('cli-ux', () => {
   const cli = jest.requireActual('cli-ux');
@@ -24,10 +22,6 @@ describe('Add Approuter', () => {
   const testOutputDir = getTestOutputDir(__filename);
 
   beforeAll(async () => {
-    await deleteAsync(testOutputDir, 3);
-  }, TimeThresholds.SHORT);
-
-  afterAll(async () => {
     await deleteAsync(testOutputDir, 3);
   }, TimeThresholds.SHORT);
 

@@ -23,10 +23,6 @@ describe('generate-odata-client', () => {
     await fs.copy(pathForResources, pathForTests);
   }, TimeThresholds.LONG);
 
-  afterAll(async () => {
-    await deleteAsync(pathForTests, 6);
-  }, TimeThresholds.LONG);
-
   test(
     '[E2E] should generate a OData client',
     async () => {
