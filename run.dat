@@ -8,3 +8,5 @@
 ==== changed output dir  =====
 2 win, node 10, test finished asyunc open generator test
 2 win, node 10, test finished asyunc open generator test
+==== remove rimraf before  =====
+3 all green
