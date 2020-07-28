@@ -1,7 +1,6 @@
 /*!
  * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
-import { deleteAsync, TimeThresholds } from './test-utils';
 
 const execa = jest.fn().mockRejectedValueOnce({ exitCode: 1 }).mockResolvedValueOnce('installed').mockResolvedValueOnce('generated');
 jest.mock('execa', () => execa);
@@ -16,6 +15,7 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import GenerateODataClient from '../src/commands/generate-odata-client';
 import { generatorOptionsSDK, GeneratorOptionsSDK } from '../src/utils';
+import { deleteAsync, TimeThresholds } from './test-utils';
 
 describe('generate-odata-client', () => {
   const pathForTests = path.resolve(__dirname, __filename.replace(/\./g, '-')).replace('-ts', '');

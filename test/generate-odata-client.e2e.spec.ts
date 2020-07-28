@@ -1,7 +1,6 @@
 /*!
  * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
-import { deleteAsync } from './test-utils';
 
 jest.mock('cli-ux', () => ({
   default: {
@@ -13,6 +12,7 @@ jest.retryTimes(3);
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import GenerateODataClient from '../src/commands/generate-odata-client';
+import { deleteAsync, TimeThresholds } from './test-utils';
 
 describe('generate-odata-client', () => {
   const pathForTests = path.resolve(__dirname, __filename.replace(/\./g, '-')).replace('-ts', '');
