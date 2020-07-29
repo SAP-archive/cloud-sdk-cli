@@ -1,7 +1,7 @@
 {
   "name": "@sap-cloud-sdk/cli",
   "description": "CLI for the SAP Cloud SDK for JavaScript",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "author": "SAP",
   "bin": {
     "sap-cloud-sdk": "./bin/run"
@@ -84,12 +84,12 @@
   },
   "scripts": {
     "lint": "tslint -p . -t stylish && tslint -p test -t stylish && prettier -c \"**/*.ts\"",
-    "fix:formatting": "tslint -p . -t stylish --fix && tslint -p test -t stylish --fix && prettier --write \"**/*.ts\"",
+    "lint:fix": "tslint -p . -t stylish --fix && tslint -p test -t stylish --fix && prettier --write \"**/*.ts\"",
     "prepack": "rimraf lib && tsc -b && cp -R src/templates lib/ && oclif-dev manifest && oclif-dev readme",
     "postpack": "rimraf oclif.manifest.json",
-    "pretest": "rimraf test/test-output/*-spec/ && npm run lint && tsc -b",
+    "pretest": "npm run lint && tsc -b",
     "test": "jest --testNamePattern=\"^((?!\\[E2E\\]).)*$\"",
-    "test:full": "rimraf test/test-output/*-spec/ && tsc -b && jest",
+    "test:full": "tsc -b && jest --no-cache --runInBand",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "test:watch-debug": "node --inspect-brk node_modules/.bin/jest --watch --runInBand",
     "version": "oclif-dev readme && git add README.md"

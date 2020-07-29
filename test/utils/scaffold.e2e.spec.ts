@@ -4,25 +4,28 @@
 jest.retryTimes(3);
 
 import * as fs from 'fs-extra';
-import { buildScaffold, shouldBuildScaffold } from '../../src/utils';
-import { deleteAsync, getCleanProjectDir, getTestOutputDir } from '../test-utils';
+import { buildScaffold } from '../../src/utils';
+import { deleteAsync, getCleanProjectDir, getTestOutputDir, TimeThresholds } from '../test-utils';
 
 const testOutputDir = getTestOutputDir(__filename);
 
 describe('Scaffold Utils', () => {
   beforeAll(async () => {
     await deleteAsync(testOutputDir, 6);
-  }, 80000);
+  }, TimeThresholds.LONG);
 
-  afterAll(async () => {
-    await deleteAsync(testOutputDir, 6);
-  }, 80000);
+  test(
+    '[E2E] should build the scaffold',
+    async done => {
+      const projectDir = await getCleanProjectDir(testOutputDir, 'build-scaffold');
 
-  test('[E2E] should build the scaffold', async () => {
-    const projectDir = await getCleanProjectDir(testOutputDir, 'build-scaffold');
+      await buildScaffold(projectDir, false, false);
 
-    await buildScaffold(projectDir, false, false);
-
-    return fs.readdir(projectDir).then(files => expect(files.sort()).toMatchSnapshot());
-  }, 80000);
+      const files = await  fs.readdir(projectDir);
+      expect(files.sort()).toMatchSnapshot();
+      await fs.remove(`${testOutputDir}/build-scaffold/src/app.controller.spec.ts`)
+      done()
+    },
+    TimeThresholds.LONG
+  );
 });
