@@ -37,7 +37,7 @@ $ npm install -g @sap-cloud-sdk/cli
 $ sap-cloud-sdk COMMAND
 running command...
 $ sap-cloud-sdk (-v|--version|version)
-@sap-cloud-sdk/cli/0.1.9 darwin-x64 node-v14.2.0
+@sap-cloud-sdk/cli/0.1.10 darwin-x64 node-v13.13.0
 $ sap-cloud-sdk --help [COMMAND]
 USAGE
   $ sap-cloud-sdk COMMAND
@@ -102,7 +102,7 @@ EXAMPLE
   $ sap-cloud-sdk add-approuter
 ```
 
-_See code: [src/commands/add-approuter.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.9/src/commands/add-approuter.ts)_
+_See code: [src/commands/add-approuter.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.10/src/commands/add-approuter.ts)_
 
 ## `sap-cloud-sdk add-cds [PROJECTDIR]`
 
@@ -124,7 +124,7 @@ EXAMPLE
   $ sap-cloud-sdk add-cds
 ```
 
-_See code: [src/commands/add-cds.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.9/src/commands/add-cds.ts)_
+_See code: [src/commands/add-cds.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.10/src/commands/add-cds.ts)_
 
 ## `sap-cloud-sdk add-cx-server [PROJECTDIR]`
 
@@ -145,7 +145,7 @@ EXAMPLE
   $ sap-cloud-sdk add-cx-server
 ```
 
-_See code: [src/commands/add-cx-server.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.9/src/commands/add-cx-server.ts)_
+_See code: [src/commands/add-cx-server.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.10/src/commands/add-cx-server.ts)_
 
 ## `sap-cloud-sdk autocomplete [SHELL]`
 
@@ -189,14 +189,14 @@ OPTIONS
                                                        generated if not existent. By default it will be saved to/read
                                                        from the input directory as "service-mapping.json".
 
+  --additionalFiles=additionalFiles                    Glob describing additional files to be added to the each
+                                                       generated service directory.
+
   --aggregatorDirectoryName=aggregatorDirectoryName    Hack for cloud-sdk-vdm package
 
   --aggregatorNpmPackageName=aggregatorNpmPackageName  When provided, the generator will generate an additional package
                                                        with the provided name that has dependencies to all other
                                                        generated packages.
-
-  --changelogFile=changelogFile                        Path to file that will be copied into the generated packages
-                                                       under the filename CHANGELOG.md.
 
   --clearOutputDir                                     When set to true, the generator will delete EVERYTHING in the
                                                        specified output directory before generating code. [default:
@@ -252,7 +252,7 @@ EXAMPLES
   $ sap-cloud-sdk generate-odata-client --help
 ```
 
-_See code: [src/commands/generate-odata-client.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.9/src/commands/generate-odata-client.ts)_
+_See code: [src/commands/generate-odata-client.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.10/src/commands/generate-odata-client.ts)_
 
 ## `sap-cloud-sdk help [COMMAND]`
 
@@ -280,7 +280,7 @@ USAGE
   $ sap-cloud-sdk help-page
 ```
 
-_See code: [src/commands/help-page.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.9/src/commands/help-page.ts)_
+_See code: [src/commands/help-page.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.10/src/commands/help-page.ts)_
 
 ## `sap-cloud-sdk init [PROJECTDIR]`
 
@@ -311,7 +311,7 @@ EXAMPLES
   $ sap-cloud-sdk init --help
 ```
 
-_See code: [src/commands/init.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.9/src/commands/init.ts)_
+_See code: [src/commands/init.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.10/src/commands/init.ts)_
 
 ## `sap-cloud-sdk package [PROJECTDIR]`
 
@@ -343,7 +343,7 @@ EXAMPLES
   $ sap-cloud-sdk package --include="package.json,package-lock.json,index.js,dist/**/*" --exclude="**/*.java"
 ```
 
-_See code: [src/commands/package.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.9/src/commands/package.ts)_
+_See code: [src/commands/package.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.10/src/commands/package.ts)_
 <!-- commandsstop -->
 
 ## Contribute
@@ -360,7 +360,7 @@ Projects that use the CLI are free to use any package manager as long as a `pack
 
 ### Release
 
-If you want to release, increase the version and create a PR for that branch.
+If you want to release, increase the version, run `yarn prepack` to adjust the README.md and create a PR for that branch.
 Once merged and if the tests are green, you can create a new GitHub release based on the master branch.
 Fill in the release notes and press "Publish release".
 This will trigger the github action and a new release will be published on `npm` automatically.
