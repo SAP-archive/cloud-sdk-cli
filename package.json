@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1.22.2",
-    "@types/fs-extra": "^8.1.0",
+    "@types/fs-extra": "^9.0.1",
     "@types/jest": "^26.0.7",
     "@types/js-yaml": "^3.12.3",
     "@types/listr": "^0.14.2",
