@@ -85,10 +85,11 @@ async function copyRemote(sourcePath: URL, fileName: string) {
         if (response.statusCode && (response.statusCode < 200 || response.statusCode > 299)) {
           reject(new Error('Failed to load page, status code: ' + response.statusCode));
         }
-
-        response.on('data', content => {
+        let data = '';
+        response.on('data', (content:string) => data+=content)
+        response.on('end', () => {
           fs.mkdirSync(path.dirname(fileName), { recursive: true });
-          fs.writeFileSync(fileName, content);
+          fs.writeFileSync(fileName, data);
           resolve();
         });
       })

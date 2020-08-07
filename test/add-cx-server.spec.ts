@@ -41,10 +41,14 @@ describe('Add CX Server', () => {
 
       const files = fs.readdir(projectDir);
       const approuterFiles = fs.readdir(path.resolve(projectDir, 'cx-server'));
+      const fileContent = fs.readFile(path.resolve(projectDir, 'cx-server','cx-server'),{encoding:'utf8'})
 
-      return Promise.all([files, approuterFiles]).then(values => {
+      return Promise.all([files, approuterFiles, fileContent]).then(values => {
         expect(values[0]).toContain('cx-server');
         expect(values[1]).toIncludeAllMembers(['cx-server', 'cx-server.bat', 'server.cfg']);
+        //Some heuristic test that the content of the script has been downloaded proerly.
+        expect((values[2] as string).startsWith("#!/bin/bash")).toBe(true)
+        expect((values[2] as string).match("docker run"))
       });
     },
     TimeThresholds.SHORT
