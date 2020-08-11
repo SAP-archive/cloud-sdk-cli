@@ -50,7 +50,7 @@ describe('Add CDS', () => {
 
   it(
     'should detect and fail if there are conflicts',
-    async done => {
+    async () => {
       const projectDir = await getCleanProjectDir(testOutputDir, 'add-cds-conflicts');
 
       await fs.copy(path.resolve(__dirname, 'express'), projectDir, { recursive: true });
@@ -62,8 +62,9 @@ describe('Add CDS', () => {
         await AddCds.run([projectDir, '--skipInstall']);
       } catch (e) {
         expect(e.message).toMatch(/A file with the name .* already exists\./);
-        done();
+        return;
       }
+      throw new Error('This point should not be reached.');
     },
     TimeThresholds.SHORT
   );
