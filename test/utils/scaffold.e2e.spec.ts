@@ -16,15 +16,14 @@ describe('Scaffold Utils', () => {
 
   test(
     '[E2E] should build the scaffold',
-    async done => {
+    async () => {
       const projectDir = await getCleanProjectDir(testOutputDir, 'build-scaffold');
 
       await buildScaffold(projectDir, false, false);
 
-      const files = await  fs.readdir(projectDir);
+      const files = await fs.readdir(projectDir);
       expect(files.sort()).toMatchSnapshot();
-      await fs.remove(`${testOutputDir}/build-scaffold/src/app.controller.spec.ts`)
-      done()
+      return fs.remove(`${testOutputDir}/build-scaffold/src/app.controller.spec.ts`);
     },
     TimeThresholds.LONG
   );
