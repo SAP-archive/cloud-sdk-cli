@@ -50,6 +50,7 @@ export async function buildScaffold(projectDir: string, verbose: boolean, addCds
 
   fs.unlinkSync(path.resolve(projectDir, 'README.md'));
   modifyMainTs(path.resolve(projectDir, 'src', 'main.ts'));
+  modifyTsconfigBuildJson(path.resolve(projectDir, 'tsconfig.build.json'));
   if (addCds) {
     addCatalogueModule(path.resolve(projectDir, 'src', 'app.module.ts'));
   }
@@ -65,6 +66,18 @@ function modifyMainTs(pathToMainTs: string) {
     recordWarning('Could not set listening port to `process.env.PORT`', 'in file `app.module.ts`. Please adjust manually.');
   } else {
     fs.writeFileSync(pathToMainTs, modifiedMainTs);
+  }
+}
+
+function modifyTsconfigBuildJson(pathToTsconfigBuildJson: string) {
+  const TsconfigBuildJson = fs.readFileSync(pathToTsconfigBuildJson, { encoding: 'utf8' });
+  const modifiedExclude = '  "exclude": ["node_modules", "test", "dist", "deployment", "**/*spec.ts"]';
+  const modifiedTsconfigBuildJson = TsconfigBuildJson.replace('  "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]', modifiedExclude);
+
+  if (!modifiedTsconfigBuildJson.includes(modifiedExclude)) {
+    recordWarning('Could not exclude deployment`', 'in file `tsconfig.build.json`. Please adjust manually.');
+  } else {
+    fs.writeFileSync(pathToTsconfigBuildJson, modifiedTsconfigBuildJson);
   }
 }
 

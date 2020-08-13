@@ -86,7 +86,7 @@ async function copyRemote(sourcePath: URL, fileName: string) {
           reject(new Error('Failed to load page, status code: ' + response.statusCode));
         }
         let content = '';
-        response.on('data', (chunk:string) => content+=chunk)
+        response.on('data', (chunk: string) => (content += chunk));
         response.on('end', () => {
           fs.mkdirSync(path.dirname(fileName), { recursive: true });
           fs.writeFileSync(fileName, content);
