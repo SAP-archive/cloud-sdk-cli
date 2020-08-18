@@ -4,6 +4,7 @@
 jest.retryTimes(3);
 
 import * as fs from 'fs-extra';
+import * as path from 'path';
 import { buildScaffold } from '../../src/utils';
 import { deleteAsync, getCleanProjectDir, getTestOutputDir, TimeThresholds } from '../test-utils';
 
@@ -21,8 +22,16 @@ describe('Scaffold Utils', () => {
 
       await buildScaffold(projectDir, false, false);
 
-      const files = await fs.readdir(projectDir);
-      expect(files.sort()).toMatchSnapshot();
+      const files = fs.readdir(projectDir);
+      const mainTs = fs.readFile(path.resolve(projectDir, 'src', 'main.ts'), { encoding: 'utf8' });
+      const tsconfigBuildJson = fs.readFile(path.resolve(projectDir, 'tsconfig.build.json'), { encoding: 'utf8' });
+      const tsconfigJson = fs.readFile(path.resolve(projectDir, 'tsconfig.json'), { encoding: 'utf8' });
+
+      expect((await files).sort()).toMatchSnapshot();
+      expect(await mainTs).toMatch('.listen(process.env.PORT || 3000)');
+      expect(await tsconfigBuildJson).toMatch('deployment');
+      expect(await tsconfigJson).toMatch('"allowJs": true');
+
       return fs.remove(`${testOutputDir}/build-scaffold/src/app.controller.spec.ts`);
     },
     TimeThresholds.LONG
