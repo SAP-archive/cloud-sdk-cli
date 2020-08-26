@@ -367,11 +367,3 @@ If you want to release, increase the version, run `yarn prepack` to adjust the R
 Once merged and if the tests are green, you can create a new GitHub release based on the master branch.
 Fill in the release notes and press "Publish release".
 This will trigger the github action and a new release will be published on `npm` automatically.
-
-## License
-
-Copyright (c) 2020 SAP SE or an SAP affiliate company.
-All rights reserved.
-This file is licensed under the Apache Software License, v. 2 except as noted otherwise in the [LICENSE file](LICENSE).
-
-Note: This license does not apply to the SAP Cloud SDK for JavaScript Logo referenced in this README.
