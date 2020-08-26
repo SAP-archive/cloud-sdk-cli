@@ -39,3 +39,9 @@ jobs:
         run: yarn run test:full
         env:
           CI: true
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: REUSE Compliance Check
+        uses: fsfe/reuse-action@v1.1
+    
