@@ -3,9 +3,6 @@
 exports[`Templates Utils should return information which files to copy where 1`] = `
 Array [
   Array [
-    ".npmrc",
-  ],
-  Array [
     ".pipeline",
     "config.yml",
   ],

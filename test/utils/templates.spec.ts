@@ -29,10 +29,10 @@ describe('Templates Utils', () => {
     'should find conflicts',
     async () => {
       const projectDir = await getCleanProjectDir(testOutputDir, 'find-conflicts');
-      await fs.writeFile(path.resolve(projectDir, '.npmrc'), 'foobar');
+      await fs.writeFile(path.resolve(projectDir, 'manifest.yml'), 'foobar');
       findConflicts(getCopyDescriptors(projectDir, getTemplatePaths(['init'])), true);
       try {
-        await fs.stat(path.resolve(projectDir, '.npmrc'));
+        await fs.stat(path.resolve(projectDir, 'manifest.yml'));
       } catch (e) {
         expect(e.message).toMatch(/no such file or directory.*npmrc/);
       }
