@@ -34,7 +34,7 @@ describe('Templates Utils', () => {
       try {
         await fs.stat(path.resolve(projectDir, 'manifest.yml'));
       } catch (e) {
-        expect(e.message).toMatch(/no such file or directory.*npmrc/);
+        expect(e.message).toMatch(/no such file or directory.*manifest.yml/);
       }
     },
     TimeThresholds.EXTRA_SHORT

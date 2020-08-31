@@ -30,7 +30,7 @@ describe('Init', () => {
       await Init.run([projectDir, '--projectName=testingApp', '--startCommand="npm start"', '--no-analytics', '--skipInstall', '--force']);
 
       await Promise.all(
-        ['.npmrc', 'credentials.json', 'systems.json', 'manifest.yml'].map(file => path.resolve(projectDir, file)).map(path => fs.access(path))
+        ['credentials.json', 'systems.json', 'manifest.yml'].map(file => path.resolve(projectDir, file)).map(path => fs.access(path))
       );
       try {
         await fs.access(path.resolve(projectDir, 'test'));
