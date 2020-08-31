@@ -26,7 +26,7 @@ describe('Init', () => {
       await Init.run([projectDir, '--projectName=testingApp', '--buildScaffold', '--no-analytics']);
 
       await Promise.all([
-        ...['.npmrc', 'credentials.json', 'systems.json', 'manifest.yml'].map(file => path.resolve(projectDir, file)).map(path => fs.access(path)),
+        ...['credentials.json', 'systems.json', 'manifest.yml'].map(file => path.resolve(projectDir, file)).map(path => fs.access(path)),
         fs.readFile(path.resolve(projectDir, 'README.md'), { encoding: 'utf8' }).then(file => expect(file).toInclude('SAP Cloud SDK'))
       ]);
 

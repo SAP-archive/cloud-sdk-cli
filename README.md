@@ -217,10 +217,6 @@ OPTIONS
                                                        .js.map, .d.ts and .d.ts.map files. When set to false, the
                                                        generator will only generate .ts files. [default: true].
 
-  --[no-]generateNpmrc                                 By default, the generator will generate a .npmrc file specifying
-                                                       a registry for @sap scoped dependencies. When set to false, the
-                                                       generator will skip the generation of .npmrc. [default: true].
-
   --[no-]generatePackageJson                           By default, the generator will generate a package.json file,
                                                        specifying dependencies and scripts for compiling and generating
                                                        documentation. When set to false, the generator will skip the
