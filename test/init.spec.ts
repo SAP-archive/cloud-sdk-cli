@@ -14,7 +14,7 @@ const testOutputDir = getTestOutputDir(__filename);
 const expressAppDir = path.resolve('test', 'express');
 const nestAppDir = path.resolve('test', 'nest');
 
-jest.retryTimes(3);F
+jest.retryTimes(3);
 
 describe('Init', () => {
   beforeAll(async () => {
