@@ -33,7 +33,7 @@ describe('Init', () => {
       // execute the ci scripts and check if the reports are written
       // trying to do this in parallel lead to strange npm errors
       await execa('npm', ['run', 'ci-backend-unit-test'], { cwd: projectDir, stdio: 'inherit' });
-      await execa('npm', ['run', 'ci-integration-test'], { cwd: projectDir, stdio: 'inherit' });
+      await execa('npm', ['run', 'ci-it-backend'], { cwd: projectDir, stdio: 'inherit' });
 
       const reportsPath = path.resolve(projectDir, 's4hana_pipeline', 'reports');
       const backendUtil = fs.readdir(path.resolve(reportsPath, 'backend-unit'));

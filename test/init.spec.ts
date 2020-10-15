@@ -142,7 +142,7 @@ describe('Init', () => {
           'ci-package',
           'ci-backend-unit-test',
           'ci-frontend-unit-test',
-          'ci-integration-test',
+          'ci-it-backend',
           'ci-e2e'
         ]);
       });
