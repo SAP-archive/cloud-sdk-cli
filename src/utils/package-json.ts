@@ -39,7 +39,7 @@ const scaffoldProjectPackageJson: PackageJsonChange = {
     'deploy': 'npm run build && sap-cloud-sdk package && cf push',
     'ci-build': 'npm run build',
     'ci-package': 'sap-cloud-sdk package --ci',
-    'ci-integration-test': 'jest --ci --config ./test/jest-e2e.json',
+    'ci-it-backend': 'jest --ci --config ./test/jest-e2e.json',
     'ci-backend-unit-test': 'jest --ci'
   },
   devDependencies: ['jest-junit', '@sap-cloud-sdk/test-util', '@sap-cloud-sdk/cli'],
@@ -51,7 +51,7 @@ const existingProjectPackageJson: PackageJsonChange = {
   scripts: {
     'ci-build': 'echo "Use this to compile or minify your application"',
     'ci-package': 'sap-cloud-sdk package --include="package.json,package-lock.json,index.js,dist/**/*"',
-    'ci-integration-test':
+    'ci-it-backend':
       'echo "Test your application and write results in a JUnit format to `s4hana_pipeline/reports/backend-integration/` and coverage in a cobertura format to `s4hana_pipeline/reports/coverage/backend-integration/`"',
     'ci-backend-unit-test':
       'echo "Test your application and write results in a JUnit format to `s4hana_pipeline/reports/backend-unit/` and coverage in a cobertura format to `s4hana_pipeline/reports/coverage/backend-unit/`"'

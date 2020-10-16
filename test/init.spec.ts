@@ -137,14 +137,7 @@ describe('Init', () => {
 
         expect(dependencies).toContain('@sap-cloud-sdk/core');
         expect(devDependencies).toContain('@sap-cloud-sdk/test-util');
-        expect(scripts).toIncludeAllMembers([
-          'ci-build',
-          'ci-package',
-          'ci-backend-unit-test',
-          'ci-frontend-unit-test',
-          'ci-integration-test',
-          'ci-e2e'
-        ]);
+        expect(scripts).toIncludeAllMembers(['ci-build', 'ci-package', 'ci-backend-unit-test', 'ci-frontend-unit-test', 'ci-it-backend', 'ci-e2e']);
       });
     },
     TimeThresholds.SHORT
