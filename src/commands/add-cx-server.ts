@@ -8,7 +8,7 @@ import * as path from 'path';
 import { CopyDescriptor, copyFiles, findConflicts } from '../utils/';
 
 export default class AddCxServer extends Command {
-  static description = 'Add the scripts to set up a Jenkins master for CI/CD of your project';
+  static description = 'Add the scripts to set up a Jenkins server for CI/CD of your project';
   static examples = ['$ sap-cloud-sdk add-cx-server'];
 
   static flags = {

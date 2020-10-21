@@ -2,7 +2,7 @@
 
 # SAP Cloud SDK CLI
 
-[![Tests Badge](https://github.com/SAP/cloud-sdk-cli/workflows/Tests/badge.svg?branch=master)](https://github.com/SAP/cloud-sdk-cli/actions)
+[![Tests Badge](https://github.com/SAP/cloud-sdk-cli/workflows/Tests/badge.svg?branch=main)](https://github.com/SAP/cloud-sdk-cli/actions)
 [![NPM Downloads](https://img.shields.io/npm/dw/@sap-cloud-sdk/cli)](https://www.npmjs.com/package/@sap-cloud-sdk/cli)
 
 A nifty command line interface (CLI) for the SAP Cloud SDK for JavaScript to initialize and package your SAP Cloud Platform application.
@@ -128,7 +128,7 @@ _See code: [src/commands/add-cds.ts](https://github.com/SAP/cloud-sdk-cli/blob/v
 
 ## `sap-cloud-sdk add-cx-server [PROJECTDIR]`
 
-Add the scripts to set up a Jenkins master for CI/CD of your project
+Add the scripts to set up a Jenkins server for CI/CD of your project
 
 ```
 USAGE
@@ -354,14 +354,14 @@ If you have found a bug in our existing functionality, please [open an issue](ht
 
 ### Package Manager
 
-This repository uses [yarn](https://yarnpkg.com/) as a package manager. 
+This repository uses [yarn](https://yarnpkg.com/) as a package manager.
 This is only relevant for the development of the CLI.
 Projects that use the CLI are free to use any package manager as long as a `package.json` is present.
 
 ### Release
 
 If you want to release, increase the version, run `yarn prepack` to adjust the README.md and create a PR for that branch.
-Once merged and if the tests are green, you can create a new GitHub release based on the master branch.
+Once merged and if the tests are green, you can create a new GitHub release based on the main branch.
 Fill in the release notes and press "Publish release".
 This will trigger the github action and a new release will be published on `npm` automatically.
 

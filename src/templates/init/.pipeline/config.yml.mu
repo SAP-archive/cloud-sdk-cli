@@ -19,7 +19,7 @@
 
 ### General project setup
 general:
-  productiveBranch: 'master'
+  productiveBranch: 'main'
   projectName: '{{ projectName }}'
 
 ### Step-specific configuration
