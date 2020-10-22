@@ -14,7 +14,6 @@ module.exports = {
         'test/nest/**/*',
         'test/test-output/**/*'
       ]
-
     },
     sourceType: 'module'
   },
