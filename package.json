@@ -87,9 +87,10 @@
     "lint:fix": "tslint -p . -t stylish --fix && tslint -p test -t stylish --fix && prettier --write \"**/*.ts\"",
     "prepack": "rimraf lib && tsc -b && cp -R src/templates lib/ && oclif-dev manifest && oclif-dev readme",
     "postpack": "rimraf oclif.manifest.json",
-    "pretest": "tsc -b",
-    "test": "jest --testNamePattern=\"^((?!\\[E2E\\]).)*$\"",
-    "test:full": "tsc -b && jest --no-cache --runInBand",
+    "build": "tsc -b",
+    "test": "jest --testPathIgnorePatterns=\"e2e\"",
+    "test:e2e": "jest --testPathPattern=\"e2e\"",
+    "test:full": "jest --no-cache --runInBand",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "test:watch-debug": "node --inspect-brk node_modules/.bin/jest --watch --runInBand",
     "version": "oclif-dev readme && git add README.md"

@@ -65,20 +65,6 @@ describe('Package', () => {
     TimeThresholds.SHORT
   );
 
-  test(
-    '[E2E] should copy dependencies when --ci is set',
-    async () => {
-      const projectDir = await getCleanProjectDir(testOutputDir, 'productive-dependencies');
-      await fs.copy(nestAppDir, projectDir, { recursive: true });
-      await Package.run([projectDir, '--ci']);
-
-      return fs
-        .readdir(path.resolve(projectDir, 'deployment'))
-        .then(files => expect(files).toIncludeAllMembers(['package.json', 'package-lock.json', 'node_modules']));
-    },
-    TimeThresholds.LONG
-  );
-
   it(
     'should not show warning messages when old dependencies are not used',
     async () => {
