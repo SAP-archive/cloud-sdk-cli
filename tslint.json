@@ -4,7 +4,7 @@
     "tslint-config-prettier"
   ],
   "linterOptions": {
-    "exclude": ["node_modules/**/*", "src/templates/**/*", "lib/**/*", "tmp/**/*", "test/express/**/*", "test/nest/**/*"]
+    "exclude": ["node_modules/**/*", "src/templates/**/*", "lib/**/*", "tmp/**/*", "test/express/**/*", "test/nest/**/*", "test/test-output/**/*"]
   },
   "rules": {
     "arrow-parens": [false, "as-needed"],
