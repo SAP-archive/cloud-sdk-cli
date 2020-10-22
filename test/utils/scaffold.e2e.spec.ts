@@ -21,10 +21,10 @@ describe('Scaffold Utils', () => {
 
       await buildScaffold(projectDir, false, false);
 
-      const files = await  fs.readdir(projectDir);
+      const files = await fs.readdir(projectDir);
       expect(files.sort()).toMatchSnapshot();
-      await fs.remove(`${testOutputDir}/build-scaffold/src/app.controller.spec.ts`)
-      done()
+      await fs.remove(`${testOutputDir}/build-scaffold/src/app.controller.spec.ts`);
+      done();
     },
     TimeThresholds.LONG
   );
