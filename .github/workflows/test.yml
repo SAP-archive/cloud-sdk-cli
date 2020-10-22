@@ -1,4 +1,4 @@
-name: Tests
+name: build
 
 on:
   pull_request: ~
@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ ubuntu-latest]
+        os: [macos-latest, windows-latest, ubuntu-latest]
         node-version: [10.x, 12.x]
 
     steps:
@@ -36,6 +36,7 @@ jobs:
       - name: Install Dependencies
         run: yarn install --frozen-lockfile --ignore-engines
       - run: yarn lint
+        if: runner.os == 'Linux'
       - run: yarn build
       - run: yarn run test
       - run: yarn run test:e2e
