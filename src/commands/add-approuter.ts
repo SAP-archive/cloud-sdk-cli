@@ -1,14 +1,19 @@
-/*!
- * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
- */
+/* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
 
 import { Command, flags } from '@oclif/command';
 import cli from 'cli-ux';
 import * as Listr from 'listr';
-import { copyFiles, findConflicts, getCopyDescriptors, getProjectNameFromManifest, getTemplatePaths } from '../utils/';
+import {
+  copyFiles,
+  findConflicts,
+  getCopyDescriptors,
+  getProjectNameFromManifest,
+  getTemplatePaths
+} from '../utils/';
 
 export default class AddApprouter extends Command {
-  static description = 'Setup your Cloud Foundry app to authenticate through the app router';
+  static description =
+    'Setup your Cloud Foundry app to authenticate through the app router';
   static aliases = ['add-app-router'];
   static examples = ['$ sap-cloud-sdk add-approuter'];
 
@@ -25,13 +30,14 @@ export default class AddApprouter extends Command {
   static args = [
     {
       name: 'projectDir',
-      description: 'Path to the project directory to which the approuter should be added.'
+      description:
+        'Path to the project directory to which the approuter should be added.'
     }
   ];
 
   async run() {
-    const { flags, args } = this.parse(AddApprouter);
-    const projectDir = args.projectDir || '.';
+    const parsed = this.parse(AddApprouter);
+    const projectDir = parsed.args.projectDir || '.';
 
     try {
       const options = await this.getOptions();
@@ -39,8 +45,13 @@ export default class AddApprouter extends Command {
         {
           title: 'Creating files',
           task: async () => {
-            const copyDescriptors = getCopyDescriptors(projectDir, getTemplatePaths(['add-approuter']));
-            await findConflicts(copyDescriptors, flags.force).catch(e => this.error(e, { exit: 11 }));
+            const copyDescriptors = getCopyDescriptors(
+              projectDir,
+              getTemplatePaths(['add-approuter'])
+            );
+            await findConflicts(copyDescriptors, parsed.flags.force).catch(e =>
+              this.error(e, { exit: 11 })
+            );
             await copyFiles(copyDescriptors, options);
           }
         }
@@ -58,7 +69,9 @@ export default class AddApprouter extends Command {
     const projectName = getProjectNameFromManifest(this);
 
     const options: { [key: string]: string } = {
-      projectName: projectName || (await cli.prompt('Enter project name as maintained in Cloud Foundry'))
+      projectName:
+        projectName ||
+        (await cli.prompt('Enter project name as maintained in Cloud Foundry'))
     };
 
     return options;

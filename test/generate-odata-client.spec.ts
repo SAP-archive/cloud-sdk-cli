@@ -1,8 +1,10 @@
-/*!
- * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
- */
+/* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
 
-const execa = jest.fn().mockRejectedValueOnce({ exitCode: 1 }).mockResolvedValueOnce('installed').mockResolvedValueOnce('generated');
+const execa = jest
+  .fn()
+  .mockRejectedValueOnce({ exitCode: 1 })
+  .mockResolvedValueOnce('installed')
+  .mockResolvedValueOnce('generated');
 jest.mock('execa', () => execa);
 jest.mock('cli-ux', () => ({
   default: {
@@ -11,8 +13,8 @@ jest.mock('cli-ux', () => ({
 }));
 jest.retryTimes(3);
 
-import * as fs from 'fs-extra';
 import * as path from 'path';
+import * as fs from 'fs-extra';
 import GenerateODataClient from '../src/commands/generate-odata-client';
 import { generatorOptionsSDK, GeneratorOptionsSDK } from '../src/utils';
 import { deleteAsync, getTestOutputDir, TimeThresholds } from './test-utils';
@@ -22,7 +24,11 @@ describe('generate-odata-client', () => {
 
   beforeAll(async () => {
     await deleteAsync(pathForTests, 3);
-    const pathForResources = path.resolve(__dirname, 'resources', 'template-generator-odata-client');
+    const pathForResources = path.resolve(
+      __dirname,
+      'resources',
+      'template-generator-odata-client'
+    );
     await fs.copy(pathForResources, pathForTests);
   }, TimeThresholds.LONG);
 
@@ -44,11 +50,20 @@ describe('generate-odata-client', () => {
   it(
     'should install and generate',
     async done => {
-      await GenerateODataClient.run(['-i=input', '-o=output', '--projectDir', pathForTests]);
+      await GenerateODataClient.run([
+        '-i=input',
+        '-o=output',
+        '--projectDir',
+        pathForTests
+      ]);
 
       expect(execa).toHaveBeenCalledTimes(3);
-      expect(execa.mock.calls[1][1].sort()).toContain('@sap-cloud-sdk/generator');
-      expect(execa.mock.calls[2][1].sort()).toEqual(getDefault(pathForTests).sort());
+      expect(execa.mock.calls[1][1].sort()).toContain(
+        '@sap-cloud-sdk/generator'
+      );
+      expect(execa.mock.calls[2][1].sort()).toEqual(
+        getDefault(pathForTests).sort()
+      );
       done();
     },
     TimeThresholds.MEDIUM
@@ -59,7 +74,9 @@ function getDefault(projectDir: string) {
   return [
     ...Object.keys(generatorOptionsSDK).reduce((prev, current) => {
       const value = generatorOptionsSDK[current as keyof GeneratorOptionsSDK];
-      return value && typeof value.default !== 'undefined' ? [...prev, `--${current}=${value.default}`] : prev;
+      return value && typeof value.default !== 'undefined'
+        ? [...prev, `--${current}=${value.default}`]
+        : prev;
     }, [] as any),
     `--inputDir=${path.resolve(projectDir, 'input')}`,
     `--outputDir=${path.resolve(projectDir, 'output')}`

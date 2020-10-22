@@ -1,12 +1,10 @@
-/*!
- * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
- */
+/* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
 
+import * as fs from 'fs';
+import * as path from 'path';
 import { Command, flags } from '@oclif/command';
 import cli from 'cli-ux';
-import * as fs from 'fs';
 import * as Listr from 'listr';
-import * as path from 'path';
 import { boxMessage, getWarnings } from '../utils';
 import {
   buildScaffold,
@@ -25,23 +23,28 @@ import {
 } from '../utils/';
 
 export default class Init extends Command {
-  static description = 'Initializes your project for the SAP Cloud SDK, SAP Cloud Platform Cloud Foundry and CI/CD using the SAP Cloud SDK toolkit';
+  static description =
+    'Initializes your project for the SAP Cloud SDK, SAP Cloud Platform Cloud Foundry and CI/CD using the SAP Cloud SDK toolkit';
 
   static examples = ['$ sap-cloud-sdk init', '$ sap-cloud-sdk init --help'];
 
   static flags = {
     // visible
     projectDir: flags.string({
-      description: 'Path to the directory in which the project should be created.'
+      description:
+        'Path to the directory in which the project should be created.'
     }),
     addCds: flags.boolean({
-      description: 'Add a cds configuration and example data to follow the SAP Cloud Application Programming model.'
+      description:
+        'Add a cds configuration and example data to follow the SAP Cloud Application Programming model.'
     }),
     force: flags.boolean({
-      description: 'Do not fail if a file or npm script already exist and overwrite it.'
+      description:
+        'Do not fail if a file or npm script already exist and overwrite it.'
     }),
     frontendScripts: flags.boolean({
-      description: 'Add frontend-related npm scripts which are executed by our CI/CD toolkit.'
+      description:
+        'Add frontend-related npm scripts which are executed by our CI/CD toolkit.'
     }),
     help: flags.help({
       char: 'h',
@@ -54,15 +57,18 @@ export default class Init extends Command {
     // hidden
     projectName: flags.string({
       hidden: true,
-      description: 'Give project name which is used for the Cloud Foundry mainfest.yml.'
+      description:
+        'Give project name which is used for the Cloud Foundry mainfest.yml.'
     }),
     startCommand: flags.string({
       hidden: true,
-      description: 'Give a command which is used to start the application productively.'
+      description:
+        'Give a command which is used to start the application productively.'
     }),
     buildScaffold: flags.boolean({
       hidden: true,
-      description: 'If the folder is empty, use nest-cli to create a project scaffold.'
+      description:
+        'If the folder is empty, use nest-cli to create a project scaffold.'
     }),
     analytics: flags.boolean({
       hidden: true,
@@ -71,74 +77,121 @@ export default class Init extends Command {
     }),
     analyticsSalt: flags.string({
       hidden: true,
-      description: 'Set salt for analytics. This should only be used for CI builds.'
+      description:
+        'Set salt for analytics. This should only be used for CI builds.'
     }),
     skipInstall: flags.boolean({
       hidden: true,
-      description: 'Skip installing npm dependencies. If you use this, make sure to install manually afterwards.'
+      description:
+        'Skip installing npm dependencies. If you use this, make sure to install manually afterwards.'
     })
   };
 
   static args = [
     {
       name: 'projectDir',
-      description: 'Path to the directory in which the project should be created.'
+      description:
+        'Path to the directory in which the project should be created.'
     }
   ];
 
   async run() {
-    const { flags, args } = this.parse(Init);
-    const projectDir = args.projectDir || '.';
+    const parsed = this.parse(Init);
+    const projectDir = parsed.args.projectDir || '.';
 
     try {
       fs.mkdirSync(projectDir, { recursive: true });
-      const isScaffold = await shouldBuildScaffold(projectDir, flags.buildScaffold, flags.force);
+      const isScaffold = await shouldBuildScaffold(
+        projectDir,
+        parsed.flags.buildScaffold,
+        parsed.flags.force
+      );
       if (isScaffold) {
-        await buildScaffold(projectDir, flags.verbose, flags.addCds);
+        await buildScaffold(
+          projectDir,
+          parsed.flags.verbose,
+          parsed.flags.addCds
+        );
       }
-      const options = await this.getOptions(projectDir, isScaffold ? 'npm run start:prod' : flags.startCommand, flags.projectName).catch(e =>
-        this.error(flags.verbose ? e.stack : e.message, { exit: 10 })
+      const options = await this.getOptions(
+        projectDir,
+        isScaffold ? 'npm run start:prod' : parsed.flags.startCommand,
+        parsed.flags.projectName
+      ).catch(e =>
+        this.error(parsed.flags.verbose ? e.stack : e.message, { exit: 10 })
       );
 
-      await usageAnalytics(projectDir, flags.analytics, flags.analyticsSalt);
+      await usageAnalytics(
+        projectDir,
+        parsed.flags.analytics,
+        parsed.flags.analyticsSalt
+      );
 
       const tasks = new Listr([
         {
           title: 'Creating files',
           task: async () => {
-            const copyDescriptors = getCopyDescriptors(projectDir, getTemplatePaths(this.getTemplateNames(isScaffold, flags.addCds)));
-            await findConflicts(copyDescriptors, flags.force).catch(e => this.error(flags.verbose ? e.stack : e.message, { exit: 11 }));
+            const copyDescriptors = getCopyDescriptors(
+              projectDir,
+              getTemplatePaths(
+                this.getTemplateNames(isScaffold, parsed.flags.addCds)
+              )
+            );
+            await findConflicts(copyDescriptors, parsed.flags.force).catch(e =>
+              this.error(parsed.flags.verbose ? e.stack : e.message, {
+                exit: 11
+              })
+            );
             await copyFiles(copyDescriptors, options);
           }
         },
         {
           title: 'Modifying test config',
-          task: () => modifyJestConfig(path.resolve(projectDir, 'test', 'jest-e2e.json'), getJestConfig(false)),
+          task: () =>
+            modifyJestConfig(
+              path.resolve(projectDir, 'test', 'jest-e2e.json'),
+              getJestConfig(false)
+            ),
           enabled: () => isScaffold
         },
         {
           title: 'Adding dependencies to package.json',
           task: async () =>
-            modifyPackageJson({ projectDir, isScaffold, frontendScripts: flags.frontendScripts, force: flags.force, addCds: flags.addCds }).catch(e =>
-              this.error(flags.verbose ? e.stack : e.message, { exit: 12 })
+            modifyPackageJson({
+              projectDir,
+              isScaffold,
+              frontendScripts: parsed.flags.frontendScripts,
+              force: parsed.flags.force,
+              addCds: parsed.flags.addCds
+            }).catch(e =>
+              this.error(parsed.flags.verbose ? e.stack : e.message, {
+                exit: 12
+              })
             )
         },
         {
           title: 'Installing dependencies',
-          task: async () => installDependencies(projectDir, flags.verbose).catch(e => this.error(flags.verbose ? e.stack : e.message, { exit: 13 })),
-          enabled: () => !flags.skipInstall
+          task: async () =>
+            installDependencies(projectDir, parsed.flags.verbose).catch(e =>
+              this.error(parsed.flags.verbose ? e.stack : e.message, {
+                exit: 13
+              })
+            ),
+          enabled: () => !parsed.flags.skipInstall
         },
         {
           title: 'Modifying `.gitignore`',
-          task: () => modifyGitIgnore(projectDir, flags.addCds)
+          task: () => modifyGitIgnore(projectDir, parsed.flags.addCds)
         }
       ]);
 
       await tasks.run();
 
-      this.printSuccessMessage(isScaffold, flags.addCds);
+      this.printSuccessMessage(isScaffold, parsed.flags.addCds);
     } catch (error) {
-      this.error(flags.verbose ? error.stack : error.message, { exit: 1 });
+      this.error(parsed.flags.verbose ? error.stack : error.message, {
+        exit: 1
+      });
     }
   }
 
@@ -158,7 +211,11 @@ export default class Init extends Command {
     return templates;
   }
 
-  private async getOptions(projectDir: string, startCommand?: string, projectName?: string) {
+  private async getOptions(
+    projectDir: string,
+    startCommand?: string,
+    projectName?: string
+  ) {
     const { name, scripts } = await parsePackageJson(projectDir);
 
     const options: { [key: string]: string } = {
@@ -188,7 +245,14 @@ export default class Init extends Command {
     ];
 
     if (warnings) {
-      this.log(boxMessage(['⚠️  Init finished with warnings:', ...warnings, '', ...body]));
+      this.log(
+        boxMessage([
+          '⚠️  Init finished with warnings:',
+          ...warnings,
+          '',
+          ...body
+        ])
+      );
     } else {
       this.log(boxMessage(['✅ Init finished successfully.', '', ...body]));
     }
@@ -222,7 +286,10 @@ export default class Init extends Command {
   }
 
   private nextStepsScaffold() {
-    return ['- Run the application locally (`npm run start:dev`)', '- Deploy your application (`npm run deploy`)'];
+    return [
+      '- Run the application locally (`npm run start:dev`)',
+      '- Deploy your application (`npm run deploy`)'
+    ];
   }
 
   private nextStepsCdsNoScaffold() {

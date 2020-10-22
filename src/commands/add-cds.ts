@@ -1,12 +1,20 @@
-/*!
- * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
- */
+/* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
 
 import { Command, flags } from '@oclif/command';
 import cli from 'cli-ux';
 import * as Listr from 'listr';
-import { installDependencies, modifyGitIgnore, modifyPackageJson } from '../utils';
-import { copyFiles, findConflicts, getCopyDescriptors, getProjectNameFromManifest, getTemplatePaths } from '../utils/';
+import {
+  installDependencies,
+  modifyGitIgnore,
+  modifyPackageJson
+} from '../utils';
+import {
+  copyFiles,
+  findConflicts,
+  getCopyDescriptors,
+  getProjectNameFromManifest,
+  getTemplatePaths
+} from '../utils/';
 
 export default class AddCds extends Command {
   static description = 'Setup your Cloud Foundry app to use a CDS service';
@@ -15,7 +23,8 @@ export default class AddCds extends Command {
   static flags = {
     // visible
     force: flags.boolean({
-      description: 'Do not fail if a file or npm script already exist and overwrite it.'
+      description:
+        'Do not fail if a file or npm script already exist and overwrite it.'
     }),
     help: flags.help({
       char: 'h',
@@ -28,24 +37,27 @@ export default class AddCds extends Command {
     // hidden
     projectName: flags.string({
       hidden: true,
-      description: 'Give project name which is used for the Cloud Foundry mainfest.yml.'
+      description:
+        'Give project name which is used for the Cloud Foundry mainfest.yml.'
     }),
     skipInstall: flags.boolean({
       hidden: true,
-      description: 'Skip installing npm dependencies. If you use this, make sure to install manually afterwards.'
+      description:
+        'Skip installing npm dependencies. If you use this, make sure to install manually afterwards.'
     })
   };
 
   static args = [
     {
       name: 'projectDir',
-      description: 'Path to the project directory in which the cds sources should be added.'
+      description:
+        'Path to the project directory in which the cds sources should be added.'
     }
   ];
 
   async run() {
-    const { flags, args } = this.parse(AddCds);
-    const projectDir = args.projectDir || '.';
+    const parsed = this.parse(AddCds);
+    const projectDir = parsed.args.projectDir || '.';
 
     try {
       const options = await this.getOptions();
@@ -53,22 +65,40 @@ export default class AddCds extends Command {
         {
           title: 'Creating files',
           task: async () => {
-            const copyDescriptors = getCopyDescriptors(projectDir, getTemplatePaths(['add-cds']));
-            await findConflicts(copyDescriptors, flags.force).catch(e => this.error(flags.verbose ? e.stack : e.message, { exit: 11 }));
+            const copyDescriptors = getCopyDescriptors(
+              projectDir,
+              getTemplatePaths(['add-cds'])
+            );
+            await findConflicts(copyDescriptors, parsed.flags.force).catch(e =>
+              this.error(parsed.flags.verbose ? e.stack : e.message, {
+                exit: 11
+              })
+            );
             await copyFiles(copyDescriptors, options);
           }
         },
         {
           title: 'Adding dependencies to package.json',
           task: async () =>
-            modifyPackageJson({ projectDir, force: flags.force, addCds: true }).catch(e =>
-              this.error(flags.verbose ? e.stack : e.message, { exit: 12 })
+            modifyPackageJson({
+              projectDir,
+              force: parsed.flags.force,
+              addCds: true
+            }).catch(e =>
+              this.error(parsed.flags.verbose ? e.stack : e.message, {
+                exit: 12
+              })
             )
         },
         {
           title: 'Installing dependencies',
-          task: async () => installDependencies(projectDir, flags.verbose).catch(e => this.error(flags.verbose ? e.stack : e.message, { exit: 13 })),
-          enabled: () => !flags.skipInstall
+          task: async () =>
+            installDependencies(projectDir, parsed.flags.verbose).catch(e =>
+              this.error(parsed.flags.verbose ? e.stack : e.message, {
+                exit: 13
+              })
+            ),
+          enabled: () => !parsed.flags.skipInstall
         },
         {
           title: 'Modifying `.gitignore`',
@@ -80,7 +110,7 @@ export default class AddCds extends Command {
 
       this.printSuccessMessage();
     } catch (e) {
-      this.error(flags.verbose ? e.stack : e.message, { exit: 1 });
+      this.error(parsed.flags.verbose ? e.stack : e.message, { exit: 1 });
     }
   }
 
@@ -88,7 +118,9 @@ export default class AddCds extends Command {
     const projectName = getProjectNameFromManifest(this);
 
     const options: { [key: string]: string } = {
-      projectName: projectName || (await cli.prompt('Enter project name as maintained in Cloud Foundry'))
+      projectName:
+        projectName ||
+        (await cli.prompt('Enter project name as maintained in Cloud Foundry'))
     };
 
     return options;

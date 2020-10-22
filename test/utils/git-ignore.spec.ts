@@ -1,10 +1,13 @@
-/*!
- * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
- */
+/* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
 jest.mock('../../src/utils/warnings');
 import * as fs from 'fs-extra';
 import { modifyGitIgnore, recordWarning } from '../../src/utils';
-import { deleteAsync, getCleanProjectDir, getTestOutputDir, TimeThresholds } from '../test-utils';
+import {
+  deleteAsync,
+  getCleanProjectDir,
+  getTestOutputDir,
+  TimeThresholds
+} from '../test-utils';
 
 const testOutputDir = getTestOutputDir(__filename);
 
@@ -16,13 +19,21 @@ describe('Git Ignore Utils', () => {
   it(
     'should add paths to empty git ignore',
     async () => {
-      const projectDir = await getCleanProjectDir(testOutputDir, 'empty-git-ignore');
+      const projectDir = await getCleanProjectDir(
+        testOutputDir,
+        'empty-git-ignore'
+      );
       await fs.writeFile(`${projectDir}/.gitignore`, '');
 
       modifyGitIgnore(projectDir, false);
 
-      const gitIgnoreContent = (await fs.readFile(`${projectDir}/.gitignore`, { encoding: 'utf8' })).split('\n');
-      expect(gitIgnoreContent).toIncludeAllMembers(['/s4hana_pipeline', 'credentials.json']);
+      const gitIgnoreContent = (
+        await fs.readFile(`${projectDir}/.gitignore`, { encoding: 'utf8' })
+      ).split('\n');
+      expect(gitIgnoreContent).toIncludeAllMembers([
+        '/s4hana_pipeline',
+        'credentials.json'
+      ]);
     },
     TimeThresholds.EXTRA_SHORT
   );
@@ -30,12 +41,17 @@ describe('Git Ignore Utils', () => {
   it(
     'should add cds paths to empty git ignore',
     async () => {
-      const projectDir = await getCleanProjectDir(testOutputDir, 'empty-git-ignore-cds');
+      const projectDir = await getCleanProjectDir(
+        testOutputDir,
+        'empty-git-ignore-cds'
+      );
       await fs.writeFile(`${projectDir}/.gitignore`, '');
 
       modifyGitIgnore(projectDir, true);
 
-      const gitIgnoreContent = (await fs.readFile(`${projectDir}/.gitignore`, { encoding: 'utf8' })).split('\n');
+      const gitIgnoreContent = (
+        await fs.readFile(`${projectDir}/.gitignore`, { encoding: 'utf8' })
+      ).split('\n');
       expect(gitIgnoreContent).toIncludeAllMembers(['gen/', '*.db']);
     },
     TimeThresholds.EXTRA_SHORT
@@ -44,7 +60,10 @@ describe('Git Ignore Utils', () => {
   it(
     'should add paths to existing git ignore',
     async () => {
-      const projectDir = await getCleanProjectDir(testOutputDir, 'existing-git-ignore');
+      const projectDir = await getCleanProjectDir(
+        testOutputDir,
+        'existing-git-ignore'
+      );
       await fs.writeFile(
         `${projectDir}/.gitignore`,
         `myPath
@@ -55,8 +74,14 @@ describe('Git Ignore Utils', () => {
       );
       modifyGitIgnore(projectDir, false);
 
-      const gitIgnoreContent = (await fs.readFile(`${projectDir}/.gitignore`, { encoding: 'utf8' })).split('\n');
-      expect(gitIgnoreContent).toIncludeAllMembers(['/s4hana_pipeline', 'myPath', 'credentials.json']);
+      const gitIgnoreContent = (
+        await fs.readFile(`${projectDir}/.gitignore`, { encoding: 'utf8' })
+      ).split('\n');
+      expect(gitIgnoreContent).toIncludeAllMembers([
+        '/s4hana_pipeline',
+        'myPath',
+        'credentials.json'
+      ]);
     },
     TimeThresholds.EXTRA_SHORT
   );
@@ -64,7 +89,10 @@ describe('Git Ignore Utils', () => {
   it(
     'warn if there is no git ignore',
     async () => {
-      const projectDir = await getCleanProjectDir(testOutputDir, 'no-git-ignore');
+      const projectDir = await getCleanProjectDir(
+        testOutputDir,
+        'no-git-ignore'
+      );
 
       modifyGitIgnore(projectDir, false);
 

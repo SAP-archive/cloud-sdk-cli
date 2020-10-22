@@ -1,11 +1,14 @@
-/*!
- * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
- */
+/* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
 
-import * as fs from 'fs-extra';
 import * as path from 'path';
+import * as fs from 'fs-extra';
 import AddCxServer from '../src/commands/add-cx-server';
-import { deleteAsync, getCleanProjectDir, getTestOutputDir, TimeThresholds } from './test-utils';
+import {
+  deleteAsync,
+  getCleanProjectDir,
+  getTestOutputDir,
+  TimeThresholds
+} from './test-utils';
 
 describe('Add CX Server', () => {
   const testOutputDir = getTestOutputDir(__filename);
@@ -17,7 +20,10 @@ describe('Add CX Server', () => {
   it(
     'should add the necessary files',
     async () => {
-      const projectDir = await getCleanProjectDir(testOutputDir, 'add-cx-server');
+      const projectDir = await getCleanProjectDir(
+        testOutputDir,
+        'add-cx-server'
+      );
 
       await AddCxServer.run([projectDir]);
 
@@ -35,7 +41,10 @@ describe('Add CX Server', () => {
   it(
     'should add the necessary files on windows',
     async () => {
-      const projectDir = await getCleanProjectDir(testOutputDir, 'add-cx-server');
+      const projectDir = await getCleanProjectDir(
+        testOutputDir,
+        'add-cx-server'
+      );
 
       await AddCxServer.run([projectDir, '--platform=win32']);
 
@@ -44,7 +53,11 @@ describe('Add CX Server', () => {
 
       return Promise.all([files, approuterFiles]).then(values => {
         expect(values[0]).toContain('cx-server');
-        expect(values[1]).toIncludeAllMembers(['cx-server', 'cx-server.bat', 'server.cfg']);
+        expect(values[1]).toIncludeAllMembers([
+          'cx-server',
+          'cx-server.bat',
+          'server.cfg'
+        ]);
       });
     },
     TimeThresholds.SHORT
@@ -53,9 +66,14 @@ describe('Add CX Server', () => {
   it(
     'should add necessary files to an existing project',
     async () => {
-      const projectDir = await getCleanProjectDir(testOutputDir, 'add-cx-server-to-existing-project');
+      const projectDir = await getCleanProjectDir(
+        testOutputDir,
+        'add-cx-server-to-existing-project'
+      );
 
-      await fs.copy(path.resolve(__dirname, 'express'), projectDir, { recursive: true });
+      await fs.copy(path.resolve(__dirname, 'express'), projectDir, {
+        recursive: true
+      });
 
       await AddCxServer.run([projectDir]);
 
@@ -73,7 +91,10 @@ describe('Add CX Server', () => {
   it(
     'should detect and fail if there are conflicts',
     async () => {
-      const projectDir = await getCleanProjectDir(testOutputDir, 'add-cx-server-conflicts');
+      const projectDir = await getCleanProjectDir(
+        testOutputDir,
+        'add-cx-server-conflicts'
+      );
 
       await fs.mkdir(path.resolve(projectDir, 'cx-server'));
       await fs.createFile(path.resolve(projectDir, 'cx-server', 'cx-server'));
@@ -81,7 +102,9 @@ describe('Add CX Server', () => {
       try {
         await AddCxServer.run([projectDir]);
       } catch (e) {
-        expect(e.message).toContain('A file with the name "cx-server" already exists.');
+        expect(e.message).toContain(
+          'A file with the name "cx-server" already exists.'
+        );
       }
     },
     TimeThresholds.SHORT

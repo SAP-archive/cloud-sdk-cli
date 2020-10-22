@@ -18,6 +18,15 @@ module.exports = {
     },
     sourceType: 'module'
   },
+  ignorePatterns: [
+    'dist',
+    'node_modules',
+    'lib',
+    'tmp',
+    'test/express',
+    'test/nest',
+    'test/test-output'
+  ],
   plugins: [
     '@typescript-eslint',
     'header',
@@ -148,6 +157,15 @@ module.exports = {
     'dot-notation': 'off',
     'eol-last': 'error',
     eqeqeq: ['error', 'smart'],
+    'header/header': [
+      'error',
+      'block',
+      {
+          'pattern': 'Copyright \\(c\\) \\d{4} SAP SE or an SAP affiliate company. All rights reserved. ',
+          'template': 'Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. ',
+          'lineEndings': 'unix'
+      }
+    ],
     'guard-for-in': 'off',
     'id-blacklist': 'off',
     'id-match': 'off',
