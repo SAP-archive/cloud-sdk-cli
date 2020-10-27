@@ -1,14 +1,13 @@
-/*!
- * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
- */
+/* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
 
+import * as path from 'path';
 import { Command, flags } from '@oclif/command';
 import * as Listr from 'listr';
-import * as path from 'path';
 import { CopyDescriptor, copyFiles, findConflicts } from '../utils/';
 
 export default class AddCxServer extends Command {
-  static description = 'Add the scripts to set up a Jenkins server for CI/CD of your project';
+  static description =
+    'Add the scripts to set up a Jenkins server for CI/CD of your project';
   static examples = ['$ sap-cloud-sdk add-cx-server'];
 
   static flags = {
@@ -29,25 +28,32 @@ export default class AddCxServer extends Command {
   static args = [
     {
       name: 'projectDir',
-      description: 'Path to the project directory to which the cx-server should be added.'
+      description:
+        'Path to the project directory to which the cx-server should be added.'
     }
   ];
 
   async run() {
-    const { flags, args } = this.parse(AddCxServer);
-    const projectDir = args.projectDir || '.';
+    const parsed = this.parse(AddCxServer);
+    const projectDir = parsed.args.projectDir || '.';
     const options = await this.getOptions();
 
     try {
-      const files = [this.copyDescriptorForGithub('cx-server', projectDir), this.copyDescriptorForGithub('server.cfg', projectDir)];
-      if (flags.platform === 'win32') {
+      const files = [
+        this.copyDescriptorForGithub('cx-server', projectDir),
+        this.copyDescriptorForGithub('server.cfg', projectDir)
+      ];
+      if (parsed.flags.platform === 'win32') {
         files.push(this.copyDescriptorForGithub('cx-server.bat', projectDir));
       }
 
       const tasks = new Listr([
         {
           title: 'Finding potential conflicts',
-          task: async () => findConflicts(files, flags.force).catch(e => this.error(e, { exit: 11 }))
+          task: async () =>
+            findConflicts(files, parsed.flags.force).catch(e =>
+              this.error(e, { exit: 11 })
+            )
         },
         {
           title: 'Creating files',
@@ -61,8 +67,12 @@ export default class AddCxServer extends Command {
     }
   }
 
-  private copyDescriptorForGithub(fileName: string, projectDir: string): CopyDescriptor {
-    const githubPrefix = 'https://raw.githubusercontent.com/SAP/devops-docker-cx-server/master/cx-server-companion/life-cycle-scripts/';
+  private copyDescriptorForGithub(
+    fileName: string,
+    projectDir: string
+  ): CopyDescriptor {
+    const githubPrefix =
+      'https://raw.githubusercontent.com/SAP/devops-docker-cx-server/master/cx-server-companion/life-cycle-scripts/';
 
     return {
       sourcePath: new URL(fileName, githubPrefix),

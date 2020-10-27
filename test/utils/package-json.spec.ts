@@ -1,13 +1,20 @@
-/*!
- * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
- */
+/* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
 jest.mock('execa', () => jest.fn().mockResolvedValue('1.0.0'));
 
+import * as path from 'path';
 import * as execa from 'execa';
 import * as fs from 'fs-extra';
-import * as path from 'path';
-import { installDependencies, modifyPackageJson, parsePackageJson } from '../../src/utils';
-import { deleteAsync, getCleanProjectDir, getTestOutputDir, TimeThresholds } from '../test-utils';
+import {
+  installDependencies,
+  modifyPackageJson,
+  parsePackageJson
+} from '../../src/utils';
+import {
+  deleteAsync,
+  getCleanProjectDir,
+  getTestOutputDir,
+  TimeThresholds
+} from '../test-utils';
 
 const testOutputDir = getTestOutputDir(__filename);
 
@@ -20,7 +27,10 @@ describe('Package Json Utils', () => {
     'should call `npm install`',
     () => {
       installDependencies('', true);
-      expect(execa).toHaveBeenCalledWith('npm', ['install'], { cwd: '', stdio: 'inherit' });
+      expect(execa).toHaveBeenCalledWith('npm', ['install'], {
+        cwd: '',
+        stdio: 'inherit'
+      });
     },
     TimeThresholds.SHORT
   );
@@ -28,11 +38,19 @@ describe('Package Json Utils', () => {
   it(
     'should parse the package.json',
     async () => {
-      const projectDir = await getCleanProjectDir(testOutputDir, 'parse-package-json');
+      const projectDir = await getCleanProjectDir(
+        testOutputDir,
+        'parse-package-json'
+      );
       const packageJsonPath = path.resolve(projectDir, 'package.json');
-      await fs.copyFile(path.resolve('test', 'nest', 'package.json'), packageJsonPath);
+      await fs.copyFile(
+        path.resolve('test', 'nest', 'package.json'),
+        packageJsonPath
+      );
 
-      expect(Object.keys(await parsePackageJson(projectDir)).sort()).toMatchSnapshot();
+      expect(
+        Object.keys(await parsePackageJson(projectDir)).sort()
+      ).toMatchSnapshot();
     },
     TimeThresholds.SHORT
   );
@@ -40,9 +58,15 @@ describe('Package Json Utils', () => {
   it(
     'add scripts, dependencies and test config for existing project',
     async () => {
-      const projectDir = await getCleanProjectDir(testOutputDir, 'modify-package-json-existing');
+      const projectDir = await getCleanProjectDir(
+        testOutputDir,
+        'modify-package-json-existing'
+      );
       const packageJsonPath = path.resolve(projectDir, 'package.json');
-      await fs.copyFile(path.resolve('test', 'nest', 'package.json'), packageJsonPath);
+      await fs.copyFile(
+        path.resolve('test', 'nest', 'package.json'),
+        packageJsonPath
+      );
 
       await modifyPackageJson({
         projectDir,
@@ -59,9 +83,15 @@ describe('Package Json Utils', () => {
   it(
     'add scripts, dependencies and test config for scaffolded project',
     async () => {
-      const projectDir = await getCleanProjectDir(testOutputDir, 'modify-package-json-existing');
+      const projectDir = await getCleanProjectDir(
+        testOutputDir,
+        'modify-package-json-existing'
+      );
       const packageJsonPath = path.resolve(projectDir, 'package.json');
-      await fs.copyFile(path.resolve('test', 'nest', 'package.json'), packageJsonPath);
+      await fs.copyFile(
+        path.resolve('test', 'nest', 'package.json'),
+        packageJsonPath
+      );
 
       await modifyPackageJson({
         projectDir,

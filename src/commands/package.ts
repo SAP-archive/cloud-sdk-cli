@@ -1,14 +1,17 @@
-/*!
- * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
- */
+/* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
 
+import * as fs from 'fs';
+import * as path from 'path';
 import { Command, flags } from '@oclif/command';
 import * as glob from 'fast-glob';
-import * as fs from 'fs';
 import * as Listr from 'listr';
-import * as path from 'path';
 import * as rm from 'rimraf';
-import { boxMessage, checkOldDependencies, getWarnings, parsePackageJson } from '../utils';
+import {
+  boxMessage,
+  checkOldDependencies,
+  getWarnings,
+  parsePackageJson
+} from '../utils';
 
 export default class Package extends Command {
   static description = 'Copies the specified files to the deployment folder';
@@ -31,7 +34,8 @@ export default class Package extends Command {
     }),
     ci: flags.boolean({
       default: false,
-      description: 'Add node_modules in production environments to respect the `build once` principle.'
+      description:
+        'Add node_modules in production environments to respect the `build once` principle.'
     }),
     include: flags.string({
       char: 'i',
@@ -57,13 +61,16 @@ export default class Package extends Command {
   ];
 
   async run() {
-    const { flags, args } = this.parse(Package);
-    const projectDir = args.projectDir || '.';
-    const outputDir = path.resolve(projectDir, flags.output);
+    const parsed = this.parse(Package);
+    const projectDir = parsed.args.projectDir || '.';
+    const outputDir = path.resolve(projectDir, parsed.flags.output);
 
     function copyFiles(filePaths: string[]): void {
       filePaths.forEach(filepath => {
-        const outputFilePath = path.resolve(outputDir, path.relative(projectDir, filepath));
+        const outputFilePath = path.resolve(
+          outputDir,
+          path.relative(projectDir, filepath)
+        );
         fs.mkdirSync(path.dirname(outputFilePath), { recursive: true });
         fs.copyFileSync(filepath, outputFilePath);
       });
@@ -71,7 +78,7 @@ export default class Package extends Command {
 
     const tasks = new Listr([
       {
-        title: `Overwrite ${flags.output}`,
+        title: `Overwrite ${parsed.flags.output}`,
         task: () => {
           try {
             if (fs.existsSync(outputDir)) {
@@ -86,26 +93,28 @@ export default class Package extends Command {
       {
         title: 'Copying files',
         task: async () => {
-          const include = await glob(flags.include.split(','), {
+          const include = await glob(parsed.flags.include.split(','), {
             dot: true,
             absolute: true,
             cwd: projectDir
           });
-          const exclude: string[] = flags.exclude.length
-            ? await glob(flags.exclude.split(','), {
+          const exclude: string[] = parsed.flags.exclude.length
+            ? await glob(parsed.flags.exclude.split(','), {
                 dot: true,
                 absolute: true,
                 cwd: projectDir
               })
             : [];
-          const filtered = include.filter(filepath => !exclude.includes(filepath));
+          const filtered = include.filter(
+            filepath => !exclude.includes(filepath)
+          );
 
           copyFiles(filtered);
         }
       },
       {
         title: 'Copying node_modules for ci',
-        enabled: () => flags.ci,
+        enabled: () => parsed.flags.ci,
         task: async () => {
           const nodeModuleFiles = await glob('node_modules/**/*', {
             dot: true,
@@ -119,7 +128,9 @@ export default class Package extends Command {
       {
         title: 'Check the SAP Cloud SDK dependencies',
         task: async () => {
-          const { dependencies, devDependencies } = await parsePackageJson(projectDir);
+          const { dependencies, devDependencies } = await parsePackageJson(
+            projectDir
+          );
           checkOldDependencies(dependencies);
           checkOldDependencies(devDependencies);
         }
@@ -139,9 +150,18 @@ export default class Package extends Command {
     ];
     if (warnings) {
       if (this.hasOldSDKWarnings(warnings)) {
-        this.log(boxMessage(['⚠️ Package finished with warnings:', ...warnings, '', ...body]));
+        this.log(
+          boxMessage([
+            '⚠️ Package finished with warnings:',
+            ...warnings,
+            '',
+            ...body
+          ])
+        );
       } else {
-        this.log(boxMessage(['⚠️ Package finished with warnings:', ...warnings]));
+        this.log(
+          boxMessage(['⚠️ Package finished with warnings:', ...warnings])
+        );
       }
     } else {
       this.log(boxMessage(['✅ Package finished successfully.']));
@@ -150,6 +170,9 @@ export default class Package extends Command {
 
   private hasOldSDKWarnings(warnings: string[]) {
     const regex = RegExp('Old SAP Cloud SDK: .* is detected.');
-    return warnings.map(warning => regex.test(warning)).filter(value => value).length > 0;
+    return (
+      warnings.map(warning => regex.test(warning)).filter(value => value)
+        .length > 0
+    );
   }
 }

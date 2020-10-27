@@ -1,16 +1,18 @@
-/*!
- * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
- */
+/* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
 
-import cli from 'cli-ux';
-import * as execa from 'execa';
 import * as fs from 'fs';
 import * as path from 'path';
+import cli from 'cli-ux';
+import * as execa from 'execa';
 import * as rm from 'rimraf';
 import { recordWarning } from '../utils/';
 
-export async function shouldBuildScaffold(projectDir: string, buildScaffold: boolean, force: boolean = false): Promise<boolean> {
-  if (buildScaffold) {
+export async function shouldBuildScaffold(
+  projectDir: string,
+  doBuildScaffold: boolean,
+  force = false
+): Promise<boolean> {
+  if (doBuildScaffold) {
     await checkForEmptyDir(projectDir, force);
     return true;
   }
@@ -19,13 +21,21 @@ export async function shouldBuildScaffold(projectDir: string, buildScaffold: boo
     return false;
   }
 
-  cli.log(`The target directory (${projectDir}) does not contain a \`package.json.\``);
+  cli.log(
+    `The target directory (${projectDir}) does not contain a \`package.json.\``
+  );
 
-  if (await cli.confirm('Should a new `nest.js` project be initialized in the target directory? (y|n)')) {
+  if (
+    await cli.confirm(
+      'Should a new `nest.js` project be initialized in the target directory? (y|n)'
+    )
+  ) {
     await checkForEmptyDir(projectDir, force);
     return true;
   }
-  cli.info('➡️ Cancelling `init` because a valid `package.json` is required to run.');
+  cli.info(
+    '➡️ Cancelling `init` because a valid `package.json` is required to run.'
+  );
   return cli.exit(13);
 }
 
@@ -39,14 +49,31 @@ async function checkForEmptyDir(projectDir: string, force: boolean) {
   }
 }
 
-export async function buildScaffold(projectDir: string, verbose: boolean, addCds: boolean) {
+export async function buildScaffold(
+  projectDir: string,
+  verbose: boolean,
+  addCds: boolean
+) {
   cli.action.start('Building application scaffold');
   const options: execa.Options = {
     cwd: projectDir,
     stdio: verbose ? 'inherit' : 'ignore'
   };
 
-  await execa('npx', ['-p', '@nestjs/cli', 'nest', 'new', '.', '--skip-install', '--package-manager', 'npm'], options);
+  await execa(
+    'npx',
+    [
+      '-p',
+      '@nestjs/cli',
+      'nest',
+      'new',
+      '.',
+      '--skip-install',
+      '--package-manager',
+      'npm'
+    ],
+    options
+  );
 
   fs.unlinkSync(path.resolve(projectDir, 'README.md'));
   modifyMainTs(path.resolve(projectDir, 'src', 'main.ts'));
@@ -62,7 +89,10 @@ function modifyMainTs(pathToMainTs: string) {
   const modifiedMainTs = mainTs.replace('.listen(3000)', modifiedListen);
 
   if (!modifiedMainTs.includes(modifiedListen)) {
-    recordWarning('Could not set listening port to `process.env.PORT`', 'in file `app.module.ts`. Please adjust manually.');
+    recordWarning(
+      'Could not set listening port to `process.env.PORT`',
+      'in file `app.module.ts`. Please adjust manually.'
+    );
   } else {
     fs.writeFileSync(pathToMainTs, modifiedMainTs);
   }
@@ -77,7 +107,9 @@ export function addCatalogueModule(pathToAppModuleTs: string) {
     .replace('imports: []', `imports: [${moduleName}]`);
 
   if (!modifiedAppModuleTs.includes(`imports: [${moduleName}]`)) {
-    recordWarning(`Could not add module ${moduleName} to \`app.module.ts\`. Please add manually.`);
+    recordWarning(
+      `Could not add module ${moduleName} to \`app.module.ts\`. Please add manually.`
+    );
   } else {
     fs.writeFileSync(pathToAppModuleTs, modifiedAppModuleTs);
   }

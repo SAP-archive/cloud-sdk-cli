@@ -1,6 +1,4 @@
-/*!
- * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
- */
+/* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
 
 const prompt = jest.fn().mockResolvedValue('mock-project');
 jest.mock('cli-ux', () => {
@@ -15,10 +13,15 @@ jest.mock('cli-ux', () => {
   };
 });
 
-import * as fs from 'fs-extra';
 import * as path from 'path';
+import * as fs from 'fs-extra';
 import AddCds from '../src/commands/add-cds';
-import { deleteAsync, getCleanProjectDir, getTestOutputDir, TimeThresholds } from './test-utils';
+import {
+  deleteAsync,
+  getCleanProjectDir,
+  getTestOutputDir,
+  TimeThresholds
+} from './test-utils';
 
 describe('Add CDS', () => {
   const testOutputDir = getTestOutputDir(__filename);
@@ -30,9 +33,14 @@ describe('Add CDS', () => {
   it(
     'should add necessary files to an existing project',
     async () => {
-      const projectDir = await getCleanProjectDir(testOutputDir, 'add-cds-to-existing-project');
+      const projectDir = await getCleanProjectDir(
+        testOutputDir,
+        'add-cds-to-existing-project'
+      );
 
-      await fs.copy(path.resolve(__dirname, 'express'), projectDir, { recursive: true });
+      await fs.copy(path.resolve(__dirname, 'express'), projectDir, {
+        recursive: true
+      });
 
       await AddCds.run([projectDir, '--skipInstall']);
 
@@ -51,12 +59,21 @@ describe('Add CDS', () => {
   it(
     'should detect and fail if there are conflicts',
     async done => {
-      const projectDir = await getCleanProjectDir(testOutputDir, 'add-cds-conflicts');
+      const projectDir = await getCleanProjectDir(
+        testOutputDir,
+        'add-cds-conflicts'
+      );
 
-      await fs.copy(path.resolve(__dirname, 'express'), projectDir, { recursive: true });
+      await fs.copy(path.resolve(__dirname, 'express'), projectDir, {
+        recursive: true
+      });
       await fs.mkdir(path.resolve(projectDir, 'db'));
       await fs.createFile(path.resolve(projectDir, 'db', 'data-model.cds'));
-      await fs.writeFile(path.resolve(projectDir, 'db', 'data-model.cds'), 'some text', 'utf8');
+      await fs.writeFile(
+        path.resolve(projectDir, 'db', 'data-model.cds'),
+        'some text',
+        'utf8'
+      );
 
       try {
         await AddCds.run([projectDir, '--skipInstall']);
