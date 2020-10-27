@@ -34,22 +34,15 @@ describe('generate-odata-client', () => {
 
   it(
     'should fail if the mandatory parameters are not there',
-    async done => {
-      GenerateODataClient.run([])
-        .then(() => {
-          throw new Error('Should not resolve.');
-        })
-        .catch((err: Error) => {
-          expect(err.message).toMatch('-i, --inputDir INPUTDIR');
-          done();
-        });
+    async () => {
+      await expect(GenerateODataClient.run([])).rejects.toMatchSnapshot();
     },
     TimeThresholds.MEDIUM
   );
 
   it(
     'should install and generate',
-    async done => {
+    async () => {
       await GenerateODataClient.run([
         '-i=input',
         '-o=output',
@@ -64,7 +57,6 @@ describe('generate-odata-client', () => {
       expect(execa.mock.calls[2][1].sort()).toEqual(
         getDefault(pathForTests).sort()
       );
-      done();
     },
     TimeThresholds.MEDIUM
   );

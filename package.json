@@ -7,6 +7,38 @@
     "sap-cloud-sdk": "./bin/run"
   },
   "bugs": "https://github.com/SAP/cloud-sdk-cli/issues",
+  "files": [
+    "/bin",
+    "/lib",
+    "/npm-shrinkwrap.json",
+    "/oclif.manifest.json"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SAP/cloud-sdk-cli"
+  },
+  "homepage": "https://developers.sap.com/topics/cloud-sdk.html",
+  "keywords": [
+    "sap-cloud-sdk",
+    "cloud-sdk-cli",
+    "sap-cloud-platform"
+  ],
+  "license": "Apache-2.0",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "lint": "yarn eslint --ext .ts .",
+    "lint:fix": "yarn lint --fix",
+    "prepack": "rimraf lib && tsc -b && cp -R src/templates lib/ && oclif-dev manifest && oclif-dev readme",
+    "postpack": "rimraf oclif.manifest.json",
+    "build": "tsc -b",
+    "test": "jest --testPathIgnorePatterns=\"e2e\"",
+    "test:e2e": "jest --testPathPattern=\"e2e\"",
+    "test:full": "jest --no-cache --runInBand",
+    "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
+    "test:watch-debug": "node --inspect-brk node_modules/.bin/jest --watch --runInBand",
+    "version": "oclif-dev readme && git add README.md"
+  },
   "dependencies": {
     "@oclif/command": "^1.5.19",
     "@oclif/config": "^1.14.0",
@@ -29,7 +61,7 @@
   "devDependencies": {
     "@oclif/dev-cli": "^1.22.2",
     "@types/fs-extra": "^9.0.1",
-    "@types/jest": "^26.0.7",
+    "@types/jest": "^26.0.15",
     "@types/js-yaml": "^3.12.3",
     "@types/listr": "^0.14.2",
     "@types/node": ">=13.9.8",
@@ -43,9 +75,9 @@
     "eslint-plugin-unused-imports": "^0.1.3",
     "fs-extra": "^9.0.0",
     "globby": "^11.0.0",
-    "jest": "^26.1.0",
+    "jest": "^26.6.1",
     "jest-circus": "^26.6.1",
-    "jest-extended": "^0.11.2",
+    "jest-extended": "^0.11.5",
     "prettier": "^2.0.2",
     "ts-jest": "^26.1.4",
     "ts-node": "^9.0.0",
@@ -54,20 +86,6 @@
   "engines": {
     "node": ">=10.0.0"
   },
-  "files": [
-    "/bin",
-    "/lib",
-    "/npm-shrinkwrap.json",
-    "/oclif.manifest.json"
-  ],
-  "homepage": "https://developers.sap.com/topics/cloud-sdk.html",
-  "keywords": [
-    "sap-cloud-sdk",
-    "cloud-sdk-cli",
-    "sap-cloud-platform"
-  ],
-  "license": "Apache-2.0",
-  "main": "lib/index.js",
   "oclif": {
     "commands": "./lib/commands",
     "warn-if-update-available": {
@@ -83,23 +101,5 @@
       "@oclif/plugin-not-found",
       "@oclif/plugin-warn-if-update-available"
     ]
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/SAP/cloud-sdk-cli"
-  },
-  "scripts": {
-    "lint": "yarn eslint --ext .ts .",
-    "lint:fix": "yarn lint --fix",
-    "prepack": "rimraf lib && tsc -b && cp -R src/templates lib/ && oclif-dev manifest && oclif-dev readme",
-    "postpack": "rimraf oclif.manifest.json",
-    "build": "tsc -b",
-    "test": "jest --testPathIgnorePatterns=\"e2e\"",
-    "test:e2e": "jest --testPathPattern=\"e2e\"",
-    "test:full": "jest --no-cache --runInBand",
-    "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
-    "test:watch-debug": "node --inspect-brk node_modules/.bin/jest --watch --runInBand",
-    "version": "oclif-dev readme && git add README.md"
-  },
-  "types": "lib/index.d.ts"
+  }
 }
