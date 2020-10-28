@@ -1,8 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`generate-odata-client should fail if the mandatory parameters are not there 1`] = `
-[Error: Missing required flag:
- -i, --inputDir INPUTDIR  [2mThis directory will be recursively searched for
-                          .edmx/.xml files.[22m
-See more help with --help]
-`;
