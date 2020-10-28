@@ -58,7 +58,7 @@ describe('Add CDS', () => {
 
   it(
     'should detect and fail if there are conflicts',
-    async done => {
+    async () => {
       const projectDir = await getCleanProjectDir(
         testOutputDir,
         'add-cds-conflicts'
@@ -79,7 +79,6 @@ describe('Add CDS', () => {
         await AddCds.run([projectDir, '--skipInstall']);
       } catch (e) {
         expect(e.message).toMatch(/A file with the name .* already exists\./);
-        done();
       }
     },
     TimeThresholds.SHORT
