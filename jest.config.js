@@ -1,4 +1,6 @@
+/* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
 module.exports = {
+  verbose: true,
   preset: 'ts-jest',
   testEnvironment: 'node',
   testRunner: 'jest-circus/runner',
@@ -14,7 +16,7 @@ module.exports = {
   roots: ['test'],
   globals: {
     'ts-jest': {
-      diagnostics: false,
+      diagnostics: false
     }
   }
 };
