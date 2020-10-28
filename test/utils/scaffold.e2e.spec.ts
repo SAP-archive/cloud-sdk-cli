@@ -19,7 +19,7 @@ describe('Scaffold Utils', () => {
 
   test(
     '[E2E] should build the scaffold',
-    async done => {
+    async () => {
       const projectDir = await getCleanProjectDir(
         testOutputDir,
         'build-scaffold'
@@ -32,7 +32,6 @@ describe('Scaffold Utils', () => {
       await fs.remove(
         `${testOutputDir}/build-scaffold/src/app.controller.spec.ts`
       );
-      done();
     },
     TimeThresholds.LONG
   );
