@@ -271,10 +271,10 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@eslint/eslintrc@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.npmjs.org/@eslint/eslintrc/-/eslintrc-0.2.0.tgz#bc7e3c4304d4c8720968ccaee793087dfb5fe6b4"
-  integrity sha512-+cIGPCBdLCzqxdtwppswP+zTsH9BOIGzAeKfBIbtb4gW/giMlfMwP0HUSFfhzh20f9u8uZ8hOp62+4GPquTbwQ==
+"@eslint/eslintrc@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.npmjs.org/@eslint/eslintrc/-/eslintrc-0.2.1.tgz#f72069c330461a06684d119384435e12a5d76e3c"
+  integrity sha512-XRUeBZ5zBWLYgSANMpThFddrZZkEbGHgUdt5UJjZfnlN9BGCiUBrf+nvbRupSjMvqzwnQN0qwCmOxITt1cfywA==
   dependencies:
     ajv "^6.12.4"
     debug "^4.1.1"
@@ -1055,20 +1055,10 @@ acorn@^7.4.0:
   resolved "https://registry.npmjs.org/acorn/-/acorn-7.4.1.tgz#feaed255973d2e77555b83dbc08851a6c63520fa"
   integrity sha512-nQyp0o1/mNdbTO1PO6kHkwSrmgZ0MT/jCCpNiwbUjGoRN4dlBhqJtoQuCnEOKzgTVwg0ZWiCoQy6SxMebQVh8A==
 
-ajv@^6.10.0, ajv@^6.10.2, ajv@^6.12.4:
+ajv@^6.10.0, ajv@^6.10.2, ajv@^6.12.4, ajv@^6.5.5:
   version "6.12.6"
   resolved "https://registry.npmjs.org/ajv/-/ajv-6.12.6.tgz#baf5a62e802b07d977034586f8c3baf5adf26df4"
   integrity sha512-j3fVLgvTo527anyYyJOGTYJbG+vnnQYvE0m5mmkc1TK+nxAppkCLMIL0aZ4dblVCNoGShhm+kzE4ZUykBoMg4g==
-  dependencies:
-    fast-deep-equal "^3.1.1"
-    fast-json-stable-stringify "^2.0.0"
-    json-schema-traverse "^0.4.1"
-    uri-js "^4.2.2"
-
-ajv@^6.5.5:
-  version "6.12.3"
-  resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.12.3.tgz#18c5af38a111ddeb4f2697bd78d68abc1cabd706"
-  integrity sha512-4K0cK3L1hsqk9xIb2z9vs/XU+PGJZ9PNpJRDS9YLzmNdX6jmVPfamLvTJr0aDAusnHyCHO6MjzlkAsgtqp9teA==
   dependencies:
     fast-deep-equal "^3.1.1"
     fast-json-stable-stringify "^2.0.0"
@@ -2228,12 +2218,12 @@ eslint@^6.3.0:
     v8-compile-cache "^2.0.3"
 
 eslint@^7.12.0:
-  version "7.12.0"
-  resolved "https://registry.npmjs.org/eslint/-/eslint-7.12.0.tgz#7b6a85f87a9adc239e979bb721cde5ce0dc27da6"
-  integrity sha512-n5pEU27DRxCSlOhJ2rO57GDLcNsxO0LPpAbpFdh7xmcDmjmlGUfoyrsB3I7yYdQXO5N3gkSTiDrPSPNFiiirXA==
+  version "7.12.1"
+  resolved "https://registry.npmjs.org/eslint/-/eslint-7.12.1.tgz#bd9a81fa67a6cfd51656cdb88812ce49ccec5801"
+  integrity sha512-HlMTEdr/LicJfN08LB3nM1rRYliDXOmfoO4vj39xN6BLpFzF00hbwBoqHk8UcJ2M/3nlARZWy/mslvGEuZFvsg==
   dependencies:
     "@babel/code-frame" "^7.0.0"
-    "@eslint/eslintrc" "^0.2.0"
+    "@eslint/eslintrc" "^0.2.1"
     ajv "^6.10.0"
     chalk "^4.0.0"
     cross-spawn "^7.0.2"
@@ -4087,12 +4077,7 @@ lodash.templatesettings@^4.0.0:
   dependencies:
     lodash._reinterpolate "^3.0.0"
 
-lodash@^4.17.11, lodash@^4.17.13, lodash@^4.17.15, lodash@^4.17.19:
-  version "4.17.19"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.19.tgz#e48ddedbe30b3321783c5b4301fbd353bc1e4a4b"
-  integrity sha512-JNvd8XER9GQX0v2qJgsaN/mzFCNA5BRe/j8JN9d+tWyGLSodKQHKFicdwNYzWwI3wjRnaKPsGj1XkBjx/F96DQ==
-
-lodash@^4.17.14:
+lodash@^4.17.11, lodash@^4.17.13, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.19:
   version "4.17.20"
   resolved "https://registry.npmjs.org/lodash/-/lodash-4.17.20.tgz#b44a9b6297bcb698f1c51a3545a2b3b368d59c52"
   integrity sha512-PlhdFcillOINfeV7Ni6oF1TAEayyZBoZ8bcshTHqOYJYlrqzRK5hagpagky5o4HfCzzd1TRkXPMFq6cKk9rGmA==
