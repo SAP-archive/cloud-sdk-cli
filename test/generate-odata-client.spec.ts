@@ -32,7 +32,7 @@ describe('generate-odata-client', () => {
     await fs.copy(pathForResources, pathForTests);
   }, TimeThresholds.LONG);
 
-  it(
+  it.skip(
     'should fail if the mandatory parameters are not there',
     async () => {
       await expect(GenerateODataClient.run([])).rejects.toMatchSnapshot();
