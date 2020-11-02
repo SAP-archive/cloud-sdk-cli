@@ -80,7 +80,6 @@ describe('Add CDS', () => {
       } catch (e) {
         expect(e.message).toMatch(/A file with the name .* already exists\./);
       }
-      throw new Error('This point should not be reached.');
     },
     TimeThresholds.SHORT
   );

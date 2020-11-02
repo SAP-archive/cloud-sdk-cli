@@ -44,7 +44,6 @@ describe('Add Approuter', () => {
       return Promise.all([files, approuterFiles]).then(values => {
         expect(values[0]).toContain('approuter');
         expect(values[1]).toIncludeAllMembers([
-          '.npmrc',
           'manifest.yml',
           'package.json',
           'xs-app.json',
@@ -75,7 +74,6 @@ describe('Add Approuter', () => {
       return Promise.all([files, approuterFiles]).then(values => {
         expect(values[0]).toContain('approuter');
         expect(values[1]).toIncludeAllMembers([
-          '.npmrc',
           'manifest.yml',
           'package.json',
           'xs-app.json',
