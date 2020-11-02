@@ -17,9 +17,12 @@ export interface GeneratorOptionsSDK {
   clearOutputDir: boolean;
   aggregatorNpmPackageName?: string;
   aggregatorDirectoryName?: string;
+  generateNpmrc: boolean;
   generateTypedocJson: boolean;
   generatePackageJson: boolean;
+  versionInPackageJson?: string;
   generateJs: boolean;
+  processesJsGeneration?: number;
   sdkAfterVersionScript: boolean;
   s4hanaCloud: boolean;
   generateCSN: boolean;
@@ -98,6 +101,12 @@ export const generatorOptionsSDK: KeysToOptions = {
     type: 'string',
     hidden: true
   },
+  generateNpmrc: {
+    describe:
+      'Deprecated. If set to true the generator will generate an .npmrc file specifying a registry for @sap scoped dependencies. This is not necessary anymore and will be skipped by default.',
+    type: 'string',
+    default: 'false'
+  },
   generateTypedocJson: {
     describe:
       'By default, the generator will generate a typedoc.json file for each package, used for the corresponding "doc" npm script. When set to false, the generator will skip the generation of the typedoc.json.',
@@ -110,11 +119,22 @@ export const generatorOptionsSDK: KeysToOptions = {
     type: 'boolean',
     default: true
   },
+  versionInPackageJson: {
+    describe:
+      'By default, when generating package.json file, the generator will set a version by using the generator version. It can also be set to a specific version.',
+    type: 'string'
+  },
   generateJs: {
     describe:
       'By default, the generator will also generate transpiled .js, .js.map, .d.ts and .d.ts.map files. When set to false, the generator will only generate .ts files.',
     type: 'boolean',
     default: true
+  },
+  processesJsGeneration: {
+    describe: 'Number of processes used for generation of javascript files.',
+    alias: 'np',
+    type: 'number',
+    default: 16
   },
   sdkAfterVersionScript: {
     describe: 'When set to true, the package.json of generated services will have the after-version script to internally keep the versions in sync.',

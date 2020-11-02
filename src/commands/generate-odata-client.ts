@@ -5,7 +5,7 @@
 import { Command } from '@oclif/command';
 import cli from 'cli-ux';
 import * as execa from 'execa';
-import { generatorOptionsSDK } from '../utils';
+import { generatorOptionsSDK, NumberArgType, toIntegerFlag } from '../utils';
 import { BoolArgType, generatorOptionCli, StringArgType, toBooleanFlag, toStringFlag } from '../utils/generate-odata-client-util';
 
 export default class GenerateODataClient extends Command {
@@ -17,7 +17,7 @@ export default class GenerateODataClient extends Command {
     '$ sap-cloud-sdk generate-odata-client --help'
   ];
 
-  static flags: BoolArgType & StringArgType = {
+  static flags: BoolArgType & StringArgType & NumberArgType = {
     // Options which are 1:1 to the SDK CLI
     inputDir: toStringFlag(generatorOptionsSDK.inputDir),
     outputDir: toStringFlag(generatorOptionsSDK.outputDir),
@@ -35,6 +35,9 @@ export default class GenerateODataClient extends Command {
     sdkAfterVersionScript: toBooleanFlag(generatorOptionsSDK.sdkAfterVersionScript),
     s4hanaCloud: toBooleanFlag(generatorOptionsSDK.s4hanaCloud),
     forceOverwrite: toBooleanFlag(generatorOptionsSDK.forceOverwrite),
+    processesJsGeneration: toIntegerFlag(generatorOptionsSDK.processesJsGeneration!),
+    generateNpmrc: toBooleanFlag(generatorOptionsSDK.generateNpmrc),
+    versionInPackageJson: toStringFlag(generatorOptionsSDK.versionInPackageJson!),
     // Options related to the CLI some of them are mapped to SDK CLI attributes
     projectDir: toStringFlag(generatorOptionCli.projectDir)
   };

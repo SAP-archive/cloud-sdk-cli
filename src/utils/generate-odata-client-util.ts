@@ -8,6 +8,7 @@ import { IBooleanFlag, IOptionFlag } from '@oclif/parser/lib/flags';
 import * as path from 'path';
 import { Options } from 'yargs';
 import { GeneratorOptionsSDK } from './generator-options';
+import { PathLike } from 'fs';
 
 interface GeneratorOptionCli {
   projectDir: string;
@@ -29,7 +30,15 @@ type AllOptions = GeneratorOptionsSDK & GeneratorOptionCli;
 
 // OClif distinguishes between boolean and string flags. Split the keys to get proper typing
 type FilterBooleanKeys<Base> = {
-  [Key in keyof Base]: Base[Key] extends boolean ? Key : never;
+  [Key in keyof Base]: Base[Key] extends boolean | undefined ? Key : never;
+};
+
+type FilterStringKeys<Base> = {
+  [Key in keyof Base]: Base[Key] extends string | PathLike | undefined ? Key : never;
+};
+
+type FilterNumberKeys<Base> = {
+  [Key in keyof Base]: Base[Key] extends number | undefined ? Key : never;
 };
 
 type BoolArgKeys = NonNullable<FilterBooleanKeys<AllOptions>[keyof AllOptions]>;
@@ -37,14 +46,28 @@ export type BoolArgType = {
   [optionName in BoolArgKeys]: IBooleanFlag<boolean>;
 };
 
-type StringArgKeys = keyof Omit<AllOptions, BoolArgKeys>;
+type StringArgKeys = NonNullable<FilterStringKeys<AllOptions>[keyof AllOptions]>;
 export type StringArgType = {
   [optionName in StringArgKeys]: IOptionFlag<string | undefined>;
+};
+
+type NumberArgKeys = NonNullable<FilterNumberKeys<AllOptions>[keyof AllOptions]>;
+export type NumberArgType = {
+  [optionName in NumberArgKeys]: IOptionFlag<number | undefined>;
 };
 
 export type FlagsParsed = {
   [Key in keyof AllOptions]: AllOptions[Key] extends boolean ? boolean : string | undefined;
 };
+
+export function toIntegerFlag(yargsNumber: Options): IOptionFlag<number | undefined> {
+  return flags.integer({
+    char: yargsNumber.alias as AlphabetLowercase | AlphabetUppercase,
+    description: yargsNumber.describe,
+    required: yargsNumber.requiresArg,
+    default: yargsNumber.default
+  });
+}
 
 export function toBooleanFlag(yargsBool: Options): IBooleanFlag<boolean> {
   const extendedDescription = `${yargsBool.describe} [default: ${yargsBool.default}].`;
