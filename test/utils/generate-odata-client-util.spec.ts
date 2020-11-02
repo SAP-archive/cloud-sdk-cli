@@ -1,20 +1,28 @@
-/*!
- * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
- */
+/* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
 
 import { Options } from 'yargs';
-import { toBooleanFlag, toStringFlag } from '../../src/utils/generate-odata-client-util';
+import {
+  toBooleanFlag,
+  toStringFlag
+} from '../../src/utils/generate-odata-client-util';
 import { TimeThresholds } from '../test-utils';
 
 describe('Generate OData Client Utils', () => {
   it(
     'should translate the description correctly',
     () => {
-      let yargsOption: Options = { describe: 'expectedDescription', default: false };
-      expect(toBooleanFlag(yargsOption).description).toBe('expectedDescription [default: false].');
+      let yargsOption: Options = {
+        describe: 'expectedDescription',
+        default: false
+      };
+      expect(toBooleanFlag(yargsOption).description).toBe(
+        'expectedDescription [default: false].'
+      );
 
       yargsOption = { describe: 'expectedDescription', default: true };
-      expect(toBooleanFlag(yargsOption).description).toBe('expectedDescription [default: true].');
+      expect(toBooleanFlag(yargsOption).description).toBe(
+        'expectedDescription [default: true].'
+      );
     },
     TimeThresholds.EXTRA_SHORT
   );
@@ -55,7 +63,10 @@ describe('Generate OData Client Utils', () => {
   );
 
   it('should translate all string arguments correctly.', () => {
-    const yargsOption: Options = { alias: 'expectedAlias', description: 'expectedDescription' };
+    const yargsOption: Options = {
+      alias: 'expectedAlias',
+      description: 'expectedDescription'
+    };
     expect(toStringFlag(yargsOption).char).toBe(yargsOption.alias);
     expect(toStringFlag(yargsOption).description).toBe(yargsOption.describe);
   });

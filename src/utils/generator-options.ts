@@ -1,6 +1,4 @@
-/*!
- * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
- */
+/* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
 
 import { PathLike } from 'fs';
 import { resolve } from 'path';
@@ -32,7 +30,8 @@ type KeysToOptions = {
 export const generatorOptionsSDK: KeysToOptions = {
   inputDir: {
     alias: 'i',
-    describe: 'This directory will be recursively searched for .edmx/.xml files.',
+    describe:
+      'This directory will be recursively searched for .edmx/.xml files.',
     normalize: true,
     coerce: resolve,
     type: 'string',
@@ -71,7 +70,8 @@ export const generatorOptionsSDK: KeysToOptions = {
     hidden: true
   },
   additionalFiles: {
-    describe: 'Glob describing additional files to be added to the each generated service directory.',
+    describe:
+      'Glob describing additional files to be added to the each generated service directory.',
     type: 'string',
     normalize: false,
     hidden: false
@@ -83,7 +83,8 @@ export const generatorOptionsSDK: KeysToOptions = {
     default: false
   },
   clearOutputDir: {
-    describe: 'When set to true, the generator will delete EVERYTHING in the specified output directory before generating code.',
+    describe:
+      'When set to true, the generator will delete EVERYTHING in the specified output directory before generating code.',
     type: 'boolean',
     default: false
   },
@@ -117,19 +118,22 @@ export const generatorOptionsSDK: KeysToOptions = {
     default: true
   },
   sdkAfterVersionScript: {
-    describe: 'When set to true, the package.json of generated services will have the after-version script to internally keep the versions in sync.',
+    describe:
+      'When set to true, the package.json of generated services will have the after-version script to internally keep the versions in sync.',
     type: 'boolean',
     default: false,
     hidden: true
   },
   s4hanaCloud: {
-    describe: 'When set to true, the description of the generated packages will be specific to S/4HANA Cloud.',
+    describe:
+      'When set to true, the description of the generated packages will be specific to S/4HANA Cloud.',
     type: 'boolean',
     default: false,
     hidden: true
   },
   generateCSN: {
-    describe: 'When set to true a CSN file will be generated for each service definition in the output directory.',
+    describe:
+      'When set to true a CSN file will be generated for each service definition in the output directory.',
     type: 'boolean',
     default: false
   }

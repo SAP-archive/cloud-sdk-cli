@@ -5,3 +5,15 @@ updates:
   schedule:
     interval: daily
     time: "01:00"
+  allow:
+    dependency-type: "production"
+  versioning-strategy: widen
+  
+ - package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "01:00"
+  allow:
+    dependency-type: "development"
+  versioning-strategy: increase

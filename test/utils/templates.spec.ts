@@ -1,10 +1,19 @@
-/*!
- * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
- */
-import * as fs from 'fs-extra';
+/* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
 import * as path from 'path';
-import { CopyDescriptor, copyFiles, findConflicts, getCopyDescriptors, getTemplatePaths } from '../../src/utils';
-import { deleteAsync, getCleanProjectDir, getTestOutputDir, TimeThresholds } from '../test-utils';
+import * as fs from 'fs-extra';
+import {
+  CopyDescriptor,
+  copyFiles,
+  findConflicts,
+  getCopyDescriptors,
+  getTemplatePaths
+} from '../../src/utils';
+import {
+  deleteAsync,
+  getCleanProjectDir,
+  getTestOutputDir,
+  TimeThresholds
+} from '../test-utils';
 
 const testOutputDir = getTestOutputDir(__filename);
 
@@ -16,11 +25,21 @@ describe('Templates Utils', () => {
   it(
     'should return information which files to copy where',
     () => {
-      const initCopyInfo = getCopyDescriptors('targetDir', getTemplatePaths(['init']));
-      expect(initCopyInfo.map(copyInfo => copyInfoToPathArray(copyInfo)).sort()).toMatchSnapshot();
+      const initCopyInfo = getCopyDescriptors(
+        'targetDir',
+        getTemplatePaths(['init'])
+      );
+      expect(
+        initCopyInfo.map(copyInfo => copyInfoToPathArray(copyInfo)).sort()
+      ).toMatchSnapshot();
 
-      const appRouterCopyInfo = getCopyDescriptors('targetDir', getTemplatePaths(['add-approuter']));
-      expect(appRouterCopyInfo.map(appRouterCopyInfo => copyInfoToPathArray(appRouterCopyInfo).sort())).toMatchSnapshot();
+      const appRouterCopyInfo = getCopyDescriptors(
+        'targetDir',
+        getTemplatePaths(['add-approuter'])
+      );
+      expect(
+        appRouterCopyInfo.map(info => copyInfoToPathArray(info).sort())
+      ).toMatchSnapshot();
     },
     TimeThresholds.EXTRA_SHORT
   );
@@ -28,9 +47,15 @@ describe('Templates Utils', () => {
   it(
     'should find conflicts',
     async () => {
-      const projectDir = await getCleanProjectDir(testOutputDir, 'find-conflicts');
+      const projectDir = await getCleanProjectDir(
+        testOutputDir,
+        'find-conflicts'
+      );
       await fs.writeFile(path.resolve(projectDir, 'manifest.yml'), 'foobar');
-      findConflicts(getCopyDescriptors(projectDir, getTemplatePaths(['init'])), true);
+      findConflicts(
+        getCopyDescriptors(projectDir, getTemplatePaths(['init'])),
+        true
+      );
       try {
         await fs.stat(path.resolve(projectDir, 'manifest.yml'));
       } catch (e) {
@@ -43,9 +68,17 @@ describe('Templates Utils', () => {
   it(
     'should copy files locally',
     async () => {
-      const projectDir = await getCleanProjectDir(testOutputDir, 'copy-files-locally');
-      await copyFiles(getCopyDescriptors(projectDir, getTemplatePaths(['init'])), {});
-      return fs.readdir(projectDir).then(value => expect(value).toMatchSnapshot);
+      const projectDir = await getCleanProjectDir(
+        testOutputDir,
+        'copy-files-locally'
+      );
+      await copyFiles(
+        getCopyDescriptors(projectDir, getTemplatePaths(['init'])),
+        {}
+      );
+      return fs
+        .readdir(projectDir)
+        .then(value => expect(value).toMatchSnapshot);
     },
     TimeThresholds.EXTRA_SHORT
   );
@@ -56,7 +89,10 @@ describe('Templates Utils', () => {
   // });
 
   function copyInfoToPathArray(copyInfo: CopyDescriptor): string[] {
-    const filePathBeginnginFromTargetDir = path.relative(path.resolve('targetDir'), copyInfo.fileName);
+    const filePathBeginnginFromTargetDir = path.relative(
+      path.resolve('targetDir'),
+      copyInfo.fileName
+    );
     const filePathAsList = filePathBeginnginFromTargetDir.split(path.sep);
     return filePathAsList;
   }

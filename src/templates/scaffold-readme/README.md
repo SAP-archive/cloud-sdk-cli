@@ -6,7 +6,7 @@ This is your **SAP Cloud Platform Cloud Foundry** application powered by the [SA
 
 ## Getting started
 
-Everything is ready to go. 
+Everything is ready to go.
 
 ```bash
 # Run the application locally
@@ -25,7 +25,7 @@ $ cf push
 
 ## Testing
 
-The project comes with unit and end-to-end tests. 
+The project comes with unit and end-to-end tests.
 Unit tests are located in the `src/` folder next to the modules and controllers, while end-to-end tests are in the `test/` folder.
 
 ```bash
@@ -49,12 +49,12 @@ sap-cloud-sdk add-cx-server
 $ ./cx-server start
 ```
 
-Point the new Jenkins to your repository and it will automatically run the pipeline. 
+Point the new Jenkins to your repository and it will automatically run the pipeline.
 If the pipeline should deploy your application as well, you need to modify the `.pipeline/config.yml`.
 
 ## NestJS
 
-NestJS is a progressive [Node.js](http://nodejs.org) framework for building efficient and scalable server-side applications, heavily inspired by [Angular](https://angular.io). 
+NestJS is a progressive [Node.js](http://nodejs.org) framework for building efficient and scalable server-side applications, heavily inspired by [Angular](https://angular.io).
 
 The [Nest CLI](https://docs.nestjs.com/cli/usages) is a powerful tool and can help you create new controllers, modules and interfaces.
 
@@ -64,7 +64,7 @@ If you need support with the SAP Cloud SDK, the SAP Cloud SDK CLI or this projec
 
 ## License and Notice
 
-The SAP Cloud SDK CLI is licensed under the [Apache Software License, v. 2](https://github.com/SAP/cloud-sdk-cli/blob/master/LICENSE). 
+The SAP Cloud SDK CLI is licensed under the [Apache Software License, v. 2](https://github.com/SAP/cloud-sdk-cli/blob/main/LICENSE).
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
 
 The SAP Cloud SDK is in no way affiliated with or endorsed by Nest and its maintainers.
