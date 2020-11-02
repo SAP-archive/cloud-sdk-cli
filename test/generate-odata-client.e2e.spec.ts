@@ -38,9 +38,8 @@ describe('generate-odata-client', () => {
       ]);
       expect(result.exitCode).toBe(0);
 
-      return fs
-        .readdir(path.resolve(pathForTests, 'output'))
-        .then(file => expect(file).toHaveLength(1));
+      const files = await fs.readdir(path.resolve(pathForTests, 'output'));
+      expect(files).toHaveLength(1);
     },
     TimeThresholds.LONG
   );
