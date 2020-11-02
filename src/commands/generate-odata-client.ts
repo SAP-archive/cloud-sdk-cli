@@ -29,7 +29,6 @@ export default class GenerateODataClient extends Command {
     generateJs: toBooleanFlag(generatorOptionsSDK.generateJs),
     generatePackageJson: toBooleanFlag(generatorOptionsSDK.generatePackageJson),
     generateTypedocJson: toBooleanFlag(generatorOptionsSDK.generateTypedocJson),
-    generateNpmrc: toBooleanFlag(generatorOptionsSDK.generateNpmrc),
     useSwagger: toBooleanFlag(generatorOptionsSDK.useSwagger),
     serviceMapping: toStringFlag(generatorOptionsSDK.serviceMapping!),
     writeReadme: toBooleanFlag(generatorOptionsSDK.writeReadme),

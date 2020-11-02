@@ -137,8 +137,9 @@ async function copyRemote(sourcePath: URL, fileName: string) {
             )
           );
         }
-
-        response.on('data', content => {
+        let content = '';
+        response.on('data', (chunk: string) => (content += chunk));
+        response.on('end', () => {
           fs.mkdirSync(path.dirname(fileName), { recursive: true });
           fs.writeFileSync(fileName, content);
           resolve();

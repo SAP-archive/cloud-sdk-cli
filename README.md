@@ -8,6 +8,9 @@
 A nifty command line interface (CLI) for the SAP Cloud SDK for JavaScript to initialize and package your SAP Cloud Platform application.
 It is also the launchpad when trying to set up the approuter or getting started with the [SAP Cloud SDK for Continuous Delivery](https://github.com/SAP/cloud-s4-sdk-pipeline).
 
+## Looking for SAP Cloud SDK documentation?
+Check our [API documentation](https://sap.github.io/cloud-sdk/docs/js/api-reference-js-ts) and [getting started](https://sap.github.io/cloud-sdk/docs/js/getting-started) guide on our [documentation portal](https://sap.github.io/cloud-sdk/).
+
 ## About the SDK
 
 The SAP Cloud SDK supports you end-to-end when developing applications that communicate with SAP solutions and services such as SAP S/4HANA Cloud, SAP SuccessFactors, and many others.
@@ -37,7 +40,7 @@ $ npm install -g @sap-cloud-sdk/cli
 $ sap-cloud-sdk COMMAND
 running command...
 $ sap-cloud-sdk (-v|--version|version)
-@sap-cloud-sdk/cli/0.1.10 darwin-x64 node-v13.13.0
+@sap-cloud-sdk/cli/0.1.11 darwin-x64 node-v13.13.0
 $ sap-cloud-sdk --help [COMMAND]
 USAGE
   $ sap-cloud-sdk COMMAND
@@ -102,7 +105,7 @@ EXAMPLE
   $ sap-cloud-sdk add-approuter
 ```
 
-_See code: [src/commands/add-approuter.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.10/src/commands/add-approuter.ts)_
+_See code: [src/commands/add-approuter.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.11/src/commands/add-approuter.ts)_
 
 ## `sap-cloud-sdk add-cds [PROJECTDIR]`
 
@@ -124,7 +127,7 @@ EXAMPLE
   $ sap-cloud-sdk add-cds
 ```
 
-_See code: [src/commands/add-cds.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.10/src/commands/add-cds.ts)_
+_See code: [src/commands/add-cds.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.11/src/commands/add-cds.ts)_
 
 ## `sap-cloud-sdk add-cx-server [PROJECTDIR]`
 
@@ -145,7 +148,7 @@ EXAMPLE
   $ sap-cloud-sdk add-cx-server
 ```
 
-_See code: [src/commands/add-cx-server.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.10/src/commands/add-cx-server.ts)_
+_See code: [src/commands/add-cx-server.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.11/src/commands/add-cx-server.ts)_
 
 ## `sap-cloud-sdk autocomplete [SHELL]`
 
@@ -168,7 +171,7 @@ EXAMPLES
   $ sap-cloud-sdk autocomplete --refresh-cache
 ```
 
-_See code: [@oclif/plugin-autocomplete](https://github.com/oclif/plugin-autocomplete/blob/v0.1.5/src/commands/autocomplete/index.ts)_
+_See code: [@oclif/plugin-autocomplete](https://github.com/oclif/plugin-autocomplete/blob/v0.2.0/src/commands/autocomplete/index.ts)_
 
 ## `sap-cloud-sdk generate-odata-client`
 
@@ -214,10 +217,6 @@ OPTIONS
                                                        .js.map, .d.ts and .d.ts.map files. When set to false, the
                                                        generator will only generate .ts files. [default: true].
 
-  --[no-]generateNpmrc                                 By default, the generator will generate a .npmrc file specifying
-                                                       a registry for @sap scoped dependencies. When set to false, the
-                                                       generator will skip the generation of .npmrc. [default: true].
-
   --[no-]generatePackageJson                           By default, the generator will generate a package.json file,
                                                        specifying dependencies and scripts for compiling and generating
                                                        documentation. When set to false, the generator will skip the
@@ -252,7 +251,7 @@ EXAMPLES
   $ sap-cloud-sdk generate-odata-client --help
 ```
 
-_See code: [src/commands/generate-odata-client.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.10/src/commands/generate-odata-client.ts)_
+_See code: [src/commands/generate-odata-client.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.11/src/commands/generate-odata-client.ts)_
 
 ## `sap-cloud-sdk help [COMMAND]`
 
@@ -280,7 +279,7 @@ USAGE
   $ sap-cloud-sdk help-page
 ```
 
-_See code: [src/commands/help-page.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.10/src/commands/help-page.ts)_
+_See code: [src/commands/help-page.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.11/src/commands/help-page.ts)_
 
 ## `sap-cloud-sdk init [PROJECTDIR]`
 
@@ -311,7 +310,7 @@ EXAMPLES
   $ sap-cloud-sdk init --help
 ```
 
-_See code: [src/commands/init.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.10/src/commands/init.ts)_
+_See code: [src/commands/init.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.11/src/commands/init.ts)_
 
 ## `sap-cloud-sdk package [PROJECTDIR]`
 
@@ -343,7 +342,7 @@ EXAMPLES
   $ sap-cloud-sdk package --include="package.json,package-lock.json,index.js,dist/**/*" --exclude="**/*.java"
 ```
 
-_See code: [src/commands/package.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.10/src/commands/package.ts)_
+_See code: [src/commands/package.ts](https://github.com/SAP/cloud-sdk-cli/blob/v0.1.11/src/commands/package.ts)_
 <!-- commandsstop -->
 
 ## Contribute
@@ -364,11 +363,3 @@ If you want to release, increase the version, run `yarn prepack` to adjust the R
 Once merged and if the tests are green, you can create a new GitHub release based on the main branch.
 Fill in the release notes and press "Publish release".
 This will trigger the github action and a new release will be published on `npm` automatically.
-
-## License
-
-Copyright (c) 2020 SAP SE or an SAP affiliate company.
-All rights reserved.
-This file is licensed under the Apache Software License, v. 2 except as noted otherwise in the [LICENSE file](LICENSE).
-
-Note: This license does not apply to the SAP Cloud SDK for JavaScript Logo referenced in this README.

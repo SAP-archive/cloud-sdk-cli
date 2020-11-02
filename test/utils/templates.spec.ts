@@ -51,15 +51,15 @@ describe('Templates Utils', () => {
         testOutputDir,
         'find-conflicts'
       );
-      await fs.writeFile(path.resolve(projectDir, '.npmrc'), 'foobar');
+      await fs.writeFile(path.resolve(projectDir, 'manifest.yml'), 'foobar');
       findConflicts(
         getCopyDescriptors(projectDir, getTemplatePaths(['init'])),
         true
       );
       try {
-        await fs.stat(path.resolve(projectDir, '.npmrc'));
+        await fs.stat(path.resolve(projectDir, 'manifest.yml'));
       } catch (e) {
-        expect(e.message).toMatch(/no such file or directory.*npmrc/);
+        expect(e.message).toMatch(/no such file or directory.*manifest.yml/);
       }
     },
     TimeThresholds.EXTRA_SHORT

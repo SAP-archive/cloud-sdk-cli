@@ -33,7 +33,7 @@ describe('Init', () => {
       ]);
 
       await Promise.all([
-        ...['.npmrc', 'credentials.json', 'systems.json', 'manifest.yml']
+        ...['credentials.json', 'systems.json', 'manifest.yml']
           .map(file => path.resolve(projectDir, file))
           .map(filePath => fs.access(filePath)),
         fs
@@ -47,7 +47,7 @@ describe('Init', () => {
         cwd: projectDir,
         stdio: 'inherit'
       });
-      await execa('npm', ['run', 'ci-integration-test'], {
+      await execa('npm', ['run', 'ci-it-backend'], {
         cwd: projectDir,
         stdio: 'inherit'
       });
