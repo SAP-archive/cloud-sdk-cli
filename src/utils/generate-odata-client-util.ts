@@ -1,6 +1,7 @@
 /* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
 
 import * as path from 'path';
+import { PathLike } from 'fs';
 import { flags } from '@oclif/command';
 // eslint-disable-next-line import/no-internal-modules
 import { IBooleanFlag, IOptionFlag } from '@oclif/parser/lib/flags';
@@ -11,7 +12,6 @@ import {
   // eslint-disable-next-line import/no-internal-modules
 } from '@oclif/parser/lib/alphabet';
 import { GeneratorOptionsSDK } from './generator-options';
-import { PathLike } from 'fs';
 
 interface GeneratorOptionCli {
   projectDir: string;
@@ -38,7 +38,9 @@ type FilterBooleanKeys<Base> = {
 };
 
 type FilterStringKeys<Base> = {
-  [Key in keyof Base]: Base[Key] extends string | PathLike | undefined ? Key : never;
+  [Key in keyof Base]: Base[Key] extends string | PathLike | undefined
+    ? Key
+    : never;
 };
 
 type FilterNumberKeys<Base> = {
@@ -50,12 +52,16 @@ export type BoolArgType = {
   [optionName in BoolArgKeys]: IBooleanFlag<boolean>;
 };
 
-type StringArgKeys = NonNullable<FilterStringKeys<AllOptions>[keyof AllOptions]>;
+type StringArgKeys = NonNullable<
+  FilterStringKeys<AllOptions>[keyof AllOptions]
+>;
 export type StringArgType = {
   [optionName in StringArgKeys]: IOptionFlag<string | undefined>;
 };
 
-type NumberArgKeys = NonNullable<FilterNumberKeys<AllOptions>[keyof AllOptions]>;
+type NumberArgKeys = NonNullable<
+  FilterNumberKeys<AllOptions>[keyof AllOptions]
+>;
 export type NumberArgType = {
   [optionName in NumberArgKeys]: IOptionFlag<number | undefined>;
 };
@@ -66,7 +72,9 @@ export type FlagsParsed = {
     : string | undefined;
 };
 
-export function toIntegerFlag(yargsNumber: Options): IOptionFlag<number | undefined> {
+export function toIntegerFlag(
+  yargsNumber: Options
+): IOptionFlag<number | undefined> {
   return flags.integer({
     char: yargsNumber.alias as AlphabetLowercase | AlphabetUppercase,
     description: yargsNumber.describe,
