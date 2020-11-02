@@ -15,7 +15,6 @@ export interface GeneratorOptionsSDK {
   clearOutputDir: boolean;
   aggregatorNpmPackageName?: string;
   aggregatorDirectoryName?: string;
-  generateNpmrc: boolean;
   generateTypedocJson: boolean;
   generatePackageJson: boolean;
   versionInPackageJson?: string;
@@ -101,12 +100,6 @@ export const generatorOptionsSDK: KeysToOptions = {
     describe: 'Hack for cloud-sdk-vdm package',
     type: 'string',
     hidden: true
-  },
-  generateNpmrc: {
-    describe:
-      'Deprecated. If set to true the generator will generate an .npmrc file specifying a registry for @sap scoped dependencies. This is not necessary anymore and will be skipped by default.',
-    type: 'string',
-    default: 'false'
   },
   generateTypedocJson: {
     describe:

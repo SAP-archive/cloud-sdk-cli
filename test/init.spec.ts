@@ -42,7 +42,7 @@ describe('Init', () => {
       ]);
 
       await Promise.all(
-        ['.npmrc', 'credentials.json', 'systems.json', 'manifest.yml']
+        ['credentials.json', 'systems.json', 'manifest.yml']
           .map(file => path.resolve(projectDir, file))
           .map(filePath => fs.access(filePath))
       );
@@ -91,7 +91,6 @@ describe('Init', () => {
         'detect-conflicts'
       );
       await fs.copy(nestAppDir, projectDir, { recursive: true });
-      await fs.createFile(`${projectDir}/.npmrc`);
 
       try {
         await Init.run([
@@ -216,7 +215,7 @@ describe('Init', () => {
             'ci-package',
             'ci-backend-unit-test',
             'ci-frontend-unit-test',
-            'ci-integration-test',
+            'ci-it-backend',
             'ci-e2e'
           ]);
         });

@@ -8,8 +8,8 @@ updates:
   allow:
     dependency-type: "production"
   versioning-strategy: widen
-  
- - package-ecosystem: npm
+
+- package-ecosystem: npm
   directory: "/"
   schedule:
     interval: daily

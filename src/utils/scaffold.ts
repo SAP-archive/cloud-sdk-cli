@@ -99,13 +99,18 @@ function modifyMainTs(pathToMainTs: string) {
     try {
       fs.writeFileSync(pathToMainTs, modifiedMainTs);
     } catch (err) {
-      recordWarning('Could not set listening port to `process.env.PORT`', 'in file `app.module.ts`. Please adjust manually.');
+      recordWarning(
+        'Could not set listening port to `process.env.PORT`',
+        'in file `app.module.ts`. Please adjust manually.'
+      );
     }
   }
 }
 
 function modifyTsconfigBuildJson(pathToTsconfigBuildJson: string) {
-  const tsconfigBuildJson = fs.readFileSync(pathToTsconfigBuildJson, { encoding: 'utf8' });
+  const tsconfigBuildJson = fs.readFileSync(pathToTsconfigBuildJson, {
+    encoding: 'utf8'
+  });
   const jsonObj = JSON.parse(tsconfigBuildJson);
   if (jsonObj.exclude) {
     jsonObj.exclude = [...jsonObj.exclude, 'deployment'];
@@ -113,12 +118,17 @@ function modifyTsconfigBuildJson(pathToTsconfigBuildJson: string) {
   try {
     fs.writeFileSync(pathToTsconfigBuildJson, JSON.stringify(jsonObj, null, 2));
   } catch (err) {
-    recordWarning('Could not exclude deployment`', 'in file `tsconfig.build.json`. Please adjust manually.');
+    recordWarning(
+      'Could not exclude deployment`',
+      'in file `tsconfig.build.json`. Please adjust manually.'
+    );
   }
 }
 
 function modifyTsconfigJson(pathToTsconfigJson: string) {
-  const tsconfigJson = fs.readFileSync(pathToTsconfigJson, { encoding: 'utf8' });
+  const tsconfigJson = fs.readFileSync(pathToTsconfigJson, {
+    encoding: 'utf8'
+  });
   const jsonObj = JSON.parse(tsconfigJson);
   if (jsonObj.compilerOptions) {
     jsonObj.compilerOptions = { ...jsonObj.compilerOptions, allowJs: true };
@@ -126,7 +136,10 @@ function modifyTsconfigJson(pathToTsconfigJson: string) {
   try {
     fs.writeFileSync(pathToTsconfigJson, JSON.stringify(jsonObj, null, 2));
   } catch (err) {
-    recordWarning('Could not add compiler option "allowJs": true`', 'in file `tsconfig.json`. Please adjust manually.');
+    recordWarning(
+      'Could not add compiler option "allowJs": true`',
+      'in file `tsconfig.json`. Please adjust manually.'
+    );
   }
 }
 
