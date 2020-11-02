@@ -1,12 +1,15 @@
-/*!
- * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
- */
+/* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
 
-import { flags } from '@oclif/command';
-import { AlphabetLowercase, AlphabetUppercase } from '@oclif/parser/lib/alphabet';
-import { IBooleanFlag, IOptionFlag } from '@oclif/parser/lib/flags';
 import * as path from 'path';
+import { flags } from '@oclif/command';
+// eslint-disable-next-line import/no-internal-modules
+import { IBooleanFlag, IOptionFlag } from '@oclif/parser/lib/flags';
 import { Options } from 'yargs';
+import {
+  AlphabetLowercase,
+  AlphabetUppercase
+  // eslint-disable-next-line import/no-internal-modules
+} from '@oclif/parser/lib/alphabet';
 import { GeneratorOptionsSDK } from './generator-options';
 import { PathLike } from 'fs';
 
@@ -21,7 +24,8 @@ type KeysToOptions = {
 export const generatorOptionCli: KeysToOptions = {
   projectDir: {
     default: '.',
-    describe: 'Path to the folder in which the VDM should be created. The input and output dir are relative to this directory.',
+    describe:
+      'Path to the folder in which the VDM should be created. The input and output dir are relative to this directory.',
     type: 'string'
   }
 };
@@ -57,7 +61,9 @@ export type NumberArgType = {
 };
 
 export type FlagsParsed = {
-  [Key in keyof AllOptions]: AllOptions[Key] extends boolean ? boolean : string | undefined;
+  [Key in keyof AllOptions]: AllOptions[Key] extends boolean
+    ? boolean
+    : string | undefined;
 };
 
 export function toIntegerFlag(yargsNumber: Options): IOptionFlag<number | undefined> {
@@ -80,7 +86,9 @@ export function toBooleanFlag(yargsBool: Options): IBooleanFlag<boolean> {
   });
 }
 
-export function toStringFlag(yargsString: Options): IOptionFlag<string | undefined> {
+export function toStringFlag(
+  yargsString: Options
+): IOptionFlag<string | undefined> {
   const options: Partial<IOptionFlag<string>> = {
     char: yargsString.alias as AlphabetLowercase | AlphabetUppercase,
     description: yargsString.describe,

@@ -1,12 +1,11 @@
-/*!
- * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
- */
+/* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
 
 import { Command } from '@oclif/command';
 import * as execa from 'execa';
 
 export default class HelpPage extends Command {
-  static description = 'Display the product page, which contains tutorials and links to all relevant resources';
+  static description =
+    'Display the product page, which contains tutorials and links to all relevant resources';
 
   async run() {
     this.log('Visit us at:');

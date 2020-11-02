@@ -1,10 +1,10 @@
-name: Tests
+name: build
 
 on:
   pull_request: ~
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build:
@@ -35,8 +35,11 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Install Dependencies
         run: yarn install --frozen-lockfile --ignore-engines
-      - name: Run tests
-        run: yarn run test:full
+      - run: yarn lint
+        if: runner.os == 'Linux'
+      - run: yarn build
+      - run: yarn run test
+      - run: yarn run test:e2e
         env:
           CI: true
   checks:

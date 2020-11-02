@@ -1,6 +1,4 @@
-/*!
- * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
- */
+/* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
 
 import { getWarnings, recordWarning } from '../../src/utils/warnings';
 import { TimeThresholds } from '../test-utils';

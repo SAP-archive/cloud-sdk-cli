@@ -1,6 +1,4 @@
-/*!
- * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
- */
+/* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
 
 import { recordWarning } from './warnings';
 
@@ -13,10 +11,15 @@ const oldDependencies = [
 ];
 
 export function checkOldDependencies(dependenciesInPackageJson: any) {
-  oldDependencies.forEach(oldDependency => checkOldDependency(dependenciesInPackageJson, oldDependency));
+  oldDependencies.forEach(oldDependency =>
+    checkOldDependency(dependenciesInPackageJson, oldDependency)
+  );
 }
 
-function checkOldDependency(dependenciesInPackageJson: any, oldDependency: string) {
+function checkOldDependency(
+  dependenciesInPackageJson: any,
+  oldDependency: string
+) {
   if (dependenciesInPackageJson[oldDependency]) {
     recordWarning(`Old SAP Cloud SDK: ${oldDependency} is detected.`);
   }
