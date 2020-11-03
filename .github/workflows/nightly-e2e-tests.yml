@@ -2,7 +2,7 @@ name: nightly-e2e-tests
 
 on:
   schedule:
-    - cron:  '* 12 * * *'
+    - cron:  '* 23 * * *'
 
 jobs:
   build:
