@@ -26,7 +26,7 @@ export interface GeneratorOptionsSDK {
 }
 
 type KeysToOptions = {
-  [optionName in keyof GeneratorOptionsSDK]: Options;
+  [optionName in keyof GeneratorOptionsSDK]-?: Options;
 };
 
 export const generatorOptionsSDK: KeysToOptions = {

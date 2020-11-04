@@ -30,24 +30,24 @@ export default class GenerateODataClient extends Command {
     generatePackageJson: toBooleanFlag(generatorOptionsSDK.generatePackageJson),
     generateTypedocJson: toBooleanFlag(generatorOptionsSDK.generateTypedocJson),
     useSwagger: toBooleanFlag(generatorOptionsSDK.useSwagger),
-    serviceMapping: toStringFlag(generatorOptionsSDK.serviceMapping!),
+    serviceMapping: toStringFlag(generatorOptionsSDK.serviceMapping),
     writeReadme: toBooleanFlag(generatorOptionsSDK.writeReadme),
     additionalFiles: toStringFlag(generatorOptionsSDK.additionalFiles!),
     clearOutputDir: toBooleanFlag(generatorOptionsSDK.clearOutputDir),
     aggregatorDirectoryName: toStringFlag(
-      generatorOptionsSDK.aggregatorDirectoryName!
+      generatorOptionsSDK.aggregatorDirectoryName
     ),
     aggregatorNpmPackageName: toStringFlag(
-      generatorOptionsSDK.aggregatorNpmPackageName!
+      generatorOptionsSDK.aggregatorNpmPackageName
     ),
     sdkAfterVersionScript: toBooleanFlag(
       generatorOptionsSDK.sdkAfterVersionScript
     ),
     versionInPackageJson: toStringFlag(
-      generatorOptionsSDK.versionInPackageJson!
+      generatorOptionsSDK.versionInPackageJson
     ),
     processesJsGeneration: toIntegerFlag(
-      generatorOptionsSDK.processesJsGeneration!
+      generatorOptionsSDK.processesJsGeneration
     ),
     s4hanaCloud: toBooleanFlag(generatorOptionsSDK.s4hanaCloud),
     forceOverwrite: toBooleanFlag(generatorOptionsSDK.forceOverwrite),
