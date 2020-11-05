@@ -17,14 +17,16 @@ export interface GeneratorOptionsSDK {
   aggregatorDirectoryName?: string;
   generateTypedocJson: boolean;
   generatePackageJson: boolean;
+  versionInPackageJson?: string;
   generateJs: boolean;
+  processesJsGeneration?: number;
   sdkAfterVersionScript: boolean;
   s4hanaCloud: boolean;
   generateCSN: boolean;
 }
 
 type KeysToOptions = {
-  [optionName in keyof GeneratorOptionsSDK]: Options;
+  [optionName in keyof GeneratorOptionsSDK]-?: Options;
 };
 
 export const generatorOptionsSDK: KeysToOptions = {
@@ -111,11 +113,22 @@ export const generatorOptionsSDK: KeysToOptions = {
     type: 'boolean',
     default: true
   },
+  versionInPackageJson: {
+    describe:
+      'By default, when generating package.json file, the generator will set a version by using the generator version. It can also be set to a specific version.',
+    type: 'string'
+  },
   generateJs: {
     describe:
       'By default, the generator will also generate transpiled .js, .js.map, .d.ts and .d.ts.map files. When set to false, the generator will only generate .ts files.',
     type: 'boolean',
     default: true
+  },
+  processesJsGeneration: {
+    describe: 'Number of processes used for generation of javascript files.',
+    alias: 'np',
+    type: 'number',
+    default: 16
   },
   sdkAfterVersionScript: {
     describe:

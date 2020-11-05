@@ -3,7 +3,7 @@
 import { Command } from '@oclif/command';
 import cli from 'cli-ux';
 import * as execa from 'execa';
-import { generatorOptionsSDK } from '../utils';
+import { generatorOptionsSDK, NumberArgType, toIntegerFlag } from '../utils';
 import {
   BoolArgType,
   generatorOptionCli,
@@ -21,7 +21,7 @@ export default class GenerateODataClient extends Command {
     '$ sap-cloud-sdk generate-odata-client --help'
   ];
 
-  static flags: BoolArgType & StringArgType = {
+  static flags: BoolArgType & StringArgType & NumberArgType = {
     // Options which are 1:1 to the SDK CLI
     inputDir: toStringFlag(generatorOptionsSDK.inputDir),
     outputDir: toStringFlag(generatorOptionsSDK.outputDir),
@@ -30,18 +30,24 @@ export default class GenerateODataClient extends Command {
     generatePackageJson: toBooleanFlag(generatorOptionsSDK.generatePackageJson),
     generateTypedocJson: toBooleanFlag(generatorOptionsSDK.generateTypedocJson),
     useSwagger: toBooleanFlag(generatorOptionsSDK.useSwagger),
-    serviceMapping: toStringFlag(generatorOptionsSDK.serviceMapping!),
+    serviceMapping: toStringFlag(generatorOptionsSDK.serviceMapping),
     writeReadme: toBooleanFlag(generatorOptionsSDK.writeReadme),
     additionalFiles: toStringFlag(generatorOptionsSDK.additionalFiles!),
     clearOutputDir: toBooleanFlag(generatorOptionsSDK.clearOutputDir),
     aggregatorDirectoryName: toStringFlag(
-      generatorOptionsSDK.aggregatorDirectoryName!
+      generatorOptionsSDK.aggregatorDirectoryName
     ),
     aggregatorNpmPackageName: toStringFlag(
-      generatorOptionsSDK.aggregatorNpmPackageName!
+      generatorOptionsSDK.aggregatorNpmPackageName
     ),
     sdkAfterVersionScript: toBooleanFlag(
       generatorOptionsSDK.sdkAfterVersionScript
+    ),
+    versionInPackageJson: toStringFlag(
+      generatorOptionsSDK.versionInPackageJson
+    ),
+    processesJsGeneration: toIntegerFlag(
+      generatorOptionsSDK.processesJsGeneration
     ),
     s4hanaCloud: toBooleanFlag(generatorOptionsSDK.s4hanaCloud),
     forceOverwrite: toBooleanFlag(generatorOptionsSDK.forceOverwrite),
