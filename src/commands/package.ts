@@ -146,7 +146,7 @@ export default class Package extends Command {
     const body = [
       '🚀 Please migrate to new packages.',
       'Please find how to migrate here:',
-      'https://github.com/SAP/cloud-sdk/blob/main/knowledge-base/how-to-switch-to-os-cloud-sdk.md'
+      'https://sap.github.io/cloud-sdk/docs/js/guides/migrate-to-open-source-version-of-cloud-sdk-for-javascript-typescript/'
     ];
     if (warnings) {
       if (this.hasOldSDKWarnings(warnings)) {
