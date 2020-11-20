@@ -41,18 +41,18 @@ export async function deleteAsync(
   if (getMajorNodeVersion() >= 12) {
     return new Promise<void>((resolve, reject) =>
       fs.rmdir(dirPath, { maxRetries: busyRetries, recursive: true }, err =>
-        callBackk(err, resolve, reject)
+        callBack(err, resolve, reject)
       )
     );
   }
 
   return new Promise<void>((resolve, reject) => {
     rm(dirPath, { maxBusyTries: busyRetries }, err =>
-      callBackk(err, resolve, reject)
+      callBack(err, resolve, reject)
     );
   });
 
-  function callBackk(
+  function callBack(
     err: Error | ErrnoException | null,
     resolve: () => void,
     reject: (reason: any) => void
