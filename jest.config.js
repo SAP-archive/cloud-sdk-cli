@@ -3,10 +3,12 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   testRunner: 'jest-circus/runner',
+  testPathIgnorePatterns: ['<rootDir>/test-output'],
   modulePathIgnorePatterns: [
     '<rootDir>/lib',
     '<rootDir>/bin',
     '<rootDir>/tmp',
+    '<rootDir>/test-output',
     '<rootDir>/test/nest',
     '<rootDir>/test/express',
     '<rootDir>/test/[^/]*/[^/]*-spec'
