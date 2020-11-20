@@ -67,7 +67,7 @@ export async function deleteAsync(
 
 export enum TimeThresholds {
   EXTRA_SHORT = 10000,
-  SHORT = 30000,
+  SHORT = 45000,
   MEDIUM = 90000,
   LONG = 240000,
   EXTRA_LONG = 480000

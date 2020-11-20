@@ -22,7 +22,7 @@ describe('Init', () => {
     await deleteAsync(testOutputDir, 6);
   }, TimeThresholds.EXTRA_LONG);
 
-  test(
+  it(
     '[E2E] should create a new project with the necessary files when adding cds',
     async () => {
       const projectDir = await getCleanProjectDir(

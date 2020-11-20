@@ -26,7 +26,7 @@ describe('Package', () => {
     jest.clearAllMocks();
   }, TimeThresholds.SHORT);
 
-  test(
+  it(
     '[E2E] should copy dependencies when --ci is set',
     async () => {
       const projectDir = await getCleanProjectDir(

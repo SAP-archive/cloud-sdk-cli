@@ -16,7 +16,7 @@ describe('Scaffold Utils', () => {
     await deleteAsync(testOutputDir, 6);
   }, TimeThresholds.LONG);
 
-  test(
+  it(
     '[E2E] should build the scaffold',
     async () => {
       const projectDir = await getCleanProjectDir(

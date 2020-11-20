@@ -25,7 +25,7 @@ describe('generate-odata-client', () => {
     await fs.copy(pathForResources, pathForTests);
   }, TimeThresholds.LONG);
 
-  test(
+  it(
     '[E2E] should generate a OData client',
     async () => {
       const result = await GenerateODataClient.run([

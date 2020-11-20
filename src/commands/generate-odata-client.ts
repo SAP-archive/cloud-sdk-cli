@@ -102,8 +102,6 @@ export default class GenerateODataClient extends Command {
     const promise = execa('generate-odata-client', yargsFlags, {
       cwd: flags.projectDir || '.'
     });
-    // eslint-disable-next-line no-unused-expressions
     promise.stdout?.pipe(process.stdout);
-    return promise;
   }
 }
