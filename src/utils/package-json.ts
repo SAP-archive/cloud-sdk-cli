@@ -65,7 +65,7 @@ const existingProjectPackageJson: PackageJsonChange = {
   dependencies: ['@sap-cloud-sdk/core']
 };
 
-export async function parsePackageJson(projectDir: string) {
+export async function parsePackageJson(projectDir: string): Promise<any> {
   try {
     return JSON.parse(
       fs.readFileSync(path.resolve(projectDir, 'package.json'), {
