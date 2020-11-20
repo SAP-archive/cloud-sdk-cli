@@ -124,7 +124,7 @@ export async function copyFiles(
 }
 
 async function copyRemote(sourcePath: URL, fileName: string) {
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     https
       .get(sourcePath, response => {
         if (

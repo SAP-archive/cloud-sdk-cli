@@ -28,7 +28,7 @@ describe('generate-odata-client', () => {
   it(
     '[E2E] should generate a OData client',
     async () => {
-      const result = await GenerateODataClient.run([
+      await GenerateODataClient.run([
         '-i',
         'edmxSource',
         '-o',
@@ -36,7 +36,6 @@ describe('generate-odata-client', () => {
         '--projectDir',
         pathForTests
       ]);
-      expect(result.exitCode).toBe(0);
 
       const files = await fs.readdir(path.resolve(pathForTests, 'output'));
       expect(files).toHaveLength(1);

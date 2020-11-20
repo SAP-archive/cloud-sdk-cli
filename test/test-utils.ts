@@ -24,28 +24,10 @@ export async function getCleanProjectDir(
   return projectDir;
 }
 
-function getMajorNodeVersion(): number {
-  const nodeVersion = process.version.match(/v(\d+)\./);
-  if (nodeVersion && typeof nodeVersion[1] === 'number') {
-    return nodeVersion[1];
-  }
-  return -1;
-}
-
 export async function deleteAsync(
   dirPath: string,
   busyRetries: number
 ): Promise<void> {
-  // We found that rimraf sync is not really stable and trust the build in fs methods more
-  // So if possible i.e. node 12 or greater we use them.
-  if (getMajorNodeVersion() >= 12) {
-    return new Promise<void>((resolve, reject) =>
-      fs.rmdir(dirPath, { maxRetries: busyRetries, recursive: true }, err =>
-        callBack(err, resolve, reject)
-      )
-    );
-  }
-
   return new Promise<void>((resolve, reject) => {
     rm(dirPath, { maxBusyTries: busyRetries }, err =>
       callBack(err, resolve, reject)

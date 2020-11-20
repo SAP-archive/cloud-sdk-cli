@@ -1,5 +1,6 @@
 *-debug.log
 *-error.log
+/.yarn
 /.nyc_output
 /dist
 /lib

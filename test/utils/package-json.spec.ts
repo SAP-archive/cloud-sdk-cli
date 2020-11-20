@@ -27,10 +27,14 @@ describe('Package Json Utils', () => {
     'should call `npm install`',
     () => {
       installDependencies('', true);
-      expect(execa).toHaveBeenCalledWith('npm', ['install'], {
-        cwd: '',
-        stdio: 'inherit'
-      });
+      expect(execa).toHaveBeenCalledWith(
+        'npm',
+        ['install', '--prefer-offline'],
+        {
+          cwd: '',
+          stdio: 'inherit'
+        }
+      );
     },
     TimeThresholds.SHORT
   );

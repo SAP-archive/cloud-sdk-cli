@@ -1,10 +1,12 @@
 {
   "compilerOptions": {
     "types": ["node", "jest", "jest-extended"],
+    "module": "commonjs",
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "rootDir": "./"
+    "rootDir": "./",
+    "target": "es2017"
   },
   "include": ["./**/*.spec.ts"],
   "exclude": ["./express/**", "./nest/**"]
