@@ -1,8 +1,10 @@
-name: nightly-e2e-tests
+name: e2e-tests
 
 on:
-  schedule:
-    - cron:  '10 23 * * *'
+  pull_request: ~
+  push:
+    branches:
+      - main
 
 jobs:
   build:
