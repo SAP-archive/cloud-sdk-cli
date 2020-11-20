@@ -5,7 +5,7 @@
 /dist
 /lib
 /tmp
-node_modules
+/node_modules
 .idea
 test/**/*spec/*
 oclif.manifest.json
