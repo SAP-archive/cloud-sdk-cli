@@ -87,12 +87,12 @@ export function getCopyDescriptors(
 export async function findConflicts(
   copyDescriptors: CopyDescriptor[],
   force = false
-) {
+): Promise<void> {
   const conflicts = copyDescriptors.filter(copyDescriptor =>
     fs.existsSync(copyDescriptor.fileName)
   );
 
-  if (conflicts.length) {
+  if (conflicts.length > 0) {
     if (force) {
       conflicts.forEach(copyDescriptor =>
         fs.unlinkSync(copyDescriptor.fileName)
@@ -113,7 +113,7 @@ export async function findConflicts(
 export async function copyFiles(
   copyDescriptors: CopyDescriptor[],
   options: { [key: string]: any }
-) {
+): Promise<any[]> {
   return Promise.all(
     copyDescriptors.map(({ sourcePath, fileName }) =>
       sourcePath instanceof URL
@@ -138,7 +138,9 @@ async function copyRemote(sourcePath: URL, fileName: string) {
           );
         }
         let content = '';
-        response.on('data', (chunk: string) => (content += chunk));
+        response.on('data', (chunk: string) => {
+          content += chunk;
+        });
         response.on('end', () => {
           fs.mkdirSync(path.dirname(fileName), { recursive: true });
           fs.writeFileSync(fileName, content);

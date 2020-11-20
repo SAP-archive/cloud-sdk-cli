@@ -1,7 +1,7 @@
 /* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
 
 import * as fs from 'fs';
-import { recordWarning } from '../utils/';
+import { recordWarning } from '../utils';
 
 export function getJestConfig(isUnitTests: boolean) {
   return {
@@ -25,7 +25,7 @@ export function getJestConfig(isUnitTests: boolean) {
   };
 }
 
-export function modifyJestConfig(jestConfigPath: string, data: any) {
+export function modifyJestConfig(jestConfigPath: string, data: any): void {
   try {
     const jestConfig = JSON.parse(
       fs.readFileSync(jestConfigPath, {

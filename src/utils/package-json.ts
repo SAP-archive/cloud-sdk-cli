@@ -3,7 +3,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as execa from 'execa';
-import { recordWarning } from '../utils/';
+import { recordWarning } from '../utils';
 import { getJestConfig } from './jest-config';
 
 interface PackageJsonChange {
@@ -156,7 +156,7 @@ export async function modifyPackageJson({
   frontendScripts?: boolean;
   force?: boolean;
   addCds?: boolean;
-}) {
+}): Promise<void> {
   const originalPackageJson = await parsePackageJson(projectDir);
   const changes = await getPackageJsonChanges(
     isScaffold,
@@ -168,7 +168,7 @@ export async function modifyPackageJson({
     changes.scripts
   );
 
-  if (conflicts.length && !force) {
+  if (conflicts.length > 0 && !force) {
     throw new Error(
       conflicts.length > 1
         ? `Scripts with the names "${conflicts.join(
@@ -221,8 +221,8 @@ async function getVersionOfDependency(dependency: string): Promise<string> {
 export async function installDependencies(
   projectDir: string,
   verbose: boolean
-) {
-  return execa('npm', ['install'], {
+): Promise<void> {
+  await execa('npm', ['install'], {
     cwd: projectDir,
     stdio: verbose ? 'inherit' : 'ignore'
   });

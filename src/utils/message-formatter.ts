@@ -5,6 +5,6 @@ export function boxMessage(lines: string[]): string {
     (prev, curr) => (prev < curr.length ? curr.length : prev),
     0
   );
-  const sep = `+${[...Array(lineLength)].map(() => '-').join('')}+`;
+  const sep = `+${[...new Array(lineLength)].map(() => '-').join('')}+`;
   return ['', sep, ...lines.map(line => ` ${line} `), sep].join('\n');
 }

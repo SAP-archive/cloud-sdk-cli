@@ -10,7 +10,9 @@ const oldDependencies = [
   '@sap/cloud-sdk-test-util'
 ];
 
-export function checkOldDependencies(dependenciesInPackageJson: any) {
+export function checkOldDependencies(dependenciesInPackageJson: {
+  [name: string]: string;
+}): void {
   oldDependencies.forEach(oldDependency =>
     checkOldDependency(dependenciesInPackageJson, oldDependency)
   );

@@ -60,7 +60,7 @@ export default class Package extends Command {
     }
   ];
 
-  async run() {
+  async run(): Promise<void> {
     const parsed = this.parse(Package);
     const projectDir = parsed.args.projectDir || '.';
     const outputDir = path.resolve(projectDir, parsed.flags.output);
@@ -98,13 +98,14 @@ export default class Package extends Command {
             absolute: true,
             cwd: projectDir
           });
-          const exclude: string[] = parsed.flags.exclude.length
-            ? await glob(parsed.flags.exclude.split(','), {
-                dot: true,
-                absolute: true,
-                cwd: projectDir
-              })
-            : [];
+          const exclude: string[] =
+            parsed.flags.exclude.length > 0
+              ? await glob(parsed.flags.exclude.split(','), {
+                  dot: true,
+                  absolute: true,
+                  cwd: projectDir
+                })
+              : [];
           const filtered = include.filter(
             filepath => !exclude.includes(filepath)
           );
@@ -169,7 +170,7 @@ export default class Package extends Command {
   }
 
   private hasOldSDKWarnings(warnings: string[]) {
-    const regex = RegExp('Old SAP Cloud SDK: .* is detected.');
+    const regex = new RegExp('Old SAP Cloud SDK: .* is detected.');
     return (
       warnings.map(warning => regex.test(warning)).filter(value => value)
         .length > 0

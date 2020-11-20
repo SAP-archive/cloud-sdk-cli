@@ -4,20 +4,19 @@ import { Command, flags } from '@oclif/command';
 import cli from 'cli-ux';
 import * as Listr from 'listr';
 import {
-  installDependencies,
-  modifyGitIgnore,
-  modifyPackageJson
-} from '../utils';
-import {
   copyFiles,
   findConflicts,
   getCopyDescriptors,
   getProjectNameFromManifest,
-  getTemplatePaths
-} from '../utils/';
+  getTemplatePaths,
+  installDependencies,
+  modifyGitIgnore,
+  modifyPackageJson
+} from '../utils';
 
 export default class AddCds extends Command {
   static description = 'Setup your Cloud Foundry app to use a CDS service';
+
   static examples = ['$ sap-cloud-sdk add-cds'];
 
   static flags = {
@@ -55,7 +54,7 @@ export default class AddCds extends Command {
     }
   ];
 
-  async run() {
+  async run(): Promise<void> {
     const parsed = this.parse(AddCds);
     const projectDir = parsed.args.projectDir || '.';
 

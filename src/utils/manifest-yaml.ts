@@ -5,11 +5,13 @@ import Command from '@oclif/command';
 import * as yaml from 'js-yaml';
 
 const manifestPath = 'manifest.yml';
-interface ManifestYaml {
-  applications: Application[];
-}
+
 interface Application {
   name: string;
+}
+
+interface ManifestYaml {
+  applications: Application[];
 }
 
 export function getProjectNameFromManifest(
@@ -33,7 +35,7 @@ export function getProjectNameFromManifest(
       typeof manifest.applications === 'undefined' ||
       !Array.isArray(manifest.applications)
     ) {
-      throw new Error(
+      throw new TypeError(
         'Application property missing in manifest.yml or is not an array.'
       );
     }

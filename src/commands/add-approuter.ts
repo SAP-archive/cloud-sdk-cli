@@ -9,12 +9,14 @@ import {
   getCopyDescriptors,
   getProjectNameFromManifest,
   getTemplatePaths
-} from '../utils/';
+} from '../utils';
 
 export default class AddApprouter extends Command {
   static description =
     'Setup your Cloud Foundry app to authenticate through the app router';
+
   static aliases = ['add-app-router'];
+
   static examples = ['$ sap-cloud-sdk add-approuter'];
 
   static flags = {
@@ -35,7 +37,7 @@ export default class AddApprouter extends Command {
     }
   ];
 
-  async run() {
+  async run(): Promise<void> {
     const parsed = this.parse(AddApprouter);
     const projectDir = parsed.args.projectDir || '.';
 

@@ -5,8 +5,9 @@ import * as path from 'path';
 import { Command, flags } from '@oclif/command';
 import cli from 'cli-ux';
 import * as Listr from 'listr';
-import { boxMessage, getWarnings } from '../utils';
 import {
+  boxMessage,
+  getWarnings,
   buildScaffold,
   copyFiles,
   findConflicts,
@@ -20,7 +21,7 @@ import {
   parsePackageJson,
   shouldBuildScaffold,
   usageAnalytics
-} from '../utils/';
+} from '../utils';
 
 export default class Init extends Command {
   static description =
@@ -95,7 +96,7 @@ export default class Init extends Command {
     }
   ];
 
-  async run() {
+  async run(): Promise<void> {
     const parsed = this.parse(Init);
     const projectDir = parsed.args.projectDir || '.';
 

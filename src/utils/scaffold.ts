@@ -5,7 +5,7 @@ import * as path from 'path';
 import cli from 'cli-ux';
 import * as execa from 'execa';
 import * as rm from 'rimraf';
-import { recordWarning } from '../utils/';
+import { recordWarning } from '../utils';
 
 export async function shouldBuildScaffold(
   projectDir: string,
@@ -53,7 +53,7 @@ export async function buildScaffold(
   projectDir: string,
   verbose: boolean,
   addCds: boolean
-) {
+): Promise<void> {
   cli.action.start('Building application scaffold');
   const options: execa.Options = {
     cwd: projectDir,
@@ -90,12 +90,7 @@ function modifyMainTs(pathToMainTs: string) {
   const modifiedListen = '.listen(process.env.PORT || 3000)';
   const modifiedMainTs = mainTs.replace('.listen(3000)', modifiedListen);
 
-  if (!modifiedMainTs.includes(modifiedListen)) {
-    recordWarning(
-      'Could not set listening port to `process.env.PORT`',
-      'in file `app.module.ts`. Please adjust manually.'
-    );
-  } else {
+  if (modifiedMainTs.includes(modifiedListen)) {
     try {
       fs.writeFileSync(pathToMainTs, modifiedMainTs);
     } catch (err) {
@@ -104,6 +99,11 @@ function modifyMainTs(pathToMainTs: string) {
         'in file `app.module.ts`. Please adjust manually.'
       );
     }
+  } else {
+    recordWarning(
+      'Could not set listening port to `process.env.PORT`',
+      'in file `app.module.ts`. Please adjust manually.'
+    );
   }
 }
 
@@ -143,7 +143,7 @@ function modifyTsconfigJson(pathToTsconfigJson: string) {
   }
 }
 
-export function addCatalogueModule(pathToAppModuleTs: string) {
+export function addCatalogueModule(pathToAppModuleTs: string): void {
   const appModuleTs = fs.readFileSync(pathToAppModuleTs, { encoding: 'utf8' });
   const moduleName = 'CatalogueModule';
   const importToAdd = `import { ${moduleName} } from './catalogue/catalogue.module';`;
@@ -151,11 +151,11 @@ export function addCatalogueModule(pathToAppModuleTs: string) {
     .replace('@Module', [importToAdd, '@Module'].join('\n\n'))
     .replace('imports: []', `imports: [${moduleName}]`);
 
-  if (!modifiedAppModuleTs.includes(`imports: [${moduleName}]`)) {
+  if (modifiedAppModuleTs.includes(`imports: [${moduleName}]`)) {
+    fs.writeFileSync(pathToAppModuleTs, modifiedAppModuleTs);
+  } else {
     recordWarning(
       `Could not add module ${moduleName} to \`app.module.ts\`. Please add manually.`
     );
-  } else {
-    fs.writeFileSync(pathToAppModuleTs, modifiedAppModuleTs);
   }
 }
