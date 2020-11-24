@@ -16,8 +16,6 @@ import {
 const testOutputDir = getTestOutputDir(__filename);
 const nestAppDir = path.resolve('test', 'nest');
 
-jest.retryTimes(3);
-
 describe('Package', () => {
   beforeAll(async () => {
     await deleteAsync(testOutputDir, 3);
