@@ -39,13 +39,8 @@ jobs:
         if: runner.os == 'Linux'
       - run: yarn build
       - run: yarn run test
-      - run: yarn run test:e2e
-        if: matrix.os == 'ubuntu-latest'
-        env:
-          CI: true
   checks:
     runs-on: ubuntu-latest
     steps:
       - name: REUSE Compliance Check
         uses: fsfe/reuse-action@v1.1
-    
