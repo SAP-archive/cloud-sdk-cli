@@ -13,6 +13,15 @@ import {
   parsePackageJson
 } from '../utils';
 
+interface Context {
+  parsed: {
+    flags: any;
+    args: any;
+  };
+  outputDir: string;
+  projectDir: string;
+}
+
 export default class Package extends Command {
   static description = 'Copies the specified files to the deployment folder';
 
@@ -97,7 +106,7 @@ export default class Package extends Command {
     this.printSuccessMessage();
   }
 
-  overwrite(ctx: any): void {
+  overwrite(ctx: Context): void {
     try {
       if (fs.existsSync(ctx.outputDir!)) {
         rm.sync(ctx.outputDir!);
@@ -108,7 +117,7 @@ export default class Package extends Command {
     }
   }
 
-  async copyFiles(ctx: any): Promise<void> {
+  async copyFiles(ctx: Context): Promise<void> {
     const include = await glob(ctx.parsed.flags.include.split(','), {
       dot: true,
       absolute: true,
@@ -127,7 +136,7 @@ export default class Package extends Command {
     copyFilesTo(filtered, ctx.outputDir, ctx.projectDir);
   }
 
-  async copyNodeModules(ctx: any): Promise<void> {
+  async copyNodeModules(ctx: Context): Promise<void> {
     const nodeModuleFiles = await glob('node_modules/**/*', {
       dot: true,
       absolute: true,
@@ -137,7 +146,7 @@ export default class Package extends Command {
     copyFilesTo(nodeModuleFiles, ctx.outputDir, ctx.projectDir);
   }
 
-  async checkSDKDependencies(ctx: any): Promise<void> {
+  async checkSDKDependencies(ctx: Context): Promise<void> {
     const { dependencies, devDependencies } = await parsePackageJson(
       ctx.projectDir
     );
