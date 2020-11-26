@@ -68,7 +68,7 @@ export default class AddApprouter extends Command {
   }
 
   private async getOptions() {
-    const projectName = getProjectNameFromManifest(this);
+    const projectName = await getProjectNameFromManifest(this);
 
     const options: { [key: string]: string } = {
       projectName:

@@ -114,7 +114,7 @@ export default class AddCds extends Command {
   }
 
   private async getOptions() {
-    const projectName = getProjectNameFromManifest(this);
+    const projectName = await getProjectNameFromManifest(this);
 
     const options: { [key: string]: string } = {
       projectName:

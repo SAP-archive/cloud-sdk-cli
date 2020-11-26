@@ -25,7 +25,7 @@ describe('Git Ignore Utils', () => {
       );
       await fs.writeFile(`${projectDir}/.gitignore`, '');
 
-      modifyGitIgnore(projectDir, false);
+      await modifyGitIgnore(projectDir, false);
 
       const gitIgnoreContent = (
         await fs.readFile(`${projectDir}/.gitignore`, { encoding: 'utf8' })
@@ -47,7 +47,7 @@ describe('Git Ignore Utils', () => {
       );
       await fs.writeFile(`${projectDir}/.gitignore`, '');
 
-      modifyGitIgnore(projectDir, true);
+      await modifyGitIgnore(projectDir, true);
 
       const gitIgnoreContent = (
         await fs.readFile(`${projectDir}/.gitignore`, { encoding: 'utf8' })
@@ -72,7 +72,7 @@ describe('Git Ignore Utils', () => {
       !@#$%^&^
       \\n`
       );
-      modifyGitIgnore(projectDir, false);
+      await modifyGitIgnore(projectDir, false);
 
       const gitIgnoreContent = (
         await fs.readFile(`${projectDir}/.gitignore`, { encoding: 'utf8' })
@@ -94,7 +94,7 @@ describe('Git Ignore Utils', () => {
         'no-git-ignore'
       );
 
-      modifyGitIgnore(projectDir, false);
+      await modifyGitIgnore(projectDir, false);
 
       expect(recordWarning).toHaveBeenCalledWith(
         'No .gitignore file found!',

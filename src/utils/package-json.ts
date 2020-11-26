@@ -1,10 +1,9 @@
 /* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
 
-import * as fs from 'fs';
 import * as path from 'path';
 import * as execa from 'execa';
-import { recordWarning } from '../utils';
-import { getJestConfig } from './jest-config';
+import { readFile, recordWarning, writeFile } from '../utils';
+import { unitTestConfig } from './jest-config';
 
 interface PackageJsonChange {
   scripts?: { [key: string]: string };
@@ -48,7 +47,7 @@ const scaffoldProjectPackageJson: PackageJsonChange = {
     '@sap-cloud-sdk/cli'
   ],
   dependencies: ['@sap-cloud-sdk/core'],
-  jest: getJestConfig(true)
+  jest: unitTestConfig
 };
 
 const existingProjectPackageJson: PackageJsonChange = {
@@ -68,7 +67,7 @@ const existingProjectPackageJson: PackageJsonChange = {
 export async function parsePackageJson(projectDir: string): Promise<any> {
   try {
     return JSON.parse(
-      fs.readFileSync(path.resolve(projectDir, 'package.json'), {
+      await readFile(path.resolve(projectDir, 'package.json'), {
         encoding: 'utf8'
       })
     );
@@ -180,7 +179,7 @@ export async function modifyPackageJson({
     );
   }
 
-  fs.writeFileSync(
+  return writeFile(
     path.resolve(projectDir, 'package.json'),
     JSON.stringify(mergePackageJson(originalPackageJson, changes), null, 2)
   );

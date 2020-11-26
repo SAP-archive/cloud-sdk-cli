@@ -1,6 +1,5 @@
 /* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
 
-import * as fs from 'fs';
 import * as path from 'path';
 import { Command, flags } from '@oclif/command';
 import cli from 'cli-ux';
@@ -12,15 +11,16 @@ import {
   copyFiles,
   findConflicts,
   getCopyDescriptors,
-  getJestConfig,
   getTemplatePaths,
   installDependencies,
+  mkdir,
   modifyGitIgnore,
   modifyJestConfig,
   modifyPackageJson,
   parsePackageJson,
   shouldBuildScaffold,
-  usageAnalytics
+  usageAnalytics,
+  unitTestConfig
 } from '../utils';
 
 export default class Init extends Command {
@@ -101,7 +101,7 @@ export default class Init extends Command {
     const projectDir = parsed.args.projectDir || '.';
 
     try {
-      fs.mkdirSync(projectDir, { recursive: true });
+      await mkdir(projectDir, { recursive: true });
       const isScaffold = await shouldBuildScaffold(
         projectDir,
         parsed.flags.buildScaffold,
@@ -151,7 +151,7 @@ export default class Init extends Command {
           task: () =>
             modifyJestConfig(
               path.resolve(projectDir, 'test', 'jest-e2e.json'),
-              getJestConfig(false)
+              unitTestConfig
             ),
           enabled: () => isScaffold
         },

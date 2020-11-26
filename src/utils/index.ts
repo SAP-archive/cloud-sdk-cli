@@ -2,6 +2,7 @@
 
 export * from './check-old-dependencies';
 export * from './copy-list';
+export * from './fs';
 export * from './generate-odata-client-util';
 export * from './generator-options';
 export * from './git-ignore';

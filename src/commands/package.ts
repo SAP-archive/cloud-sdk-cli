@@ -1,12 +1,13 @@
 /* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
 
-import * as fs from 'fs';
 import * as path from 'path';
 import { Command, flags } from '@oclif/command';
 import * as glob from 'fast-glob';
 import * as Listr from 'listr';
-import * as rm from 'rimraf';
 import {
+  copyFile,
+  rm,
+  mkdir,
   boxMessage,
   checkOldDependencies,
   getWarnings,
@@ -106,12 +107,10 @@ export default class Package extends Command {
     this.printSuccessMessage();
   }
 
-  overwrite(ctx: Context): void {
+  async overwrite(ctx: Context): Promise<void> {
     try {
-      if (fs.existsSync(ctx.outputDir!)) {
-        rm.sync(ctx.outputDir!);
-      }
-      fs.mkdirSync(ctx.outputDir!);
+      await rm(ctx.outputDir);
+      await mkdir(ctx.outputDir);
     } catch (error) {
       this.error(error, { exit: 1 });
     }
@@ -133,7 +132,7 @@ export default class Package extends Command {
         : [];
     const filtered = include.filter(filepath => !exclude.includes(filepath));
 
-    copyFilesTo(filtered, ctx.outputDir, ctx.projectDir);
+    await copyFilesTo(filtered, ctx.outputDir, ctx.projectDir);
   }
 
   async copyNodeModules(ctx: Context): Promise<void> {
@@ -143,7 +142,7 @@ export default class Package extends Command {
       cwd: ctx.projectDir
     });
 
-    copyFilesTo(nodeModuleFiles, ctx.outputDir, ctx.projectDir);
+    await copyFilesTo(nodeModuleFiles, ctx.outputDir, ctx.projectDir);
   }
 
   async checkSDKDependencies(ctx: Context): Promise<void> {
@@ -190,17 +189,19 @@ export default class Package extends Command {
   }
 }
 
-function copyFilesTo(
+async function copyFilesTo(
   filePaths: string[],
   outputDir: string,
   projectDir: string
-): void {
-  filePaths.forEach(filepath => {
-    const outputFilePath = path.resolve(
-      outputDir,
-      path.relative(projectDir, filepath)
-    );
-    fs.mkdirSync(path.dirname(outputFilePath), { recursive: true });
-    fs.copyFileSync(filepath, outputFilePath);
-  });
+): Promise<void[]> {
+  return Promise.all(
+    filePaths.map(async filepath => {
+      const outputFilePath = path.resolve(
+        outputDir,
+        path.relative(projectDir, filepath)
+      );
+      await mkdir(path.dirname(outputFilePath), { recursive: true });
+      await copyFile(filepath, outputFilePath);
+    })
+  );
 }
