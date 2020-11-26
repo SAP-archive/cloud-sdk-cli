@@ -219,7 +219,7 @@ export async function installDependencies(
   projectDir: string,
   verbose: boolean
 ): Promise<void> {
-  await execa('npm', ['install', '--prefer-offline'], {
+  await execa('npm', ['install'], {
     cwd: projectDir,
     stdio: verbose ? 'inherit' : 'ignore'
   });
