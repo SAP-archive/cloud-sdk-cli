@@ -4,9 +4,8 @@ jest.mock('../src/utils/warnings');
 
 import * as path from 'path';
 import execa = require('execa');
-import * as fs from 'fs-extra';
 import Init from '../src/commands/init';
-import { rm } from '../src/utils';
+import { access, rm } from '../src/utils';
 import {
   getCleanProjectDir,
   getTestOutputDir,
@@ -41,16 +40,18 @@ describe('Init', () => {
           'srv/cat-service.cds',
           'db/data-model.cds',
           'src/catalogue/catalogue.module.ts'
-        ]
-          .map(file => path.resolve(projectDir, file))
-          .map(filePath => fs.access(filePath))
+        ].map(file =>
+          expect(access(path.resolve(projectDir, file))).toResolve()
+        )
       );
 
       await execa('npm', ['run', 'cds-deploy'], {
         cwd: projectDir,
         stdio: 'inherit'
       });
-      return fs.access(path.resolve(projectDir, 'testingApp.db'));
+      await expect(
+        access(path.resolve(projectDir, 'testingApp.db'))
+      ).toResolve();
     },
     TimeThresholds.EXTRA_LONG
   );

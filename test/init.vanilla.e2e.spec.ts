@@ -3,9 +3,8 @@ jest.mock('../src/utils/warnings');
 
 import * as path from 'path';
 import execa = require('execa');
-import * as fs from 'fs-extra';
 import Init from '../src/commands/init';
-import { rm } from '../src/utils';
+import { readdir, rm, readFile, access } from '../src/utils';
 import {
   getCleanProjectDir,
   getTestOutputDir,
@@ -31,12 +30,12 @@ describe('Init', () => {
       ]);
 
       await Promise.all([
-        ...['credentials.json', 'systems.json', 'manifest.yml']
-          .map(file => path.resolve(projectDir, file))
-          .map(filePath => fs.access(filePath)),
-        fs
-          .readFile(path.resolve(projectDir, 'README.md'), { encoding: 'utf8' })
-          .then(file => expect(file).toInclude('SAP Cloud SDK'))
+        ...['credentials.json', 'systems.json', 'manifest.yml'].map(file =>
+          access(path.resolve(projectDir, file))
+        ),
+        readFile(path.resolve(projectDir, 'README.md'), {
+          encoding: 'utf8'
+        }).then(file => expect(file).toInclude('SAP Cloud SDK'))
       ]);
 
       // execute the ci scripts and check if the reports are written
@@ -50,23 +49,19 @@ describe('Init', () => {
         stdio: 'inherit'
       });
 
-      const reportsPath = path.resolve(
-        projectDir,
-        's4hana_pipeline',
-        'reports'
+      const r = path.resolve(projectDir, 's4hana_pipeline', 'reports');
+      const backendUnit = path.resolve(r, 'backend-unit');
+      const backendUnitCoverage = path.resolve(
+        r,
+        'coverage-reports',
+        'backend-unit'
       );
-      const backendUtil = fs.readdir(path.resolve(reportsPath, 'backend-unit'));
-      const backendUtilCoverage = fs.readdir(
-        path.resolve(reportsPath, 'coverage-reports', 'backend-unit')
-      );
-      const backendIntegration = fs.readdir(
-        path.resolve(reportsPath, 'backend-integration')
-      );
+      const backendIntegration = path.resolve(r, 'backend-integration');
 
       return Promise.all([
-        backendUtil,
-        backendUtilCoverage,
-        backendIntegration
+        readdir(backendUnit),
+        readdir(backendUnitCoverage),
+        readdir(backendIntegration)
       ]).then(folders => {
         folders.forEach(folder => expect(folder.length).toBeGreaterThan(1));
         return Promise.resolve();
