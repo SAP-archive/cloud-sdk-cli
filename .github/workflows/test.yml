@@ -30,8 +30,6 @@ jobs:
         id: yarn-cache
         run: echo "::set-output name=dir::$(yarn cache dir)"
       - name: Save/restore yarn cache
-        timeout-minutes: 0.5
-        continue-on-error: true
         uses: actions/cache@v2
         with:
           path: ${{ steps.yarn-cache.outputs.dir }}
@@ -62,8 +60,6 @@ jobs:
         id: yarn-cache
         run: echo "::set-output name=dir::$(yarn cache dir)"
       - name: Save/restore yarn cache
-        timeout-minutes: 0.5
-        continue-on-error: true
         uses: actions/cache@v2
         with:
           path: ${{ steps.yarn-cache.outputs.dir }}
@@ -87,8 +83,6 @@ jobs:
         id: yarn-cache
         run: echo "::set-output name=dir::$(yarn cache dir)"
       - name: Save/restore yarn cache
-        timeout-minutes: 0.5
-        continue-on-error: true
         uses: actions/cache@v2
         with:
           path: ${{ steps.yarn-cache.outputs.dir }}
