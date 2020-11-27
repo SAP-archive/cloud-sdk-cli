@@ -38,8 +38,8 @@ $ npm run test:e2e
 
 ## Continuous Integration
 
-This project is preconfigured to run with the [SAP Cloud SDK Pipeline](https://github.com/SAP/cloud-s4-sdk-pipeline).
-To get the installer follow the short [guide](https://github.com/SAP/cloud-s4-sdk-pipeline#download-and-installation).
+This project is preconfigured to run with the [project "Piper" General Purpose Pipeline](https://sap.github.io/jenkins-library).
+To get the installer for the Jenkins-based pre-configured CI/CD server follow the short [guide](https://github.com/SAP/devops-docker-cx-server#download-and-installation).
 
 ```bash
 # If you have the SAP Cloud SDK CLI installed, it can download the install script for you

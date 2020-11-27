@@ -6,7 +6,7 @@
 [![NPM Downloads](https://img.shields.io/npm/dw/@sap-cloud-sdk/cli)](https://www.npmjs.com/package/@sap-cloud-sdk/cli)
 
 A nifty command line interface (CLI) for the SAP Cloud SDK for JavaScript to initialize and package your SAP Cloud Platform application.
-It is also the launchpad when trying to set up the approuter or getting started with the [SAP Cloud SDK for Continuous Delivery](https://github.com/SAP/cloud-s4-sdk-pipeline).
+It is also the launchpad when trying to set up the approuter or getting started with the [project "Piper" for your continuous delivery needs](https://sap.github.io/jenkins-library).
 
 ## Looking for SAP Cloud SDK documentation?
 Check our [API documentation](https://sap.github.io/cloud-sdk/docs/js/api-reference-js-ts) and [getting started](https://sap.github.io/cloud-sdk/docs/js/getting-started) guide on our [documentation portal](https://sap.github.io/cloud-sdk/).
