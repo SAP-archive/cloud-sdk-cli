@@ -20,7 +20,7 @@ import {
   parsePackageJson,
   shouldBuildScaffold,
   usageAnalytics,
-  unitTestConfig
+  integrationTestConfig
 } from '../utils';
 
 export default class Init extends Command {
@@ -151,7 +151,7 @@ export default class Init extends Command {
           task: () =>
             modifyJestConfig(
               path.resolve(projectDir, 'test', 'jest-e2e.json'),
-              unitTestConfig
+              integrationTestConfig
             ),
           enabled: () => isScaffold
         },
