@@ -41,6 +41,15 @@ jobs:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
         node-version: [10.x, 12.x, 14.x]
+        exclude:
+          - node-version: 10.x
+            os: windows-latest
+          - node-version: 12.x
+            os: windows-latest
+          - node-version: 10.x
+            os: macos-latest
+          - node-version: 12.x
+            os: macos-latest
 
     steps:
       - uses: actions/checkout@v2
@@ -66,6 +75,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
+      fail-fast: false
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
         node-version: [10.x]
