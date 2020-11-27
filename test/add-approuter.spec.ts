@@ -14,8 +14,8 @@ jest.mock('cli-ux', () => {
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import AddApprouter from '../src/commands/add-approuter';
+import { rm } from '../src/utils';
 import {
-  deleteAsync,
   getCleanProjectDir,
   getTestOutputDir,
   TimeThresholds
@@ -25,7 +25,7 @@ describe('Add Approuter', () => {
   const testOutputDir = getTestOutputDir(__filename);
 
   beforeAll(async () => {
-    await deleteAsync(testOutputDir, 3);
+    await rm(testOutputDir);
   }, TimeThresholds.SHORT);
 
   it(

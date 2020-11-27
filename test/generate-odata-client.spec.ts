@@ -16,14 +16,14 @@ jest.retryTimes(3);
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import GenerateODataClient from '../src/commands/generate-odata-client';
-import { generatorOptionsSDK, GeneratorOptionsSDK } from '../src/utils';
-import { deleteAsync, getTestOutputDir, TimeThresholds } from './test-utils';
+import { generatorOptionsSDK, GeneratorOptionsSDK, rm } from '../src/utils';
+import { getTestOutputDir, TimeThresholds } from './test-utils';
 
 describe('generate-odata-client', () => {
   const pathForTests = getTestOutputDir(__filename);
 
   beforeAll(async () => {
-    await deleteAsync(pathForTests, 3);
+    await rm(pathForTests);
     const pathForResources = path.resolve(
       __dirname,
       'resources',

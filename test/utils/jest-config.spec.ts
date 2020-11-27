@@ -4,10 +4,10 @@ import * as fs from 'fs-extra';
 import {
   unitTestConfig,
   integrationTestConfig,
-  modifyJestConfig
+  modifyJestConfig,
+  rm
 } from '../../src/utils';
 import {
-  deleteAsync,
   getCleanProjectDir,
   getTestOutputDir,
   TimeThresholds
@@ -17,7 +17,7 @@ const testOutputDir = getTestOutputDir(__filename);
 
 describe('Jest Config Utils', () => {
   beforeAll(async () => {
-    await deleteAsync(testOutputDir, 3);
+    await rm(testOutputDir);
   }, TimeThresholds.EXTRA_SHORT);
 
   it(

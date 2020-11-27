@@ -1,10 +1,16 @@
 /* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
 
-import * as fs from 'fs';
 import * as path from 'path';
 import cli from 'cli-ux';
 import * as execa from 'execa';
-import { recordWarning, readdir, rm, readFile, writeFile } from '../utils';
+import {
+  recordWarning,
+  access,
+  readdir,
+  rm,
+  readFile,
+  writeFile
+} from '../utils';
 
 export async function shouldBuildScaffold(
   projectDir: string,
@@ -16,26 +22,27 @@ export async function shouldBuildScaffold(
     return true;
   }
 
-  if (fs.existsSync(path.resolve(projectDir, 'package.json'))) {
+  try {
+    await access(path.resolve(projectDir, 'package.json'));
     return false;
-  }
+  } catch {
+    cli.log(
+      `The target directory (${projectDir}) does not contain a \`package.json.\``
+    );
 
-  cli.log(
-    `The target directory (${projectDir}) does not contain a \`package.json.\``
-  );
-
-  if (
-    await cli.confirm(
-      'Should a new `nest.js` project be initialized in the target directory? (y|n)'
-    )
-  ) {
-    await checkForEmptyDir(projectDir, force);
-    return true;
+    if (
+      await cli.confirm(
+        'Should a new `nest.js` project be initialized in the target directory? (y|n)'
+      )
+    ) {
+      await checkForEmptyDir(projectDir, force);
+      return true;
+    }
+    cli.info(
+      '➡️ Cancelling `init` because a valid `package.json` is required to run.'
+    );
+    return cli.exit(13);
   }
-  cli.info(
-    '➡️ Cancelling `init` because a valid `package.json` is required to run.'
-  );
-  return cli.exit(13);
 }
 
 async function checkForEmptyDir(projectDir: string, force: boolean) {

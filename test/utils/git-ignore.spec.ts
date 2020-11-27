@@ -1,9 +1,8 @@
 /* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
 jest.mock('../../src/utils/warnings');
 import * as fs from 'fs-extra';
-import { modifyGitIgnore, recordWarning } from '../../src/utils';
+import { modifyGitIgnore, recordWarning, rm } from '../../src/utils';
 import {
-  deleteAsync,
   getCleanProjectDir,
   getTestOutputDir,
   TimeThresholds
@@ -13,7 +12,7 @@ const testOutputDir = getTestOutputDir(__filename);
 
 describe('Git Ignore Utils', () => {
   beforeAll(async () => {
-    await deleteAsync(testOutputDir, 3);
+    await rm(testOutputDir);
   }, TimeThresholds.EXTRA_SHORT);
 
   it(

@@ -5,8 +5,8 @@ import * as path from 'path';
 import execa = require('execa');
 import * as fs from 'fs-extra';
 import Init from '../src/commands/init';
+import { rm } from '../src/utils';
 import {
-  deleteAsync,
   getCleanProjectDir,
   getTestOutputDir,
   TimeThresholds
@@ -16,7 +16,7 @@ const testOutputDir = getTestOutputDir(__filename);
 
 describe('Init', () => {
   beforeAll(async () => {
-    await deleteAsync(testOutputDir, 6);
+    await rm(testOutputDir);
   }, TimeThresholds.EXTRA_LONG);
 
   it(

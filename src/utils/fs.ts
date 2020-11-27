@@ -4,6 +4,7 @@ import { promisify } from 'util';
 import * as fs from 'fs';
 import * as rimraf from 'rimraf';
 
+export const access = promisify(fs.access);
 export const mkdir = promisify(fs.mkdir);
 export const readdir = promisify(fs.readdir);
 export const readFile = promisify(fs.readFile);

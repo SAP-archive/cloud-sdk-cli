@@ -6,10 +6,10 @@ import {
   copyFiles,
   findConflicts,
   getCopyDescriptors,
-  getTemplatePaths
+  getTemplatePaths,
+  rm
 } from '../../src/utils';
 import {
-  deleteAsync,
   getCleanProjectDir,
   getTestOutputDir,
   TimeThresholds
@@ -19,7 +19,7 @@ const testOutputDir = getTestOutputDir(__filename);
 
 describe('Templates Utils', () => {
   beforeAll(async () => {
-    deleteAsync(testOutputDir, 3);
+    await rm(testOutputDir);
   }, TimeThresholds.EXTRA_SHORT);
 
   it(

@@ -5,8 +5,8 @@ jest.mock('../src/utils/message-formatter');
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import Package from '../src/commands/package';
+import { rm } from '../src/utils';
 import {
-  deleteAsync,
   getCleanProjectDir,
   getTestOutputDir,
   TimeThresholds
@@ -17,7 +17,7 @@ const nestAppDir = path.resolve('test', 'nest');
 
 describe('Package', () => {
   beforeAll(async () => {
-    await deleteAsync(testOutputDir, 3);
+    await rm(testOutputDir);
   }, TimeThresholds.SHORT);
 
   beforeEach(() => {

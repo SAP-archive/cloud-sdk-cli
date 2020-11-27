@@ -7,10 +7,10 @@ import * as fs from 'fs-extra';
 import {
   installDependencies,
   modifyPackageJson,
-  parsePackageJson
+  parsePackageJson,
+  rm
 } from '../../src/utils';
 import {
-  deleteAsync,
   getCleanProjectDir,
   getTestOutputDir,
   TimeThresholds
@@ -20,7 +20,7 @@ const testOutputDir = getTestOutputDir(__filename);
 
 describe('Package Json Utils', () => {
   beforeAll(async () => {
-    await deleteAsync(testOutputDir, 3);
+    await rm(testOutputDir);
   }, TimeThresholds.LONG);
 
   it(

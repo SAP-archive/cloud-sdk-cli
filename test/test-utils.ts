@@ -1,8 +1,7 @@
 /* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
-import * as fs from 'fs';
+
 import * as path from 'path';
-import * as rm from 'rimraf';
-import { ErrnoException } from 'fast-glob/out/types';
+import { access, mkdir, rm } from '../src/utils';
 import { testDir, testOutputRootDir } from './test-output';
 
 export function getTestOutputDir(file: string): string {
@@ -17,34 +16,14 @@ export async function getCleanProjectDir(
   name: string
 ): Promise<string> {
   const projectDir = path.resolve(pathPrefix, name);
-  if (fs.existsSync(projectDir)) {
-    await deleteAsync(projectDir, 3);
-  }
-  fs.mkdirSync(projectDir, { recursive: true });
+
+  try {
+    await access(projectDir);
+    await rm(projectDir);
+  } catch {}
+
+  await mkdir(projectDir, { recursive: true });
   return projectDir;
-}
-
-export async function deleteAsync(
-  dirPath: string,
-  busyRetries: number
-): Promise<void> {
-  return new Promise<void>((resolve, reject) => {
-    rm(dirPath, { maxBusyTries: busyRetries }, err =>
-      callBack(err, resolve, reject)
-    );
-  });
-
-  function callBack(
-    err: Error | ErrnoException | null,
-    resolve: () => void,
-    reject: (reason: any) => void
-  ) {
-    if (err) {
-      reject(`Error in deleting: ${path} with ${err.message}`);
-    } else {
-      resolve();
-    }
-  }
 }
 
 export enum TimeThresholds {
