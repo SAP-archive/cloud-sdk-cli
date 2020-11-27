@@ -1,5 +1,4 @@
 /* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
-jest.retryTimes(3);
 
 import { buildScaffold } from '../../src/utils';
 import {

@@ -15,8 +15,6 @@ import {
 
 const testOutputDir = getTestOutputDir(__filename);
 
-jest.retryTimes(3);
-
 describe('Init', () => {
   beforeAll(async () => {
     await deleteAsync(testOutputDir, 6);
