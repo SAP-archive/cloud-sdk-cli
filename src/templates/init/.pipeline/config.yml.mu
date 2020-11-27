@@ -37,7 +37,6 @@ steps:
 ### Stage-specific configuration
 stages:
   Integration:
-    install: true
     runScripts:
       - ci-it-backend
 
