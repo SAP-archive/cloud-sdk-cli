@@ -142,7 +142,7 @@ async function copyRemote(sourcePath: URL, fileName: string) {
         response.on('end', () => {
           fs.mkdirSync(path.dirname(fileName), { recursive: true });
           fs.writeFileSync(fileName, content);
-          resolve();
+          resolve(undefined);
         });
       })
       .on('error', e => {
