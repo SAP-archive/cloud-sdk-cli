@@ -145,7 +145,7 @@ async function copyRemote(sourcePath: URL, fileName: string) {
         response.on('end', async () => {
           await mkdir(path.dirname(fileName), { recursive: true });
           await writeFile(fileName, content);
-          resolve();
+          resolve(undefined);
         });
       })
       .on('error', e => {
