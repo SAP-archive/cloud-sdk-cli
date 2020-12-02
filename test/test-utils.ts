@@ -1,7 +1,7 @@
 /* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
 
 import * as path from 'path';
-import { access, mkdir, rm } from '../src/utils';
+import { mkdir, rm } from '../src/utils';
 import { testDir, testOutputRootDir } from './test-output';
 
 export function getTestOutputDir(file: string): string {
@@ -17,12 +17,9 @@ export async function getCleanProjectDir(
 ): Promise<string> {
   const projectDir = path.resolve(pathPrefix, name);
 
-  try {
-    await access(projectDir);
-    await rm(projectDir);
-  } catch {}
-
+  await rm(projectDir);
   await mkdir(projectDir, { recursive: true });
+
   return projectDir;
 }
 
