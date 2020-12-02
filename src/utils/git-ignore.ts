@@ -23,15 +23,8 @@ export async function modifyGitIgnore(
     pathsToIgnore.push(...cdsPathsToIgnore);
   }
 
-  const fileContent = await readFile(pathToGitignore, 'utf8').catch(() =>
-    recordWarning(
-      'No .gitignore file found!',
-      'If your project is using a different version control system,',
-      'please make sure the following paths are not tracked:',
-      ...pathsToIgnore.map(filePath => '  ' + filePath)
-    )
-  );
-  if (fileContent) {
+  try {
+    const fileContent = await readFile(pathToGitignore, 'utf8');
     const newPaths = pathsToIgnore.filter(
       filePath => !fileContent.includes(filePath)
     );
@@ -45,6 +38,13 @@ export async function modifyGitIgnore(
         'please make sure the following paths are not tracked:',
         ...pathsToIgnore.map(filePath => '  ' + filePath)
       )
+    );
+  } catch {
+    recordWarning(
+      'No .gitignore file found!',
+      'If your project is using a different version control system,',
+      'please make sure the following paths are not tracked:',
+      ...pathsToIgnore.map(filePath => '  ' + filePath)
     );
   }
 }
