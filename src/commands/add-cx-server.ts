@@ -3,11 +3,12 @@
 import * as path from 'path';
 import { Command, flags } from '@oclif/command';
 import * as Listr from 'listr';
-import { CopyDescriptor, copyFiles, findConflicts } from '../utils/';
+import { CopyDescriptor, copyFiles, findConflicts } from '../utils';
 
 export default class AddCxServer extends Command {
   static description =
     'Add the scripts to set up a Jenkins server for CI/CD of your project';
+
   static examples = ['$ sap-cloud-sdk add-cx-server'];
 
   static flags = {
@@ -33,7 +34,7 @@ export default class AddCxServer extends Command {
     }
   ];
 
-  async run() {
+  async run(): Promise<void> {
     const parsed = this.parse(AddCxServer);
     const projectDir = parsed.args.projectDir || '.';
     const options = await this.getOptions();

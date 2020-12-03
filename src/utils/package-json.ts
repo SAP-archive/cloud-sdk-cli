@@ -1,10 +1,9 @@
 /* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
 
-import * as fs from 'fs';
 import * as path from 'path';
 import * as execa from 'execa';
-import { recordWarning } from '../utils/';
-import { getJestConfig } from './jest-config';
+import { readFile, recordWarning, writeFile } from '../utils';
+import { unitTestConfig } from './jest-config';
 
 interface PackageJsonChange {
   scripts?: { [key: string]: string };
@@ -48,7 +47,7 @@ const scaffoldProjectPackageJson: PackageJsonChange = {
     '@sap-cloud-sdk/cli'
   ],
   dependencies: ['@sap-cloud-sdk/core'],
-  jest: getJestConfig(true)
+  jest: unitTestConfig
 };
 
 const existingProjectPackageJson: PackageJsonChange = {
@@ -65,10 +64,10 @@ const existingProjectPackageJson: PackageJsonChange = {
   dependencies: ['@sap-cloud-sdk/core']
 };
 
-export async function parsePackageJson(projectDir: string) {
+export async function parsePackageJson(projectDir: string): Promise<any> {
   try {
     return JSON.parse(
-      fs.readFileSync(path.resolve(projectDir, 'package.json'), {
+      await readFile(path.resolve(projectDir, 'package.json'), {
         encoding: 'utf8'
       })
     );
@@ -156,7 +155,7 @@ export async function modifyPackageJson({
   frontendScripts?: boolean;
   force?: boolean;
   addCds?: boolean;
-}) {
+}): Promise<void> {
   const originalPackageJson = await parsePackageJson(projectDir);
   const changes = await getPackageJsonChanges(
     isScaffold,
@@ -168,7 +167,7 @@ export async function modifyPackageJson({
     changes.scripts
   );
 
-  if (conflicts.length && !force) {
+  if (conflicts.length > 0 && !force) {
     throw new Error(
       conflicts.length > 1
         ? `Scripts with the names "${conflicts.join(
@@ -180,7 +179,7 @@ export async function modifyPackageJson({
     );
   }
 
-  fs.writeFileSync(
+  return writeFile(
     path.resolve(projectDir, 'package.json'),
     JSON.stringify(mergePackageJson(originalPackageJson, changes), null, 2)
   );
@@ -219,8 +218,8 @@ async function getVersionOfDependency(dependency: string): Promise<string> {
 export async function installDependencies(
   projectDir: string,
   verbose: boolean
-) {
-  return execa('npm', ['install'], {
+): Promise<void> {
+  await execa('npm', ['install'], {
     cwd: projectDir,
     stdio: verbose ? 'inherit' : 'ignore'
   });

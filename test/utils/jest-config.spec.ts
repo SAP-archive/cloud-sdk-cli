@@ -1,9 +1,13 @@
 /* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import { getJestConfig, modifyJestConfig } from '../../src/utils';
 import {
-  deleteAsync,
+  unitTestConfig,
+  integrationTestConfig,
+  modifyJestConfig,
+  rm
+} from '../../src/utils';
+import {
   getCleanProjectDir,
   getTestOutputDir,
   TimeThresholds
@@ -13,14 +17,21 @@ const testOutputDir = getTestOutputDir(__filename);
 
 describe('Jest Config Utils', () => {
   beforeAll(async () => {
-    await deleteAsync(testOutputDir, 3);
+    await rm(testOutputDir);
   }, TimeThresholds.EXTRA_SHORT);
 
   it(
-    'returns jest config object for tests',
+    'returns jest config object for unit tests',
     () => {
-      expect(getJestConfig(true)).toMatchSnapshot();
-      expect(getJestConfig(false)).toMatchSnapshot();
+      expect(unitTestConfig).toMatchSnapshot();
+    },
+    TimeThresholds.EXTRA_SHORT
+  );
+
+  it(
+    'returns jest config object for integration tests',
+    () => {
+      expect(integrationTestConfig).toMatchSnapshot();
     },
     TimeThresholds.EXTRA_SHORT
   );
@@ -35,11 +46,11 @@ describe('Jest Config Utils', () => {
         jestConfigPath
       );
 
-      modifyJestConfig(jestConfigPath, getJestConfig(false));
+      await modifyJestConfig(jestConfigPath, integrationTestConfig);
 
       expect(
         JSON.parse(await fs.readFile(jestConfigPath, { encoding: 'utf8' }))
-      ).toMatchObject(getJestConfig(false));
+      ).toMatchObject(integrationTestConfig);
     },
     TimeThresholds.EXTRA_SHORT
   );

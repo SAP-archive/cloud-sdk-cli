@@ -1,9 +1,8 @@
 /* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
 jest.mock('../../src/utils/warnings');
 import * as fs from 'fs-extra';
-import { modifyGitIgnore, recordWarning } from '../../src/utils';
+import { modifyGitIgnore, recordWarning, rm } from '../../src/utils';
 import {
-  deleteAsync,
   getCleanProjectDir,
   getTestOutputDir,
   TimeThresholds
@@ -13,7 +12,7 @@ const testOutputDir = getTestOutputDir(__filename);
 
 describe('Git Ignore Utils', () => {
   beforeAll(async () => {
-    await deleteAsync(testOutputDir, 3);
+    await rm(testOutputDir);
   }, TimeThresholds.EXTRA_SHORT);
 
   it(
@@ -25,7 +24,7 @@ describe('Git Ignore Utils', () => {
       );
       await fs.writeFile(`${projectDir}/.gitignore`, '');
 
-      modifyGitIgnore(projectDir, false);
+      await modifyGitIgnore(projectDir, false);
 
       const gitIgnoreContent = (
         await fs.readFile(`${projectDir}/.gitignore`, { encoding: 'utf8' })
@@ -47,7 +46,7 @@ describe('Git Ignore Utils', () => {
       );
       await fs.writeFile(`${projectDir}/.gitignore`, '');
 
-      modifyGitIgnore(projectDir, true);
+      await modifyGitIgnore(projectDir, true);
 
       const gitIgnoreContent = (
         await fs.readFile(`${projectDir}/.gitignore`, { encoding: 'utf8' })
@@ -72,7 +71,7 @@ describe('Git Ignore Utils', () => {
       !@#$%^&^
       \\n`
       );
-      modifyGitIgnore(projectDir, false);
+      await modifyGitIgnore(projectDir, false);
 
       const gitIgnoreContent = (
         await fs.readFile(`${projectDir}/.gitignore`, { encoding: 'utf8' })
@@ -94,7 +93,7 @@ describe('Git Ignore Utils', () => {
         'no-git-ignore'
       );
 
-      modifyGitIgnore(projectDir, false);
+      await modifyGitIgnore(projectDir, false);
 
       expect(recordWarning).toHaveBeenCalledWith(
         'No .gitignore file found!',

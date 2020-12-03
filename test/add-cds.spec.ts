@@ -16,8 +16,8 @@ jest.mock('cli-ux', () => {
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import AddCds from '../src/commands/add-cds';
+import { rm } from '../src/utils';
 import {
-  deleteAsync,
   getCleanProjectDir,
   getTestOutputDir,
   TimeThresholds
@@ -27,7 +27,7 @@ describe('Add CDS', () => {
   const testOutputDir = getTestOutputDir(__filename);
 
   beforeAll(async () => {
-    await deleteAsync(testOutputDir, 6);
+    await rm(testOutputDir);
   }, TimeThresholds.LONG);
 
   it(

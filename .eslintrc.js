@@ -1,5 +1,12 @@
 module.exports = {
   env: {},
+  extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
+    'oclif',
+    'oclif-typescript',
+    'prettier'
+  ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     project: {
@@ -18,6 +25,7 @@ module.exports = {
     sourceType: 'module'
   },
   ignorePatterns: [
+    '.eslintrc.js',
     'dist',
     'node_modules',
     'lib',
@@ -43,9 +51,7 @@ module.exports = {
     }
   ],
   rules: {
-    '@typescript-eslint/adjacent-overload-signatures': 'error',
     '@typescript-eslint/array-type': 'error',
-    '@typescript-eslint/ban-types': 'error',
     '@typescript-eslint/class-name-casing': 'off',
     '@typescript-eslint/consistent-type-assertions': 'off',
     '@typescript-eslint/consistent-type-definitions': 'error',
@@ -120,20 +126,13 @@ module.exports = {
         ]
       }
     ],
-    '@typescript-eslint/no-empty-function': 'error',
-    '@typescript-eslint/no-empty-interface': 'error',
     '@typescript-eslint/no-explicit-any': 'off',
-    '@typescript-eslint/no-inferrable-types': 'error',
-    '@typescript-eslint/no-misused-new': 'error',
     '@typescript-eslint/no-namespace': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/no-parameter-properties': 'off',
-    '@typescript-eslint/no-this-alias': 'error',
     '@typescript-eslint/no-use-before-define': 'off',
-    '@typescript-eslint/no-var-requires': 'error',
     '@typescript-eslint/prefer-for-of': 'error',
     '@typescript-eslint/prefer-function-type': 'error',
-    '@typescript-eslint/prefer-namespace-keyword': 'error',
     '@typescript-eslint/quotes': [
       'error',
       'single',
@@ -142,7 +141,6 @@ module.exports = {
       }
     ],
     '@typescript-eslint/semi': ['error', 'always'],
-    '@typescript-eslint/triple-slash-reference': 'error',
     '@typescript-eslint/type-annotation-spacing': 'error',
     '@typescript-eslint/unified-signatures': 'error',
     'arrow-body-style': 'error',
@@ -151,7 +149,6 @@ module.exports = {
     camelcase: 'off',
     'comma-dangle': 'off',
     complexity: 'off',
-    'constructor-super': 'error',
     curly: 'error',
     'dot-notation': 'off',
     'eol-last': 'error',
@@ -160,9 +157,11 @@ module.exports = {
       'error',
       'block',
       {
-          'pattern': 'Copyright \\(c\\) \\d{4} SAP SE or an SAP affiliate company. All rights reserved. ',
-          'template': 'Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. ',
-          'lineEndings': 'unix'
+        pattern:
+          'Copyright \\(c\\) \\d{4} SAP SE or an SAP affiliate company. All rights reserved. ',
+        template:
+          'Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. ',
+        lineEndings: 'unix'
       }
     ],
     'guard-for-in': 'off',
@@ -195,22 +194,15 @@ module.exports = {
     'new-parens': 'error',
     'no-bitwise': 'error',
     'no-caller': 'error',
-    'no-cond-assign': 'error',
     'no-console': 'error',
-    'no-debugger': 'error',
-    'no-duplicate-case': 'error',
     'no-duplicate-imports': 'error',
     'no-else-return': ['error', { allowElseIf: false }],
-    'no-empty': 'error',
     'no-eval': 'error',
     'no-extra-bind': 'error',
-    'no-fallthrough': 'error',
     'no-invalid-this': 'off',
-    'no-irregular-whitespace': 'error',
     'no-multiple-empty-lines': ['error', { max: 1 }],
     'no-new-func': 'error',
     'no-new-wrappers': 'error',
-    'no-redeclare': 'off',
     '@typescript-eslint/no-redeclare': ['error'],
     'no-restricted-imports': ['error', '../', './'],
     'no-return-await': 'error',
@@ -223,16 +215,12 @@ module.exports = {
         hoist: 'all'
       }
     ],
-    'no-sparse-arrays': 'error',
     'no-template-curly-in-string': 'error',
     'no-throw-literal': 'error',
     'no-trailing-spaces': 'error',
     'no-undef-init': 'error',
     'no-underscore-dangle': 'off',
-    'no-unsafe-finally': 'error',
     'no-unused-expressions': 'error',
-    'no-unused-labels': 'error',
-    'no-unused-vars': 'off',
     'no-var': 'error',
     'object-curly-spacing': ['error', 'always'],
     'object-shorthand': 'error',
@@ -251,7 +239,8 @@ module.exports = {
     'space-in-parens': ['error', 'never'],
     'spaced-comment': 'error',
     'unused-imports/no-unused-imports-ts': 'error',
-    'use-isnan': 'error',
+    semi: 'off',
+    'unicorn/catch-error-name': 'off',
     'valid-jsdoc': [
       'error',
       {
@@ -262,7 +251,6 @@ module.exports = {
           return: 'returns'
         }
       }
-    ],
-    'valid-typeof': 'off'
+    ]
   }
 };

@@ -3,8 +3,8 @@
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import AddCxServer from '../src/commands/add-cx-server';
+import { rm } from '../src/utils';
 import {
-  deleteAsync,
   getCleanProjectDir,
   getTestOutputDir,
   TimeThresholds
@@ -14,7 +14,7 @@ describe('Add CX Server', () => {
   const testOutputDir = getTestOutputDir(__filename);
 
   beforeAll(async () => {
-    await deleteAsync(testOutputDir, 3);
+    await rm(testOutputDir);
   }, TimeThresholds.SHORT);
 
   it(

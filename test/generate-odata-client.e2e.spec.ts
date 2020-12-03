@@ -10,13 +10,14 @@ jest.retryTimes(3);
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import GenerateODataClient from '../src/commands/generate-odata-client';
-import { deleteAsync, getTestOutputDir, TimeThresholds } from './test-utils';
+import { rm } from '../src/utils';
+import { getTestOutputDir, TimeThresholds } from './test-utils';
 
 describe('generate-odata-client', () => {
   const pathForTests = getTestOutputDir(__filename);
 
   beforeAll(async () => {
-    await deleteAsync(pathForTests, 6);
+    await rm(pathForTests);
     const pathForResources = path.resolve(
       __dirname,
       'resources',
@@ -25,10 +26,10 @@ describe('generate-odata-client', () => {
     await fs.copy(pathForResources, pathForTests);
   }, TimeThresholds.LONG);
 
-  test(
+  it(
     '[E2E] should generate a OData client',
     async () => {
-      const result = await GenerateODataClient.run([
+      await GenerateODataClient.run([
         '-i',
         'edmxSource',
         '-o',
@@ -36,7 +37,6 @@ describe('generate-odata-client', () => {
         '--projectDir',
         pathForTests
       ]);
-      expect(result.exitCode).toBe(0);
 
       const files = await fs.readdir(path.resolve(pathForTests, 'output'));
       expect(files).toHaveLength(1);

@@ -15,9 +15,8 @@ jest.mock('cli-ux', () => {
 
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import { usageAnalytics } from '../../src/utils';
+import { rm, usageAnalytics } from '../../src/utils';
 import {
-  deleteAsync,
   getCleanProjectDir,
   getTestOutputDir,
   TimeThresholds
@@ -34,7 +33,7 @@ async function readConsentFile(projectDir: string) {
 
 describe('Usage Analytics Utils', () => {
   beforeAll(async () => {
-    await deleteAsync(testOutputDir, 3);
+    await rm(testOutputDir);
   }, TimeThresholds.EXTRA_SHORT);
 
   it(

@@ -5,8 +5,8 @@ import * as path from 'path';
 import * as fs from 'fs-extra';
 import Init from '../src/commands/init';
 import { getWarnings, recordWarning } from '../src/utils/warnings';
+import { rm } from '../src/utils';
 import {
-  deleteAsync,
   getCleanProjectDir,
   getTestOutputDir,
   TimeThresholds
@@ -20,7 +20,7 @@ jest.retryTimes(3);
 
 describe('Init', () => {
   beforeAll(async () => {
-    await deleteAsync(testOutputDir, 6);
+    await rm(testOutputDir);
   }, TimeThresholds.EXTRA_LONG);
 
   it(

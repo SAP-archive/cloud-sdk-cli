@@ -1,4 +1,4 @@
-name: build
+name: test
 
 on:
   pull_request: ~
@@ -7,45 +7,98 @@ on:
       - main
 
 jobs:
-  build:
+  test:
     runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
-        node-version: [10.x, 12.x]
+        node-version: [10.x, 12.x, 14.x]
+        exclude:
+          - node-version: 10.x
+            os: windows-latest
+          - node-version: 12.x
+            os: windows-latest
+          - node-version: 10.x
+            os: macos-latest
+          - node-version: 12.x
+            os: macos-latest
 
     steps:
       - uses: actions/checkout@v2
       - name: Get yarn cache directory
         id: yarn-cache
-        if: runner.os == 'Linux'
         run: echo "::set-output name=dir::$(yarn cache dir)"
       - name: Save/restore yarn cache
-        uses: actions/cache@v1
-        if: runner.os == 'Linux'
+        uses: actions/cache@v2
         with:
           path: ${{ steps.yarn-cache.outputs.dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2-beta
         with:
           node-version: ${{ matrix.node-version }}
       - name: Install Dependencies
         run: yarn install --frozen-lockfile --ignore-engines
-      - run: yarn lint
-        if: runner.os == 'Linux'
       - run: yarn build
-      - run: yarn run test
+      - run: yarn test
+
+  e2e:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+        node-version: [10.x]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Get yarn cache directory
+        id: yarn-cache
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - name: Save/restore yarn cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.yarn-cache.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Use Node.js 10
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: 10.x
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile --ignore-engines
       - run: yarn run test:e2e
-        if: matrix.os == 'ubuntu-latest'
-        env:
-          CI: true
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Get yarn cache directory
+        id: yarn-cache
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - name: Save/restore yarn cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.yarn-cache.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Use Node.js 12
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: 12.x
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile --ignore-engines
+      - run: yarn lint
+
   checks:
     runs-on: ubuntu-latest
     steps:
       - name: REUSE Compliance Check
         uses: fsfe/reuse-action@v1.1
-    

@@ -1,17 +1,27 @@
 /* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
 
-import * as fs from 'fs';
 import * as path from 'path';
 import { Command, flags } from '@oclif/command';
 import * as glob from 'fast-glob';
 import * as Listr from 'listr';
-import * as rm from 'rimraf';
 import {
+  copyFile,
+  rm,
+  mkdir,
   boxMessage,
   checkOldDependencies,
   getWarnings,
   parsePackageJson
 } from '../utils';
+
+interface Context {
+  parsed: {
+    flags: any;
+    args: any;
+  };
+  outputDir: string;
+  projectDir: string;
+}
 
 export default class Package extends Command {
   static description = 'Copies the specified files to the deployment folder';
@@ -60,80 +70,36 @@ export default class Package extends Command {
     }
   ];
 
-  async run() {
+  async run(): Promise<void> {
     const parsed = this.parse(Package);
     const projectDir = parsed.args.projectDir || '.';
     const outputDir = path.resolve(projectDir, parsed.flags.output);
 
-    function copyFiles(filePaths: string[]): void {
-      filePaths.forEach(filepath => {
-        const outputFilePath = path.resolve(
-          outputDir,
-          path.relative(projectDir, filepath)
-        );
-        fs.mkdirSync(path.dirname(outputFilePath), { recursive: true });
-        fs.copyFileSync(filepath, outputFilePath);
-      });
-    }
-
     const tasks = new Listr([
       {
-        title: `Overwrite ${parsed.flags.output}`,
-        task: () => {
-          try {
-            if (fs.existsSync(outputDir)) {
-              rm.sync(outputDir);
-            }
-            fs.mkdirSync(outputDir);
-          } catch (error) {
-            this.error(error, { exit: 1 });
-          }
+        title: 'Read flags',
+        task: ctx => {
+          ctx.parsed = parsed;
+          ctx.projectDir = projectDir;
+          ctx.outputDir = outputDir;
         }
       },
       {
+        title: `Overwrite ${parsed.flags.output}`,
+        task: this.overwrite
+      },
+      {
         title: 'Copying files',
-        task: async () => {
-          const include = await glob(parsed.flags.include.split(','), {
-            dot: true,
-            absolute: true,
-            cwd: projectDir
-          });
-          const exclude: string[] = parsed.flags.exclude.length
-            ? await glob(parsed.flags.exclude.split(','), {
-                dot: true,
-                absolute: true,
-                cwd: projectDir
-              })
-            : [];
-          const filtered = include.filter(
-            filepath => !exclude.includes(filepath)
-          );
-
-          copyFiles(filtered);
-        }
+        task: this.copyFiles
       },
       {
         title: 'Copying node_modules for ci',
         enabled: () => parsed.flags.ci,
-        task: async () => {
-          const nodeModuleFiles = await glob('node_modules/**/*', {
-            dot: true,
-            absolute: true,
-            cwd: projectDir
-          });
-
-          copyFiles(nodeModuleFiles);
-        }
+        task: this.copyNodeModules
       },
       {
         title: 'Check the SAP Cloud SDK dependencies',
-        task: async () => {
-          const { dependencies, devDependencies } = await parsePackageJson(
-            projectDir
-          );
-          checkOldDependencies(dependencies);
-          checkOldDependencies(devDependencies);
-        }
+        task: this.checkSDKDependencies
       }
     ]);
 
@@ -141,7 +107,53 @@ export default class Package extends Command {
     this.printSuccessMessage();
   }
 
-  private printSuccessMessage() {
+  async overwrite(ctx: Context): Promise<void> {
+    try {
+      await rm(ctx.outputDir);
+      await mkdir(ctx.outputDir);
+    } catch (error) {
+      this.error(error, { exit: 1 });
+    }
+  }
+
+  async copyFiles(ctx: Context): Promise<void> {
+    const include = await glob(ctx.parsed.flags.include.split(','), {
+      dot: true,
+      absolute: true,
+      cwd: ctx.projectDir
+    });
+    const exclude: string[] =
+      ctx.parsed.flags.exclude.length > 0
+        ? await glob(ctx.parsed.flags.exclude.split(','), {
+            dot: true,
+            absolute: true,
+            cwd: ctx.projectDir
+          })
+        : [];
+    const filtered = include.filter(filepath => !exclude.includes(filepath));
+
+    await copyFilesTo(filtered, ctx.outputDir, ctx.projectDir);
+  }
+
+  async copyNodeModules(ctx: Context): Promise<void> {
+    const nodeModuleFiles = await glob('node_modules/**/*', {
+      dot: true,
+      absolute: true,
+      cwd: ctx.projectDir
+    });
+
+    await copyFilesTo(nodeModuleFiles, ctx.outputDir, ctx.projectDir);
+  }
+
+  async checkSDKDependencies(ctx: Context): Promise<void> {
+    const { dependencies, devDependencies } = await parsePackageJson(
+      ctx.projectDir
+    );
+    checkOldDependencies(dependencies);
+    checkOldDependencies(devDependencies);
+  }
+
+  printSuccessMessage(): void {
     const warnings = getWarnings();
     const body = [
       '🚀 Please migrate to new packages.',
@@ -168,11 +180,28 @@ export default class Package extends Command {
     }
   }
 
-  private hasOldSDKWarnings(warnings: string[]) {
-    const regex = RegExp('Old SAP Cloud SDK: .* is detected.');
+  hasOldSDKWarnings(warnings: string[]): boolean {
+    const regex = new RegExp('Old SAP Cloud SDK: .* is detected.');
     return (
       warnings.map(warning => regex.test(warning)).filter(value => value)
         .length > 0
     );
   }
+}
+
+async function copyFilesTo(
+  filePaths: string[],
+  outputDir: string,
+  projectDir: string
+): Promise<void[]> {
+  return Promise.all(
+    filePaths.map(async filepath => {
+      const outputFilePath = path.resolve(
+        outputDir,
+        path.relative(projectDir, filepath)
+      );
+      await mkdir(path.dirname(outputFilePath), { recursive: true });
+      await copyFile(filepath, outputFilePath);
+    })
+  );
 }

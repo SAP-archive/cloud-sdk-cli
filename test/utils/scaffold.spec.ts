@@ -15,9 +15,8 @@ jest.retryTimes(3);
 
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import { shouldBuildScaffold } from '../../src/utils';
+import { rm, shouldBuildScaffold } from '../../src/utils';
 import {
-  deleteAsync,
   getCleanProjectDir,
   getTestOutputDir,
   TimeThresholds
@@ -27,7 +26,7 @@ const testOutputDir = getTestOutputDir(__filename);
 
 describe('Scaffold Utils', () => {
   beforeAll(async () => {
-    await deleteAsync(testOutputDir, 6);
+    await rm(testOutputDir);
   }, TimeThresholds.LONG);
 
   it(

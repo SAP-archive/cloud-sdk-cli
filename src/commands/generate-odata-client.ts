@@ -55,14 +55,14 @@ export default class GenerateODataClient extends Command {
     projectDir: toStringFlag(generatorOptionCli.projectDir)
   };
 
-  async run() {
+  async run(): Promise<void> {
     const { flags } = this.parse(GenerateODataClient);
 
     const yargsFlags = Object.entries(flags)
       .filter(
         ([key, value]) =>
           typeof value !== 'undefined' &&
-          generatorOptionsSDK.hasOwnProperty(key)
+          Object.prototype.hasOwnProperty.call(generatorOptionsSDK, key)
       )
       .map(([key, value]) => `--${key}=${value}`);
 
@@ -102,8 +102,6 @@ export default class GenerateODataClient extends Command {
     const promise = execa('generate-odata-client', yargsFlags, {
       cwd: flags.projectDir || '.'
     });
-    // eslint-disable-next-line no-unused-expressions
     promise.stdout?.pipe(process.stdout);
-    return promise;
   }
 }

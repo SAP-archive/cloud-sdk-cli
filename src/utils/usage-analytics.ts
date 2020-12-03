@@ -1,23 +1,20 @@
 /* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
 
-import * as fs from 'fs';
 import * as path from 'path';
 import cli from 'cli-ux';
+import { writeFile } from './fs';
 
 export async function usageAnalytics(
   projectDir: string,
   agreeToAnalytics: boolean | undefined,
   salt?: string
-) {
+): Promise<void> {
   const analyticsFilePath = path.resolve(
     projectDir,
     'sap-cloud-sdk-analytics.json'
   );
   if (agreeToAnalytics === false) {
-    return fs.writeFileSync(
-      analyticsFilePath,
-      JSON.stringify({ enabled: false })
-    );
+    return writeFile(analyticsFilePath, JSON.stringify({ enabled: false }));
   }
 
   if (
@@ -27,8 +24,8 @@ export async function usageAnalytics(
     ))
   ) {
     const jsonContent = salt ? { enabled: true, salt } : { enabled: true };
-    fs.writeFileSync(analyticsFilePath, JSON.stringify(jsonContent));
+    await writeFile(analyticsFilePath, JSON.stringify(jsonContent));
   } else {
-    fs.writeFileSync(analyticsFilePath, JSON.stringify({ enabled: false }));
+    await writeFile(analyticsFilePath, JSON.stringify({ enabled: false }));
   }
 }

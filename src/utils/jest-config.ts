@@ -1,9 +1,8 @@
 /* Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. */
 
-import * as fs from 'fs';
-import { recordWarning } from '../utils/';
+import { recordWarning, readFile, writeFile } from '../utils';
 
-export function getJestConfig(isUnitTests: boolean) {
+function getJestConfig(isUnitTests: boolean) {
   return {
     reporters: [
       'default',
@@ -25,10 +24,17 @@ export function getJestConfig(isUnitTests: boolean) {
   };
 }
 
-export function modifyJestConfig(jestConfigPath: string, data: any) {
+export const integrationTestConfig = getJestConfig(false);
+
+export const unitTestConfig = getJestConfig(true);
+
+export async function modifyJestConfig(
+  jestConfigPath: string,
+  data: any
+): Promise<void> {
   try {
     const jestConfig = JSON.parse(
-      fs.readFileSync(jestConfigPath, {
+      await readFile(jestConfigPath, {
         encoding: 'utf8'
       })
     );
@@ -37,7 +43,7 @@ export function modifyJestConfig(jestConfigPath: string, data: any) {
       ...data
     };
 
-    fs.writeFileSync(
+    return writeFile(
       jestConfigPath,
       JSON.stringify(adjustedJestConfig, null, 2)
     );

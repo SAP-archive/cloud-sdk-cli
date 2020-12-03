@@ -5,6 +5,7 @@ import * as https from 'https';
 import * as path from 'path';
 import { compile } from 'handlebars';
 import { CopyDescriptor } from './copy-list';
+import { rm, mkdir, readFile, copyFile, writeFile } from './fs';
 
 const templatesDir = path.resolve(__dirname, '../templates');
 
@@ -87,15 +88,15 @@ export function getCopyDescriptors(
 export async function findConflicts(
   copyDescriptors: CopyDescriptor[],
   force = false
-) {
+): Promise<void> {
   const conflicts = copyDescriptors.filter(copyDescriptor =>
     fs.existsSync(copyDescriptor.fileName)
   );
 
-  if (conflicts.length) {
+  if (conflicts.length > 0) {
     if (force) {
-      conflicts.forEach(copyDescriptor =>
-        fs.unlinkSync(copyDescriptor.fileName)
+      await Promise.all(
+        conflicts.map(copyDescriptor => rm(copyDescriptor.fileName))
       );
     } else {
       const listOfFiles = conflicts
@@ -113,7 +114,7 @@ export async function findConflicts(
 export async function copyFiles(
   copyDescriptors: CopyDescriptor[],
   options: { [key: string]: any }
-) {
+): Promise<any[]> {
   return Promise.all(
     copyDescriptors.map(({ sourcePath, fileName }) =>
       sourcePath instanceof URL
@@ -124,7 +125,7 @@ export async function copyFiles(
 }
 
 async function copyRemote(sourcePath: URL, fileName: string) {
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     https
       .get(sourcePath, response => {
         if (
@@ -138,10 +139,12 @@ async function copyRemote(sourcePath: URL, fileName: string) {
           );
         }
         let content = '';
-        response.on('data', (chunk: string) => (content += chunk));
-        response.on('end', () => {
-          fs.mkdirSync(path.dirname(fileName), { recursive: true });
-          fs.writeFileSync(fileName, content);
+        response.on('data', (chunk: string) => {
+          content += chunk;
+        });
+        response.on('end', async () => {
+          await mkdir(path.dirname(fileName), { recursive: true });
+          await writeFile(fileName, content);
           resolve(undefined);
         });
       })
@@ -156,12 +159,12 @@ async function copyLocal(
   fileName: string,
   options: { [key: string]: any }
 ) {
-  fs.mkdirSync(path.dirname(fileName), { recursive: true });
+  await mkdir(path.dirname(fileName), { recursive: true });
 
   if (path.extname(sourcePath) === '.mu') {
-    const template = compile(fs.readFileSync(sourcePath, { encoding: 'utf8' }));
-    fs.writeFileSync(fileName, template(options));
+    const template = compile(await readFile(sourcePath, { encoding: 'utf8' }));
+    await writeFile(fileName, template(options));
   } else {
-    fs.copyFileSync(sourcePath, fileName);
+    await copyFile(sourcePath, fileName);
   }
 }
