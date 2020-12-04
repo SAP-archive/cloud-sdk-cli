@@ -49,7 +49,7 @@
     "@oclif/plugin-warn-if-update-available": "^1.7.0",
     "cli-ux": "^5.4.5",
     "eslint": "^7.13.0",
-    "execa": "^4.0.0",
+    "execa": "^5.0.0",
     "fast-glob": "^3.2.2",
     "handlebars": "^4.7.3",
     "js-yaml": "^3.13.1",
