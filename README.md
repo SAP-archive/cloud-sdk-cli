@@ -4,6 +4,8 @@
 
 [![Tests Badge](https://github.com/SAP/cloud-sdk-cli/workflows/Tests/badge.svg?branch=main)](https://github.com/SAP/cloud-sdk-cli/actions)
 [![NPM Downloads](https://img.shields.io/npm/dw/@sap-cloud-sdk/cli)](https://www.npmjs.com/package/@sap-cloud-sdk/cli)
+[![REUSE status](https://api.reuse.software/badge/github.com/SAP/cloud-sdk-cli)](https://api.reuse.software/info/github.com/SAP/cloud-sdk-cli)
+
 
 ## The SAP Cloud SDK CLI is going to be deprecated soon
 
