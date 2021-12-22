@@ -69,7 +69,7 @@
     "@typescript-eslint/eslint-plugin": "^4.5.0",
     "@typescript-eslint/parser": "^4.5.0",
     "eslint-config-oclif": "^3.1.0",
-    "eslint-config-oclif-typescript": "^0.2.0",
+    "eslint-config-oclif-typescript": "^1.0.2",
     "eslint-config-prettier": "^7.0.0",
     "eslint-plugin-header": "^3.1.0",
     "eslint-plugin-import": "^2.22.1",
