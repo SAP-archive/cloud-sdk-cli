@@ -46,7 +46,7 @@
     "@oclif/plugin-autocomplete": "^0.3.0",
     "@oclif/plugin-help": "^3.1.0",
     "@oclif/plugin-not-found": "^1.2.3",
-    "@oclif/plugin-warn-if-update-available": "^1.7.0",
+    "@oclif/plugin-warn-if-update-available": "^2.0.3",
     "cli-ux": "^5.4.5",
     "eslint": "^7.13.0",
     "execa": "^5.0.0",
