@@ -7,10 +7,10 @@
 [![REUSE status](https://api.reuse.software/badge/github.com/SAP/cloud-sdk-cli)](https://api.reuse.software/info/github.com/SAP/cloud-sdk-cli)
 
 
-## The SAP Cloud SDK CLI is going to be deprecated soon
+## The SAP Cloud SDK CLI is deprecated
 
-We are not actively developing on the SAP Cloud SDK CLI anymore.
-Instead, we will provide extensive setup guides for your projects, including examples for pipelines and the most popular SAP Cloud SDK integrations.
+This repository and the npm package `@sap-cloud-sdk/cli` are deprecated.
+As replacement, we provide some [sample applications](https://github.com/SAP-samples/cloud-sdk-js), showcasing the SAP Cloud SDK for JavaScript.
 You can continue using the CLI as long as it serves your purpose but do not expect major updates, bug fixes, etc.
 
 The CLIs for OData and OpenAPI code generators will stay and are hosted in the [main SAP Cloud SDK repository](https://github.com/SAP/cloud-sdk-js).
